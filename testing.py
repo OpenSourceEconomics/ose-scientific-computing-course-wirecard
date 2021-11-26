@@ -10,6 +10,9 @@ from test_functions import rastrigin
 from test_functions import rosenbrock
 from test_functions import levi_no_13
 from test_functions import griewank
+from optimization_algorithms import newton_method_1D
+from optimization_algorithms import first_derivative
+from optimization_algorithms import newton_method
 
 def plot_test_function(domain, function, name_of_function = 'some function'): 
     """Plot a 3d graph of a function. 
@@ -41,9 +44,34 @@ def plot_test_function(domain, function, name_of_function = 'some function'):
     plt.show()
     pass
 
+
 if __name__ == "__main__":
 
-    plot_test_function((-5.12,5.12), rastrigin, 'rastrigin')
-    plot_test_function((-100,100), griewank, 'griewank')
-    plot_test_function((-10,10), levi_no_13, 'Levi no. 13')
-    plot_test_function((-100,100), rosenbrock, 'rosenbrock')
+    plot_test_functions = False
+    test_newton_1D = False
+    test_newton = True
+
+
+    if plot_test_functions == True:
+        plot_test_function((-5.12,5.12), rastrigin, 'rastrigin')
+        plot_test_function((-100,100), griewank, 'griewank')
+        plot_test_function((-10,10), levi_no_13, 'Levi no. 13')
+        plot_test_function((-100,100), rosenbrock, 'rosenbrock')
+    
+    if test_newton_1D == True:
+        print("One root of x^2 + 1 is at x == ", newton_method_1D(lambda a : a**2 - 4, 6))
+        f = lambda a : (a-4)**2 + 1
+        df_2 = lambda b : 2 * b - 8
+        df = lambda c : first_derivative(c, f, eps = 10**-8)
+        print("Min of (x-4)^2 + 1 is at x == ", newton_method_1D(df_2,1))
+        print("Min of (x-4)**2 + 1 is at x == ", newton_method_1D(df, 1))
+
+    if test_newton == True:
+        #function whose minimum we want to find:
+        f = lambda a : (a[0] + a[1])**2 + 1
+        #thus we want to find the zeros of its derivative:
+        df = lambda b : np.array([2 * b[0] + 2 * b[1], 2 * b[0] + 2 * b[1]])
+        #its derivatives Jacobian is given by: 
+        J = lambda c : np.array([[2,2],
+                                 [2,2]])
+        print("x -> x_1^2 + x_2^2 hat eine Nulstelle bei: ", newton_method(df,J, np.array([1,1])))
