@@ -1,8 +1,10 @@
-import numpy as np  
+import autograd.numpy as np  
 import matplotlib.pyplot as plt
+import math
 import random
 
 from mpl_toolkits.mplot3d import Axes3D
+from numpy.lib.function_base import vectorize
 
 
 # functions to be tested
@@ -10,9 +12,10 @@ from test_functions import rastrigin
 from test_functions import rosenbrock
 from test_functions import levi_no_13
 from test_functions import griewank
-from optimization_algorithms import newton_method_1D
-from optimization_algorithms import first_derivative
+from optimization_algorithms import find_starting_point, naive_optimization, newton_method_1D
+from optimization_algorithms import first_derivative_1D
 from optimization_algorithms import newton_method
+
 
 def plot_test_function(domain, function, name_of_function = 'some function'): 
     """Plot a 3d graph of a function. 
@@ -62,7 +65,7 @@ if __name__ == "__main__":
         print("One root of x^2 + 1 is at x == ", newton_method_1D(lambda a : a**2 - 4, 6))
         f = lambda a : (a-4)**2 + 1
         df_2 = lambda b : 2 * b - 8
-        df = lambda c : first_derivative(c, f, eps = 10**-8)
+        df = lambda c : first_derivative_1D(c, f, eps = 10**-8)
         print("Min of (x-4)^2 + 1 is at x == ", newton_method_1D(df_2,1))
         print("Min of (x-4)**2 + 1 is at x == ", newton_method_1D(df, 1))
 
@@ -74,4 +77,32 @@ if __name__ == "__main__":
         #its derivatives Jacobian is given by: 
         J = lambda c : np.array([[2,2],
                                  [2,1]])
-        print("x -> [2 * x_1 + 2 * x_2 + 1, 2 * x_1 + x_2 hat eine Nulstelle bei: ", newton_method(df,J, np.array([2,1])))
+        print("x -> [2 * x_1 + 2 * x_2 + 1, 2 * x_1 + x_2] hat eine Nulstelle bei: ", newton_method(df,J, np.array([20.234,100.391])))
+    
+        f_2 = lambda a : a # not in the mood to solve this differential equation
+        df_2 = lambda a : np.array([a[0]**2 - a[1] + a[0] * np.cos(np.pi * a[0]),a[0]*a[1] + math.exp(-a[1]) - 1 / a[0]])
+        J_2 = lambda a : np.array([[2*a[0] + np.cos(np.pi*a[0]) - np.pi*a[0]*np.sin(np.pi*a[0]), -1],
+                                  [a[1] + 1 / (a[0]**2), a[0] - math.exp(-a[1])]])
+                    
+        
+        
+
+        
+                                
+        print("df_2 hat eine Nulstelle bei: ", newton_method(df_2,J_2, np.array([2,1])))
+
+        print(" x -> (x1 + x2)^2 - 0.5 x_2^2 + 1 hat ein optimum bei: ", naive_optimization(f, 2, np.array([100.23, 6.55])))
+
+        f_3 = lambda a : rosenbrock([a[0],a[1]])   # 2 dimensionale rosenbrock
+        print("Die 2-dim Rosenbrock funktion hat ein Optimum bei: ", naive_optimization(f_3,2,np.array([89.,21.])))
+
+        f_4 = lambda a : griewank(a)    # 2 dimensionale levi_no_13
+        print("Die 2-dim griewank funktion hat ein Optimum bei: ", naive_optimization(f_4,2,[-5,5]))
+
+        f_5 = lambda a : rastrigin(a)
+        print("Die 2-dim rastrigin function hat ein Optimum bei: ", naive_optimization(f_5,2,[-5,5]))
+
+        
+
+
+

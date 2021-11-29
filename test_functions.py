@@ -1,4 +1,4 @@
-import numpy as np
+import autograd.numpy as np
 import numbers
 
 # In this File we are implementing real valued functions to test the optimization algorithms we implement
@@ -71,7 +71,8 @@ def rosenbrock(x, domain = [-100,100]):
     else: 
         return np.sum(100 * (input[1:] - input[:-1]**2 )**2 + (1 - input[:-1])**2) + 1
 
-def levi_no_13(x, domain = [-10, 10]):
+# for now i have excluded the domain of the following function
+def levi_no_13(x):
     """Compute the output of the x.size dimensional Levi No. 13 function. 
 
     Args:
@@ -88,6 +89,7 @@ def levi_no_13(x, domain = [-10, 10]):
     # The global minimum of this function lies at (1,...1) and equals to 1
 
     input = np.array(x)
+
 
     if input.size > 1 : 
         out_1 = np.sin(np.sin(3 * np.pi * input[0]))
