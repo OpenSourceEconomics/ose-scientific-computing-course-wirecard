@@ -4,10 +4,8 @@ from autograd import grad, jacobian
 
 # In this File we are going to implement the optimization algorithms we study in our assignment
 
-# To get some practice with implementing optimization algorithms I am going to work on an simple
-# version of the Newton procedure for function of the form f: \R \to \R
-
-# After that I want to implement a multidimensional version but that will still take some time i guess
+# To get some practice with implementing optimization algorithms I implemented the 1 Dimensional Newton Method, 
+# and a naive optimization algorithms that uses the multidimensional newton method
 
 def find_starting_point(f,domain,k = 100):
     print("k equals to: ",k)
@@ -89,7 +87,7 @@ def newton_method(f, df, x_n, eps = 10**(-6), n = 1000):
     while np.linalg.norm(f_xn) > eps and n > 0: 
         sol = np.linalg.solve(df(x_n), -f_xn)
         x_n = x_n + sol
-        print("x_n equals to: ", x_n)
+        #print("x_n equals to: ", x_n)
         #np.linalg.lstsq can deal with non invertibel matrices
         #x_n = x_n + np.linalg.solve(df(x_n), -f_xn)
         f_xn = f(x_n)
@@ -120,7 +118,11 @@ def naive_optimization(f, dim, domain, eps_newton = 10**(-6), eps_derivative = 1
     """
     # 1. find point x_0 to start iteration from
         # For now we treat domain as the starting point of the iteration
-    x_0 = np.array(find_starting_point(f,domain,20)).astype(float)
+    
+    if len(domain) > 2:
+        x_0 = domain
+    if len(domain) == 2:
+        x_0 = np.array(find_starting_point(f,domain,20)).astype(float)
 
     # 2. compute derivative of f
     df = jacobian(f)

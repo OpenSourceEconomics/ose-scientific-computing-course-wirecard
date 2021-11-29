@@ -93,13 +93,14 @@ if __name__ == "__main__":
 
         print(" x -> (x1 + x2)^2 - 0.5 x_2^2 + 1 hat ein optimum bei: ", naive_optimization(f, 2, np.array([100.23, 6.55])))
 
-        f_3 = lambda a : rosenbrock([a[0],a[1]])   # 2 dimensionale rosenbrock
-        print("Die 2-dim Rosenbrock funktion hat ein Optimum bei: ", naive_optimization(f_3,2,np.array([89.,21.])))
+        f_3 = lambda a : rosenbrock(a)   # n - dimensionale rosenbrock
+        print("Die 30-dim Rosenbrock funktion hat ein Optimum bei: ", naive_optimization(f_3,12,np.array([89.,21.,43.,55.,12.,13.,89.,21.,43.,55.,12.,13.,89.,21.,43.,55.,12.,13.,89.,21.,43.,55.,12.,13.,89.,21.,43.,55.,12.,13.])))
 
-        f_4 = lambda a : griewank(a)    # 2 dimensionale levi_no_13
+        
+        f_4 = lambda a : griewank(a)    # 2 dimensionale griewank
         print("Die 2-dim griewank funktion hat ein Optimum bei: ", naive_optimization(f_4,2,[-5,5]))
 
-        f_5 = lambda a : rastrigin(a)
+        f_5 = lambda a : rastrigin(a)   # 2 dimensional rastrigin
         print("Die 2-dim rastrigin function hat ein Optimum bei: ", naive_optimization(f_5,2,[-5,5]))
 
         
