@@ -54,7 +54,7 @@ def newton_method_1D(f, x_n, eps_newton = 10** (-6), eps_derivative = 10** (-6),
 def newton_method(f, df, x_n, eps = 10**(-6), n = 1000):
     f_xn = f(x_n)
     while np.linalg.norm(f_xn) > eps and n > 0: 
-        sol = np.linalg.lstsq(df(x_n), -f_xn)
+        sol = np.linalg.solve(df(x_n), -f_xn)
         print("sol equals: ",sol)
         x_n = x_n + sol
         #np.linalg.lstsq can deal with non invertibel matrices

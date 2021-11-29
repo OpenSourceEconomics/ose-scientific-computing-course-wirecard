@@ -68,10 +68,10 @@ if __name__ == "__main__":
 
     if test_newton == True:
         #function whose minimum we want to find:
-        f = lambda a : (a[0] + a[1])**2 + 1
+        f = lambda a : (a[0] + a[1])**2 - 0.5 * a[1]**2 + 1
         #thus we want to find the zeros of its derivative:
-        df = lambda b : np.array([2 * b[0] + 2 * b[1], 2 * b[0] + 2 * b[1]])
+        df = lambda b : np.array([2 * b[0] + 2 * b[1] + 1, 2 * b[0] + b[1]])
         #its derivatives Jacobian is given by: 
         J = lambda c : np.array([[2,2],
-                                 [2,2]])
-        print("x -> x_1^2 + x_2^2 hat eine Nulstelle bei: ", newton_method(df,J, np.array([1,1])))
+                                 [2,1]])
+        print("x -> [2 * x_1 + 2 * x_2 + 1, 2 * x_1 + x_2 hat eine Nulstelle bei: ", newton_method(df,J, np.array([2,1])))
