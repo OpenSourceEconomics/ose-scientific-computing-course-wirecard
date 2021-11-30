@@ -7,21 +7,14 @@ from autograd import grad, jacobian
 # To get some practice with implementing optimization algorithms I implemented the 1 Dimensional Newton Method, 
 # and a naive optimization algorithms that uses the multidimensional newton method
 
-def find_starting_point(f,domain,k = 100):
-    print("k equals to: ",k)
-    X = np.linspace(domain[0],domain[1],k)
-    Y = np.linspace(domain[0],domain[1],k)
-    x_0 = [1.,0.]
-    f_x0 = f(x_0)
-    for x in X:
-        for y in Y: 
-            if f([x,y]) < f_x0:
-                x_0 = [x,y]
-                
-                f_x0 = f([x,y])
-    
-    
-    return x_0
+def find_starting_point(f,domain,n,k = 10000):
+    #print("find_starting point bekommt n == ", n)
+    A = np.random.rand(k,n)
+    B = [f(domain[0] + (domain[1]-domain[0])*x ) for x in A]
+    index = np.where(B == np.amin(B) )
+    return A[index][0]
+
+
 
 def first_derivative_1D(x, f, eps = 10**(-6)): 
     """Return an approximation for the derivative of f at x. 
@@ -83,6 +76,7 @@ def newton_method(f, df, x_n, eps = 10**(-6), n = 1000):
         out:            either an approximation for a root or a message if the procedure didnt converge
 
     """
+    #print("newton method bekommt als x_n: ", x_n)
     f_xn = f(x_n)
     while np.linalg.norm(f_xn) > eps and n > 0: 
         sol = np.linalg.solve(df(x_n), -f_xn)
@@ -92,11 +86,28 @@ def newton_method(f, df, x_n, eps = 10**(-6), n = 1000):
         #x_n = x_n + np.linalg.solve(df(x_n), -f_xn)
         f_xn = f(x_n)
         n = n - 1
-    print("n equals: ",n)
+    #print("n equals: ",n)
     if np.linalg.norm(f_xn) < eps: 
         return x_n
     else: 
         return "Didnt converge."
+
+def nelder_mead_method(f, dim, alpha = 1, gamma = 2, rho = 0.5, sigma = 0.5):
+    # Pseudo code can be found on: https://en.wikipedia.org/wiki/Nelder%E2%80%93Mead_method
+
+    # 1 Order
+
+    # 2 Calculate x_0
+
+    # 3 Reflection
+
+    # 4 Expansion
+
+    # 5 Contraction
+
+    # 6 Shrink
+
+    pass
 
 def naive_optimization(f, dim, domain, eps_newton = 10**(-6), eps_derivative = 10**(-6),k =100, n = 1000):
     """Return a candidate for an optimum of f, if the procedure converges. 
@@ -121,9 +132,13 @@ def naive_optimization(f, dim, domain, eps_newton = 10**(-6), eps_derivative = 1
     
     if len(domain) > 2:
         x_0 = domain
-    if len(domain) == 2:
-        x_0 = np.array(find_starting_point(f,domain,20)).astype(float)
-
+        #print("x_0 = domain; x_0 = ", x_0)
+    elif len(domain) == 2:
+        x_0 = np.array(find_starting_point(f,domain,dim)).astype(float)
+        #print("x_0 by find_starting_point; x_0 = ", x_0)
+    else: 
+        #print("domain ist: ",domain)
+        print("domain ist nicht so wie sie sein sollte")
     # 2. compute derivative of f
     df = jacobian(f)
     # 3. compute jacobian of the derivative of f
@@ -132,3 +147,9 @@ def naive_optimization(f, dim, domain, eps_newton = 10**(-6), eps_derivative = 1
     optimum = newton_method(df, J , x_0)
     # 5. return output of 4
     return(optimum)
+
+if __name__ == "__main__":
+    
+    test_finding_starting_point = False
+    if test_finding_starting_point == True: 
+        print(find_starting_point(lambda a : a[0] + a[1], [4,6],2))

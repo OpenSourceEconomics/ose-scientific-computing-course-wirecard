@@ -91,7 +91,7 @@ if __name__ == "__main__":
                                 
         print("df_2 hat eine Nulstelle bei: ", newton_method(df_2,J_2, np.array([2,1])))
 
-        print(" x -> (x1 + x2)^2 - 0.5 x_2^2 + 1 hat ein optimum bei: ", naive_optimization(f, 2, np.array([100.23, 6.55])))
+        print(" x -> (x1 + x2)^2 - 0.5 x_2^2 + 1 hat ein optimum bei: ", naive_optimization(f, 2, np.array([-10, 10])))
 
         f_3 = lambda a : rosenbrock(a)   # n - dimensionale rosenbrock
         print("Die 30-dim Rosenbrock funktion hat ein Optimum bei: ", naive_optimization(f_3,12,np.array([89.,21.,43.,55.,12.,13.,89.,21.,43.,55.,12.,13.,89.,21.,43.,55.,12.,13.,89.,21.,43.,55.,12.,13.,89.,21.,43.,55.,12.,13.])))
