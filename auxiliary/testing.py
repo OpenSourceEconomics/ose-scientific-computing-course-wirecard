@@ -5,6 +5,7 @@ import random
 
 from mpl_toolkits.mplot3d import Axes3D
 from numpy.lib.function_base import vectorize
+from optimization_algorithms import nelder_mead_method
 
 
 # functions to be tested
@@ -15,6 +16,7 @@ from test_functions import griewank
 from optimization_algorithms import find_starting_point, naive_optimization, newton_method_1D
 from optimization_algorithms import first_derivative_1D
 from optimization_algorithms import newton_method
+from optimization_algorithms import nelder_mead_method, initial_simplex
 
 
 def plot_test_function(domain, function, name_of_function = 'some function'): 
@@ -50,10 +52,16 @@ def plot_test_function(domain, function, name_of_function = 'some function'):
 
 if __name__ == "__main__":
 
-    plot_test_functions = True
+    plot_test_functions = False
     test_newton_1D = False
     test_newton = False
+    test_nelder_mead = True
 
+
+    if test_nelder_mead == True:
+        #functions whose minimum we want to find:
+        f = lambda a : (a[0] + a[1])**2 - 0.5 * a[1]**2 + 1
+        print(" x -> (x1 + x2)^2 - 0.5 x_2^2 + 1 hat ein optimum bei: ", nelder_mead_method(f, initial_simplex(2,[-10,10]), 2) )
 
     if plot_test_functions == True:
         plot_test_function((-5.12,5.12), rastrigin, 'rastrigin')
@@ -70,7 +78,7 @@ if __name__ == "__main__":
         print("Min of (x-4)**2 + 1 is at x == ", newton_method_1D(df, 1))
 
     if test_newton == True:
-        #function whose minimum we want to find:
+        #functions whose minimum we want to find:
         f = lambda a : (a[0] + a[1])**2 - 0.5 * a[1]**2 + 1
         #thus we want to find the zeros of its derivative:
         df = lambda b : np.array([2 * b[0] + 2 * b[1] + 1, 2 * b[0] + b[1]])

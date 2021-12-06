@@ -32,6 +32,7 @@ def initial_simplex(dim, domain):
     """Return a dim- dimensional simplex within the cube domain^n
     Args:
         dim:           the dimension we are working with
+        domain:        edges of the domain
 
     Returns:
         out:           the verticies of the simplex in an dim+1 dimensional array
