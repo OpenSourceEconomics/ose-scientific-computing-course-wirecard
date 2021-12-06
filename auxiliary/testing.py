@@ -50,9 +50,9 @@ def plot_test_function(domain, function, name_of_function = 'some function'):
 
 if __name__ == "__main__":
 
-    plot_test_functions = False
+    plot_test_functions = True
     test_newton_1D = False
-    test_newton = True
+    test_newton = False
 
 
     if plot_test_functions == True:

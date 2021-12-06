@@ -124,10 +124,15 @@ def newton_method(f, df, x_n, eps = 10**(-6), n = 1000):
 def nelder_mead_method(f, verts ,dim, alpha = 1, gamma = 2, rho = 0.5, sigma = 0.5):
     # Pseudo code can be found on: https://en.wikipedia.org/wiki/Nelder%E2%80%93Mead_method
 
-    # 1 Order
+    # 0 Order
 
     values = np.array([f(vert) for vert,index in zip(verts,range(dim+1))])
     indexes = np.argsort(values)
+
+    # 1 Termination
+
+    if np.std(verts) < 10**(-6):
+        return(verts[indexes[0]])
 
     # 2 Calculate x_0
 
@@ -138,23 +143,31 @@ def nelder_mead_method(f, verts ,dim, alpha = 1, gamma = 2, rho = 0.5, sigma = 0
     x_r = x_0 + alpha*(x_0 - verts[indexes[-1]])
     if values[indexes[0]] <= f(x_r) and f(x_r) < values[indexes[-2]]:
         verts[indexes[-1]] = x_r
-        nelder_mead_method(f, verts, dim , alpha, gamma, rho, sigma)
+        return(nelder_mead_method(f, verts, dim , alpha, gamma, rho, sigma))
 
     # 4 Expansion
 
     if f(x_r) < values[indexes[0]]:
         x_e = x_0 + gamma*(x_r - x_0)
         if f(x_e) < f(x_r):
-            verts[verts[indexes[-1]]] = x_e
-            nelder_mead_method(f,verts,dim,alpha,gamma,rho,sigma)
+            verts[indexes[-1]] = x_e
+            return(nelder_mead_method(f,verts,dim,alpha,gamma,rho,sigma))
         else: 
             verts[indexes[-1]] = x_r
-            nelder_mead_method(f, verts, dim , alpha, gamma, rho, sigma)
+            return(nelder_mead_method(f, verts, dim , alpha, gamma, rho, sigma))
 
     # 5 Contraction
 
-    # 6 Shrink
+    x_c = x_0 + rho * (verts[indexes[-1]] - x_0)
+    if f(x_c) < f(verts[indexes[-1]]):
+        verts[indexes[-1]] = x_c
+        return(nelder_mead_method(f, verts, dim, alpha, gamma, rho, sigma))
 
+    # 6 Shrink
+    for i in range(indexes.size):
+        if i != indexes[0]:
+            verts[i] = verts[indexes[0]] + sigma*(verts[i] - verts[indexes[0]])
+        return(nelder_mead_method(f, verts, dim, alpha, gamma, rho, sigma))
     pass
 
 def naive_optimization(f, dim, domain, eps_newton = 10**(-6), eps_derivative = 10**(-6),k =100, n = 1000):
