@@ -126,14 +126,19 @@ def nelder_mead_method(f, verts ,dim, alpha = 1, gamma = 2, rho = 0.5, sigma = 0
     # Pseudo code can be found on: https://en.wikipedia.org/wiki/Nelder%E2%80%93Mead_method
 
     # 0 Order
+                #print(verts)
 
     values = np.array([f(vert) for vert,index in zip(verts,range(dim+1))])
     indexes = np.argsort(values)
 
+
+
     # 1 Termination
 
-    if np.std(verts) < 10**(-6):
+    if np.std(verts) < 10**(-3):
+        print("Termination")
         return(verts[indexes[0]])
+        
 
     # 2 Calculate x_0
 
@@ -144,7 +149,9 @@ def nelder_mead_method(f, verts ,dim, alpha = 1, gamma = 2, rho = 0.5, sigma = 0
     x_r = x_0 + alpha*(x_0 - verts[indexes[-1]])
     if values[indexes[0]] <= f(x_r) and f(x_r) < values[indexes[-2]]:
         verts[indexes[-1]] = x_r
+        print("Reflection")
         return(nelder_mead_method(f, verts, dim , alpha, gamma, rho, sigma))
+
 
     # 4 Expansion
 
@@ -152,24 +159,47 @@ def nelder_mead_method(f, verts ,dim, alpha = 1, gamma = 2, rho = 0.5, sigma = 0
         x_e = x_0 + gamma*(x_r - x_0)
         if f(x_e) < f(x_r):
             verts[indexes[-1]] = x_e
+            print("Expansion 1")
             return(nelder_mead_method(f,verts,dim,alpha,gamma,rho,sigma))
         else: 
             verts[indexes[-1]] = x_r
+            print("Expansion 2")
             return(nelder_mead_method(f, verts, dim , alpha, gamma, rho, sigma))
 
     # 5 Contraction
 
     x_c = x_0 + rho * (verts[indexes[-1]] - x_0)
     if f(x_c) < f(verts[indexes[-1]]):
-        verts[indexes[-1]] = x_c
-        return(nelder_mead_method(f, verts, dim, alpha, gamma, rho, sigma))
+        return(nelder_mead_method(f, nm_contract(verts,indexes,x_c), dim, alpha, gamma, rho, sigma))
 
     # 6 Shrink
-    for i in range(indexes.size):
-        if i != indexes[0]:
-            verts[i] = verts[indexes[0]] + sigma*(verts[i] - verts[indexes[0]])
-        return(nelder_mead_method(f, verts, dim, alpha, gamma, rho, sigma))
+        
+    return(nelder_mead_method(f, nm_shrink(verts,indexes), dim, alpha, gamma, rho, sigma))
+    
+def nm_reflect(verts, indexes):
+    new_verts = []
     pass
+
+def nm_expand():
+    new_verts = []
+    pass
+
+def nm_contract(verts, indexes, x_c):
+    new_verts = []
+    for i in range(verts.size)
+        new_verts.append(verts[i])
+    new_verts[indexes[-1]] = x_c
+    new_verts = np.array(new_verts)
+    return(new_verts)
+    
+
+def nm_shrink(verts, indexes):
+    new_verts = []
+    for i in range(indexes.size):
+        new_verts.append( verts[indexes[0]] + sigma*(verts[i] - verts[indexes[0]]) )
+    new_verts = np.array(new_verts)
+    return new_verts
+    
 
 def naive_optimization(f, dim, domain, eps_newton = 10**(-6), eps_derivative = 10**(-6),k =100, n = 1000):
     """Return a candidate for an optimum of f, if the procedure converges. 

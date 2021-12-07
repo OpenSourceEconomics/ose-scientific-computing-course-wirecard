@@ -56,7 +56,11 @@ if __name__ == "__main__":
     test_newton_1D = False
     test_newton = False
     test_nelder_mead = True
+    test_initial_simplex = True
 
+
+    if test_initial_simplex == True:
+        print(initial_simplex(2,[-10,10]))
 
     if test_nelder_mead == True:
         #functions whose minimum we want to find:
