@@ -16,11 +16,11 @@ from test_functions import griewank
 from optimization_algorithms import (
     find_starting_point,
     naive_optimization,
-    newton_method_1D,
+    newton_method,
+    nelder_mead_method,
+    initial_simplex,
 )
-from optimization_algorithms import first_derivative_1D
-from optimization_algorithms import newton_method
-from optimization_algorithms import nelder_mead_method, initial_simplex
+from work_niel import first_derivative_1D, newton_method_1D
 
 
 def plot_test_function(domain, function, name_of_function="some function"):
