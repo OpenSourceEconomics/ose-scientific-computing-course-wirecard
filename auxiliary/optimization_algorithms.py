@@ -4,10 +4,11 @@ from autograd import grad, jacobian
 
 # In this File we are going to implement the optimization algorithms we study in our assignment
 
-# To get some practice with implementing optimization algorithms I implemented the 1 Dimensional Newton Method, 
+# To get some practice with implementing optimization algorithms I implemented the 1 Dimensional Newton Method,
 # and a naive optimization algorithms that uses the multidimensional newton method
 
-def find_starting_point(f,domain,n,k = 10000):
+
+def find_starting_point(f, domain, n, k=10000):
     """Returns a candidate to start the local optimum finding process from.
     Args:
         f:              a function from \R^n to \R whose optimum we want to find
@@ -15,18 +16,19 @@ def find_starting_point(f,domain,n,k = 10000):
         n:              the dimension of the domain of the function
         k:              the amount of random points we draw to run the optimization on.
 
-       
+
 
 
     Returns:
         out:            a candidate in domain^n to start the local search for an optimum from
 
     """
-    #print("find_starting point bekommt n == ", n)
-    A = np.random.rand(k,n)
-    B = [f(domain[0] + (domain[1]-domain[0])*x ) for x in A]
-    index = np.where(B == np.amin(B) )
+    # print("find_starting point bekommt n == ", n)
+    A = np.random.rand(k, n)
+    B = [f(domain[0] + (domain[1] - domain[0]) * x) for x in A]
+    index = np.where(B == np.amin(B))
     return A[index][0]
+
 
 def initial_simplex(dim, domain):
     """Return a dim- dimensional simplex within the cube domain^n
@@ -38,19 +40,17 @@ def initial_simplex(dim, domain):
         out:           the verticies of the simplex in an dim+1 dimensional array
 
     """
-    A = np.random.rand(dim + 1,dim)
-    A = [domain[0] + x * (domain[1]- domain[0]) for x in A]
-    
-    return(A)
+    A = np.random.rand(dim + 1, dim)
+    A = [domain[0] + x * (domain[1] - domain[0]) for x in A]
+
+    return A
 
 
-
-
-def first_derivative_1D(x, f, eps = 10**(-6)): 
-    """Return an approximation for the derivative of f at x. 
+def first_derivative_1D(x, f, eps=10 ** (-6)):
+    """Return an approximation for the derivative of f at x.
 
     Args:
-        x:   a number within the domain of f 
+        x:   a number within the domain of f
         A:   a function that maps a subset of \R to \R
         eps: a scale to controll the accuracy of the approximation
 
@@ -59,11 +59,12 @@ def first_derivative_1D(x, f, eps = 10**(-6)):
         out: an approximation of the value of the derivative of f at x
 
     """
-    out = (f(x + eps) - f(x - eps)) / eps 
+    out = (f(x + eps) - f(x - eps)) / eps
     return out
 
-def newton_method_1D(f, x_n, eps_newton = 10** (-6), eps_derivative = 10** (-6), n = 1000):
-    """Return a candidate for a root of f, if the newton method starting at x_n converges. 
+
+def newton_method_1D(f, x_n, eps_newton=10 ** (-6), eps_derivative=10 ** (-6), n=1000):
+    """Return a candidate for a root of f, if the newton method starting at x_n converges.
 
     Args:
         f:              a function from \R to \R whose root we want to find
@@ -71,27 +72,28 @@ def newton_method_1D(f, x_n, eps_newton = 10** (-6), eps_derivative = 10** (-6),
         eps_newton:     sensitivity of of the root finding process
         eps_derivative: sensitivity of the derivative approximation
         n:              maximum of iterations before stopping the procedure
-       
+
 
 
     Returns:
         out: either an approximation for a root or a message if the procedure didnt converge
 
     """
-    df = lambda a : first_derivative_1D(a,f,eps_derivative)
-    for i in range(1,n):
+    df = lambda a: first_derivative_1D(a, f, eps_derivative)
+    for _i in range(1, n):
         x_n = x_n - (f(x_n) / df(x_n))
         if np.abs(f(x_n)) < eps_newton:
             break
-    #print("Ran through: ",i, " times.")
-    
-    if i > n-2: 
+    # print("Ran through: ",i, " times.")
+
+    if i > n - 2:
         return "Didnt converge"
-    else: 
+    else:
         return x_n
 
-def newton_method(f, df, x_n, eps = 10**(-6), n = 1000):
-    """Return a candidate for a root of f, if the newton method starting at x_n converges. 
+
+def newton_method(f, df, x_n, eps=10 ** (-6), n=1000):
+    """Return a candidate for a root of f, if the newton method starting at x_n converges.
 
     Args:
         f:              a function from \R^n to \R^n whose root we want to find
@@ -99,46 +101,44 @@ def newton_method(f, df, x_n, eps = 10**(-6), n = 1000):
         x_n:            a number within the domain of f from which to start the iteration
         eps:            sensitivity of of the root finding process
         n:              maximum of iterations before stopping the procedure
-       
+
 
 
     Returns:
         out:            either an approximation for a root or a message if the procedure didnt converge
 
     """
-    #print("newton method bekommt als x_n: ", x_n)
+    # print("newton method bekommt als x_n: ", x_n)
     f_xn = f(x_n)
-    while np.linalg.norm(f_xn) > eps and n > 0: 
+    while np.linalg.norm(f_xn) > eps and n > 0:
         sol = np.linalg.solve(df(x_n), -f_xn)
         x_n = x_n + sol
-        #print("x_n equals to: ", x_n)
-        #np.linalg.lstsq can deal with non invertibel matrices
-        #x_n = x_n + np.linalg.solve(df(x_n), -f_xn)
+        # print("x_n equals to: ", x_n)
+        # np.linalg.lstsq can deal with non invertibel matrices
+        # x_n = x_n + np.linalg.solve(df(x_n), -f_xn)
         f_xn = f(x_n)
         n = n - 1
-    #print("n equals: ",n)
-    if np.linalg.norm(f_xn) < eps: 
+    # print("n equals: ",n)
+    if np.linalg.norm(f_xn) < eps:
         return x_n
-    else: 
+    else:
         return "Didnt converge."
 
-def nelder_mead_method(f, verts ,dim, alpha = 1, gamma = 2, rho = 0.5, sigma = 0.5):
+
+def nelder_mead_method(f, verts, dim, alpha=1, gamma=2, rho=0.5, sigma=0.5):
     # Pseudo code can be found on: https://en.wikipedia.org/wiki/Nelder%E2%80%93Mead_method
 
     # 0 Order
-                #print(verts)
+    # print(verts)
 
-    values = np.array([f(vert) for vert,index in zip(verts,range(dim+1))])
+    values = np.array([f(vert) for vert, index in zip(verts, range(dim + 1))])
     indexes = np.argsort(values)
-
-
 
     # 1 Termination
 
-    if np.std(verts) < 10**(-3):
+    if np.std(verts) < 10 ** (-3):
         print("Termination")
-        return(verts[indexes[0]])
-        
+        return verts[indexes[0]]
 
     # 2 Calculate x_0
 
@@ -146,63 +146,64 @@ def nelder_mead_method(f, verts ,dim, alpha = 1, gamma = 2, rho = 0.5, sigma = 0
 
     # 3 Reflection
 
-    x_r = x_0 + alpha*(x_0 - verts[indexes[-1]])
+    x_r = x_0 + alpha * (x_0 - verts[indexes[-1]])
     if values[indexes[0]] <= f(x_r) and f(x_r) < values[indexes[-2]]:
-        verts[indexes[-1]] = x_r
         print("Reflection")
-        return(nelder_mead_method(f, verts, dim , alpha, gamma, rho, sigma))
-
+        return nelder_mead_method(
+            f, nm_replace_final(verts, indexes, x_r), dim, alpha, gamma, rho, sigma
+        )
 
     # 4 Expansion
 
     if f(x_r) < values[indexes[0]]:
-        x_e = x_0 + gamma*(x_r - x_0)
+        x_e = x_0 + gamma * (x_r - x_0)
         if f(x_e) < f(x_r):
-            verts[indexes[-1]] = x_e
             print("Expansion 1")
-            return(nelder_mead_method(f,verts,dim,alpha,gamma,rho,sigma))
-        else: 
-            verts[indexes[-1]] = x_r
+            return nelder_mead_method(
+                f, nm_replace_final(verts, indexes, x_e), dim, alpha, gamma, rho, sigma
+            )
+        else:
             print("Expansion 2")
-            return(nelder_mead_method(f, verts, dim , alpha, gamma, rho, sigma))
+            return nelder_mead_method(
+                f, nm_replace_final(verts, indexes, x_r), dim, alpha, gamma, rho, sigma
+            )
 
     # 5 Contraction
 
     x_c = x_0 + rho * (verts[indexes[-1]] - x_0)
     if f(x_c) < f(verts[indexes[-1]]):
-        return(nelder_mead_method(f, nm_contract(verts,indexes,x_c), dim, alpha, gamma, rho, sigma))
+        return nelder_mead_method(
+            f, nm_replace_final(verts, indexes, x_c), dim, alpha, gamma, rho, sigma
+        )
 
     # 6 Shrink
-        
-    return(nelder_mead_method(f, nm_shrink(verts,indexes), dim, alpha, gamma, rho, sigma))
-    
-def nm_reflect(verts, indexes):
-    new_verts = []
-    pass
 
-def nm_expand():
-    new_verts = []
-    pass
+    return nelder_mead_method(
+        f, nm_shrink(verts, indexes, sigma), dim, alpha, gamma, rho, sigma
+    )
 
-def nm_contract(verts, indexes, x_c):
+
+def nm_replace_final(verts, indexes, x_new):
     new_verts = []
-    for i in range(verts.size)
+    for i in range(len(verts)):
         new_verts.append(verts[i])
-    new_verts[indexes[-1]] = x_c
-    new_verts = np.array(new_verts)
-    return(new_verts)
-    
-
-def nm_shrink(verts, indexes):
-    new_verts = []
-    for i in range(indexes.size):
-        new_verts.append( verts[indexes[0]] + sigma*(verts[i] - verts[indexes[0]]) )
+    new_verts[indexes[-1]] = x_new
     new_verts = np.array(new_verts)
     return new_verts
-    
 
-def naive_optimization(f, dim, domain, eps_newton = 10**(-6), eps_derivative = 10**(-6),k =100, n = 1000):
-    """Return a candidate for an optimum of f, if the procedure converges. 
+
+def nm_shrink(verts, indexes, sigma):
+    new_verts = []
+    for i in range(indexes.size):
+        new_verts.append(verts[indexes[0]] + sigma * (verts[i] - verts[indexes[0]]))
+    new_verts = np.array(new_verts)
+    return new_verts
+
+
+def naive_optimization(
+    f, dim, domain, eps_newton=10 ** (-6), eps_derivative=10 ** (-6), k=100, n=1000
+):
+    """Return a candidate for an optimum of f, if the procedure converges.
 
     Args:
         f:              a function from \R^n to \R whose optimum we want to find
@@ -212,7 +213,7 @@ def naive_optimization(f, dim, domain, eps_newton = 10**(-6), eps_derivative = 1
         eps_derivative: sensitivity of the derivative approximation
         k:              number of gridpoints in each axis
         n:              maximum of iterations before stopping the procedure
-       
+
 
 
     Returns:
@@ -220,33 +221,35 @@ def naive_optimization(f, dim, domain, eps_newton = 10**(-6), eps_derivative = 1
 
     """
     # 1. find point x_0 to start iteration from
-        # For now we treat domain as the starting point of the iteration
-    
+    # For now we treat domain as the starting point of the iteration
+
     if len(domain) > 2:
         x_0 = domain
-        #print("x_0 = domain; x_0 = ", x_0)
+        # print("x_0 = domain; x_0 = ", x_0)
     elif len(domain) == 2:
-        x_0 = np.array(find_starting_point(f,domain,dim)).astype(float)
-        #print("x_0 by find_starting_point; x_0 = ", x_0)
-    else: 
-        #print("domain ist: ",domain)
+        x_0 = np.array(find_starting_point(f, domain, dim)).astype(float)
+        # print("x_0 by find_starting_point; x_0 = ", x_0)
+    else:
+        # print("domain ist: ",domain)
         print("domain ist nicht so wie sie sein sollte")
     # 2. compute derivative of f
     df = jacobian(f)
     # 3. compute jacobian of the derivative of f
     J = jacobian(df)
     # 4. run newton method on the derivative of f
-    optimum = newton_method(df, J , x_0)
+    optimum = newton_method(df, J, x_0)
     # 5. return output of 4
-    return(optimum)
+    return optimum
+
 
 if __name__ == "__main__":
-    
+
     test_finding_starting_point = False
     test_initial_simplex = False
-    if test_finding_starting_point == True: 
-        print(find_starting_point(lambda a : a[0] + a[1], [4,6],2))
-    if test_initial_simplex == True:
-        simplex = initial_simplex(3,[5,6])
-        for vert in simplex: 
+
+    if test_finding_starting_point:
+        print(find_starting_point(lambda a: a[0] + a[1], [4, 6], 2))
+    if test_initial_simplex:
+        simplex = initial_simplex(3, [5, 6])
+        for vert in simplex:
             print(vert)
