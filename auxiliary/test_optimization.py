@@ -33,11 +33,10 @@ def test_nm_shrink():
     assert_array_equal(computed_array, expected_array)
 
 
-"""def test_nelder_mead_method():
-    input_function = lambda a: (a[0] + a[1]) ** 2 + 1
+def test_nelder_mead_method():
+    input_function = lambda a: 20 * (a[0] + a[1]) ** 2 + 1
     expected_minimum = [0, 0]
     computed_minimum = nelder_mead_method(
-        input_function, initial_simplex(2, [-10, 10]), 2
+        input_function, initial_simplex(2, [-1, 1]), 2
     )
     assert_array_almost_equal(computed_minimum, expected_minimum)
-"""

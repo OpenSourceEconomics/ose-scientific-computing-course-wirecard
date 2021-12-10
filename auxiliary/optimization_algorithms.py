@@ -87,22 +87,37 @@ def nelder_mead_method(f, verts, dim, alpha=1, gamma=2, rho=0.5, sigma=0.5):
 
     values = np.array([f(vert) for vert in verts])
     indexes = np.argsort(values)
+    x_0 = np.array([0, 0])
+    for index in indexes[:-1]:
+        x_0 = x_0 + verts[index]
+    x_0 = x_0 / (len(verts) - 1)
+
+    x_r = x_0 + alpha * (x_0 - verts[indexes[-1]])
+    print("x_r equals: ", x_r)
+    x_e = x_0 + gamma * (x_r - x_0)
+    x_c = x_0 + rho * (verts[indexes[-1]] - x_0)
+    for i in indexes:
+        print("verts: ", verts[i], "values: ", values[i])
+    print("x_0: ", x_0, "value: ", f(x_0))
+    print("x_r: ", x_r, "value: ", f(x_r))
+    print("x_e: ", x_e, "value: ", f(x_e))
+    print("x_c: ", x_c, "value: ", f(x_c))
 
     # 1 Termination
 
-    print("The standart derivation of verts is: ", np.std(verts, axis=1))
-    if np.std(verts) < 10 ** (-2):
+    if nm_terminate(verts):
         print("Termination")
         return verts[indexes[0]]
 
     # 2 Calculate x_0
 
-    x_0 = np.sum(np.array([verts[i] for i in indexes[:-1]])) / (len(verts) - 1)
+    # x_0 = np.sum(np.array([verts[i] for i in indexes[:-1]])) / (len(verts) - 1)
 
     # 3 Reflection
 
-    x_r = x_0 + alpha * (x_0 - verts[indexes[-1]])
+    # x_r = x_0 + alpha * (x_0 - verts[indexes[-1]])
     if values[indexes[0]] <= f(x_r):
+        print("entered if")
         if f(x_r) < values[indexes[-2]]:
             print("Reflection")
             return nelder_mead_method(
@@ -112,7 +127,7 @@ def nelder_mead_method(f, verts, dim, alpha=1, gamma=2, rho=0.5, sigma=0.5):
     # 4 Expansion
 
     if f(x_r) < values[indexes[0]]:
-        x_e = x_0 + gamma * (x_r - x_0)
+        # x_e = x_0 + gamma * (x_r - x_0)
         if f(x_e) < f(x_r):
             print("Expansion 1")
             return nelder_mead_method(
@@ -126,7 +141,7 @@ def nelder_mead_method(f, verts, dim, alpha=1, gamma=2, rho=0.5, sigma=0.5):
 
     # 5 Contraction
 
-    x_c = x_0 + rho * (verts[indexes[-1]] - x_0)
+    # x_c = x_0 + rho * (verts[indexes[-1]] - x_0)
     if f(x_c) < f(verts[indexes[-1]]):
         print("Contraction")
         return nelder_mead_method(
@@ -135,10 +150,22 @@ def nelder_mead_method(f, verts, dim, alpha=1, gamma=2, rho=0.5, sigma=0.5):
 
     # 6 Shrink
 
-    print("Shrink")
     return nelder_mead_method(
         f, nm_shrink(verts, indexes, sigma), dim, alpha, gamma, rho, sigma
     )
+
+
+def nm_terminate(verts):
+    eps = 0
+    for vert in verts:
+        eps += np.linalg.norm(vert - verts[0])
+    print("Summed distance = ", eps)
+    if eps < 1e-4:
+        return True
+    if eps > 50:
+        return True
+    else:
+        return False
 
 
 def nm_replace_final(verts, indexes, x_new):  # passed pytest

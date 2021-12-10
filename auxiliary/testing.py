@@ -67,9 +67,9 @@ if __name__ == "__main__":
 
     if test_nelder_mead:
         # functions whose minimum we want to find:
-        f = lambda a: (a[0] + a[1]) ** 2 - 0.5 * a[1] ** 2 + 1
+        f = lambda a: (a[0] + a[1]) ** 2 - 0.5 * a[1] + 1
         print(
-            " x -> (x1 + x2)^2 - 0.5 x_2^2 + 1 hat ein optimum bei: ",
+            " x -> (x1 + x2)^2 - 0.5 x_2 + 1 hat ein optimum bei: ",
             nelder_mead_method(f, initial_simplex(2, [-10, 10]), 2),
         )
 
