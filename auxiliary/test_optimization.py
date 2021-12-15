@@ -4,11 +4,17 @@ import pandas as pd
 from numpy.testing import assert_array_equal
 from numpy.testing import assert_array_almost_equal
 
-from optimization_algorithms import nm_replace_final
-from optimization_algorithms import nelder_mead_method
-from optimization_algorithms import initial_simplex
-from optimization_algorithms import nm_shrink
-from optimization_algorithms import new_nelder_mead
+
+from optimization_algorithms import (
+    nm_replace_final,
+    nelder_mead_method,
+    initial_simplex,
+    nm_shrink,
+    new_nelder_mead,
+    nelder_mead_method_clean,
+)
+
+from test_functions import rastrigin, griewank, levi_no_13, rosenbrock
 
 
 FACTORS = list("cni")
@@ -35,18 +41,28 @@ def test_nm_shrink():
 
 
 def test_nelder_mead_method():
-    input_function = lambda a: 20 * (a[0] + a[1]) ** 2 + a[1] ** 4 + 1
-    expected_minimum = [0, 0]
-    computed_minimum = nelder_mead_method(
-        input_function, initial_simplex(2, [-1, 1]), 2
-    )
-    assert_array_almost_equal(computed_minimum, expected_minimum)
+    input_functions = [
+        lambda a: 20 * (a[0] + a[1]) ** 2 + a[1] ** 4 + 1,
+        lambda a: (1 / 200) * (a[0] + 1) ** 2 + (np.cos(a[1]) + 1) * a[1] ** 2
+        # lambda a : ()
+    ]
 
+    input_functions_hard = [
+        lambda a: griewank(a),
+        lambda a: rosenbrock(a),
+        lambda a: rastrigin(a),
+    ]
 
-def test_new_nelder_mead():
-    input_function = lambda a: 20 * (a[0] + a[1]) ** 2 + 1
-    expected_minimum = [0, 0]
-    pass
+    expected_minima = [[0, 0], [-1, 0]]
+
+    expected_minima_hard = [[0, 0], [1, 1], [0, 0]]
+    computed_minima = [
+        nelder_mead_method_clean(input_function, initial_simplex(2, [-5, 5]), 2)
+        for input_function in input_functions
+    ]
+    for expected_minimum, computed_minimum in zip(expected_minima, computed_minima):
+        # print("expected minimum: ", expected_minimum, "computed minimum: ", computed_minimum)
+        assert_array_almost_equal(computed_minimum, expected_minimum)
 
 
 if __name__ == "__main__":

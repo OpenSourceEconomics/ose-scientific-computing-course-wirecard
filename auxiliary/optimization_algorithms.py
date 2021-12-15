@@ -171,7 +171,7 @@ def nelder_mead_method(f, verts, dim, alpha=1, gamma=2, rho=0.5, sigma=0.5):
 
     if nm_terminate(verts):
         print("Termination")
-        return verts[indexes[0]]
+        return np.round(verts[indexes[0]])
 
     # 2 Calculate x_0
 
@@ -219,11 +219,66 @@ def nelder_mead_method(f, verts, dim, alpha=1, gamma=2, rho=0.5, sigma=0.5):
     )
 
 
+def nelder_mead_method_clean(f, verts, dim, alpha=1, gamma=2, rho=0.5, sigma=0.5):
+    # Pseudo code can be found on: https://en.wikipedia.org/wiki/Nelder%E2%80%93Mead_method
+
+    # 0 Order
+    values = np.array([f(vert) for vert in verts])
+    indexes = np.argsort(values)
+    x_0 = np.array([0, 0])
+    for index in indexes[:-1]:
+        x_0 = x_0 + verts[index]
+    x_0 = x_0 / (len(verts) - 1)
+
+    x_r = x_0 + alpha * (x_0 - verts[indexes[-1]])
+    x_e = x_0 + gamma * (x_r - x_0)
+    x_c = x_0 + rho * (verts[indexes[-1]] - x_0)
+
+    # 1 Termination
+
+    if nm_terminate(verts):
+        return np.round(verts[indexes[0]])
+
+    # 3 Reflection
+    if values[indexes[0]] <= f(x_r):
+        if f(x_r) < values[indexes[-2]]:
+            return nelder_mead_method_clean(
+                f, nm_replace_final(verts, indexes, x_r), dim, alpha, gamma, rho, sigma
+            )
+
+    # 4 Expansion
+
+    if f(x_r) < values[indexes[0]]:
+        # x_e = x_0 + gamma * (x_r - x_0)
+        if f(x_e) < f(x_r):
+            return nelder_mead_method_clean(
+                f, nm_replace_final(verts, indexes, x_e), dim, alpha, gamma, rho, sigma
+            )
+        else:
+            return nelder_mead_method_clean(
+                f, nm_replace_final(verts, indexes, x_r), dim, alpha, gamma, rho, sigma
+            )
+
+    # 5 Contraction
+
+    # x_c = x_0 + rho * (verts[indexes[-1]] - x_0)
+    if f(x_c) < f(verts[indexes[-1]]):
+        return nelder_mead_method_clean(
+            f, nm_replace_final(verts, indexes, x_c), dim, alpha, gamma, rho, sigma
+        )
+
+    # 6 Shrink
+
+    return nelder_mead_method_clean(
+        f, nm_shrink(verts, indexes, sigma), dim, alpha, gamma, rho, sigma
+    )
+
+
 def nm_terminate(verts):
     eps = 0
     for vert in verts:
         eps += abs(np.linalg.norm(vert - verts[0]))
-    print("Summed distance = ", eps)
+    # print("Summed distance = ", eps)
     if eps < 1e-4:
         return True
     if eps > 50:
