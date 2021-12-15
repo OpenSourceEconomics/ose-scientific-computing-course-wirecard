@@ -8,6 +8,7 @@ from optimization_algorithms import nm_replace_final
 from optimization_algorithms import nelder_mead_method
 from optimization_algorithms import initial_simplex
 from optimization_algorithms import nm_shrink
+from optimization_algorithms import new_nelder_mead
 
 
 FACTORS = list("cni")
@@ -34,9 +35,19 @@ def test_nm_shrink():
 
 
 def test_nelder_mead_method():
-    input_function = lambda a: 20 * (a[0] + a[1]) ** 2 + 1
+    input_function = lambda a: 20 * (a[0] + a[1]) ** 2 + a[1] ** 4 + 1
     expected_minimum = [0, 0]
     computed_minimum = nelder_mead_method(
         input_function, initial_simplex(2, [-1, 1]), 2
     )
     assert_array_almost_equal(computed_minimum, expected_minimum)
+
+
+def test_new_nelder_mead():
+    input_function = lambda a: 20 * (a[0] + a[1]) ** 2 + 1
+    expected_minimum = [0, 0]
+    pass
+
+
+if __name__ == "__main__":
+    test_nelder_mead_method()
