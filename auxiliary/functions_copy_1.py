@@ -30,9 +30,9 @@ class griewank:
         out = sum - prod + 2
         return out
 
-    self.function_val = function_value(
-        x, a
-    )  # returns the function value for the griewank function evaluated at x
+    self.function_val = function_value(x, a)
+
+    # returns the function value for the griewank function evaluated at x
     # domain=([-100]*self.dim,[100]*self.dim)
     # self.domain=domain
     # self.lower_bound=([-100]*self.dim)
