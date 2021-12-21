@@ -10,11 +10,10 @@ from optimization_algorithms import (
     nelder_mead_method,
     initial_simplex,
     nm_shrink,
-    new_nelder_mead,
     nelder_mead_method_clean,
 )
 
-from test_functions import rastrigin, griewank, levi_no_13, rosenbrock
+from functions import rastrigin, griewank, levi_no_13, rosenbrock
 
 
 FACTORS = list("cni")

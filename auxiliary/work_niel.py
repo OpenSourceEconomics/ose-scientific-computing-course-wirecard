@@ -1,7 +1,25 @@
 # Until we have a clearer image of how our project is going to unfold,
 # I will be commiting my programming-progress in this File
-
+from numpy import *
+import nlopt
 import numpy as np
+import matplotlib.pyplot as plt
+import numbers
+import math
+import pandas as pd
+import random
+import autograd.numpy as ag
+from autograd import grad, value_and_grad
+from mpl_toolkits.mplot3d import Axes3D
+from numpy.lib.function_base import vectorize
+
+
+from functions import (
+    rastrigin_instance,
+    griewank_instance,
+    levi_no_13_instance,
+    rosenbrock_instance,
+)
 
 
 def first_derivative_1D(x, f, eps=10 ** (-6)):
@@ -48,3 +66,143 @@ def newton_method_1D(f, x_n, eps_newton=10 ** (-6), eps_derivative=10 ** (-6), n
         return "Didnt converge"
     else:
         return x_n
+
+
+def get_starting_points(n, problem_info_object, p):
+
+    ### n: number of desired dimensions of the problem
+    ### problem_info_object: object that contains the known information of the problem e.g.: g_1=griewank_info(n,a=200)
+    ### p: desired number of starting points you want to draw
+
+    ## as Guvenen et al. do not specify how they generate the random starting points I will choose a method
+    ### Method:
+    # as the starting point has to be a vector fo dimension = dimension of the function, I draw every coordinate
+    # for the vector from a uniform distribution
+    # repeat this until you get 100 vectors of dimension = dim of function which are randomly generated
+    data = []
+
+    lower_b = problem_info_object.lower_bound
+    upper_b = problem_info_object.upper_bound
+
+    for i in range(n):
+        v = np.random.uniform(lower_b[i], upper_b[i], p)
+        data.append(v)
+    df = pd.DataFrame(data)
+    return df.transpose()
+
+
+#### first define a function that performs the optimization routine for 100 different starting points
+#### starting points are randomly generated
+#### do this also for tik tak
+
+#### not yet finished
+
+
+def minimization_guvenen(
+    x_tol_abs, f_tol_abs, problem, computational_budget, algo, x_0, n, problem_info
+):
+
+    ##################################     Input that need to be specified ################################
+    #######################################################################################################
+
+    ## x_tol: is the absolute Tolerance allowed
+    ## f_tol: tolerance in function value allowed
+    ## problem: we need to specify the objective function
+    ## computational budget: is a vector that contains different computational budgets between 0 and 10^5
+    ## algo: specify the algorithm you want to use from the nlopt library -> argument has to have the form:
+    ######## nlopt.algorithm_name e.g. nlopt.GN_ISRES for ISRES Algorithm
+    ## algorithm: specify the algorithm
+    ## x_0: contains the randomly generated starting points -> pandas dataframe containing starting values
+    ## n: number of dimensions the problem should have
+    ## problem_info: object that that contains known information about the objective function
+    ## as for example the domain
+    ## the best solver
+    ## function value of the best solver etc
+    ### If you want to stop the optimization routine when the x_tol_abs for convergence is met
+    ########   -> plug in -inf for f_tol_abs
+    ##### If you want to stop the optimization routine when the f_tol_abs convergence criterion is met specify:
+    ######## -> x_tol_abs=-inf
+
+    ######################################      Output       ################################################
+
+    #### returns a dataframe containing:
+    #### a vector of the optimizer -> first n columns # coordinate vector
+    #### the function value of the optimizer -> next column                ##### this is done 100 times
+    #### number of function evaluations -> next column                     #### for all 100 starting points
+    ### accuracy measures as specified in Guvenen et al.
+
+    # np.set_printoptions(precision=20)
+
+    global_optimum = nlopt.opt(algo, n)
+    global_optimum.set_lower_bounds(problem_info.lower_bound)
+    global_optimum.set_upper_bounds(problem_info.upper_bound)
+    global_optimum.set_min_objective(problem)
+    global_optimum.set_xtol_abs(x_tol_abs)
+    global_optimum.set_ftol_abs(f_tol_abs)
+    global_optimum.set_maxeval(computational_budget)
+
+    df = []
+
+    for i in range(len(x_0)):
+
+        # start_point_i=np.array(x_0.iloc[i])
+        optimizer = global_optimum.optimize(np.array(x_0.iloc[i]))
+        function_val = problem_griewank(optimizer, grad)
+        num_evals = np.array(global_optimum.get_numevals())
+        #### define accuracy measures
+
+        information = np.hstack((optimizer, function_val, num_evals))
+        df.append(information)
+
+    dframe = pd.DataFrame(df)
+
+    return dframe
+
+
+def new_nelder_mead(f, verts):
+    values = np.array([f(vert) for vert in verts])
+    indexes = np.argsort(values)
+    x_l = verts[indexes[0]]
+    x_h = verts[indexes[-1]]
+    x_n = verts[indexes[-2]]
+    f_l = f(x_l)
+    f_h = f(x_h)
+    f_n = f(x_n)
+    c = centroid(verts)
+    x_r = c + (c - x_h)
+    f_r = f(x_r)
+    if nm_terminate:
+        return c
+    elif f_r < f_l:
+        x_e = c + 2 * (c - x_h)
+        f_e = f(x_e)
+        if f_e < f_l:
+            verts = accept(verts, x_e)
+            # accept x_e
+        else:
+            verts = accept(verts, x_r)
+            # accept x_r
+    elif f_r < f_n:
+        verts = accept(verts, x_r)
+        # accept x_r
+    elif f_r < f_h:
+        x_c = c + 0.5 * (c - x_h)
+        f_c = f(x_c)
+        if f_c <= f_r:
+            verts = accept(verts, x_c)
+            # accept x_c
+        else:
+            verts = new_shrink(verts, indexes)
+    else:
+        x_c = c + 0.5 * (x_h - c)
+        f_c = f(x_c)
+        if f_c < f_h:
+            verts = accept(verts, x_c)
+            # accept x_c
+        else:
+            verts = new_shrink(verts, indexes)
+    return new_nelder_mead(f, verts)
+
+
+if __name__ == "__main__":
+    pass

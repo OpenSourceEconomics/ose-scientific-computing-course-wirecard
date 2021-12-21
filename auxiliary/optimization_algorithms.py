@@ -98,51 +98,6 @@ def accept(verts, x_new):
     return out
 
 
-def new_nelder_mead(f, verts):
-    values = np.array([f(vert) for vert in verts])
-    indexes = np.argsort(values)
-    x_l = verts[indexes[0]]
-    x_h = verts[indexes[-1]]
-    x_n = verts[indexes[-2]]
-    f_l = f(x_l)
-    f_h = f(x_h)
-    f_n = f(x_n)
-    c = centroid(verts)
-    x_r = c + (c - x_h)
-    f_r = f(x_r)
-    if nm_terminate:
-        return c
-    elif f_r < f_l:
-        x_e = c + 2 * (c - x_h)
-        f_e = f(x_e)
-        if f_e < f_l:
-            verts = accept(verts, x_e)
-            # accept x_e
-        else:
-            verts = accept(verts, x_r)
-            # accept x_r
-    elif f_r < f_n:
-        verts = accept(verts, x_r)
-        # accept x_r
-    elif f_r < f_h:
-        x_c = c + 0.5 * (c - x_h)
-        f_c = f(x_c)
-        if f_c <= f_r:
-            verts = accept(verts, x_c)
-            # accept x_c
-        else:
-            verts = new_shrink(verts, indexes)
-    else:
-        x_c = c + 0.5 * (x_h - c)
-        f_c = f(x_c)
-        if f_c < f_h:
-            verts = accept(verts, x_c)
-            # accept x_c
-        else:
-            verts = new_shrink(verts, indexes)
-    return new_nelder_mead(f, verts)
-
-
 def nelder_mead_method(f, verts, dim, alpha=1, gamma=2, rho=0.5, sigma=0.5):
     # Pseudo code can be found on: https://en.wikipedia.org/wiki/Nelder%E2%80%93Mead_method
 
