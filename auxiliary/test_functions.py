@@ -15,27 +15,34 @@ from functions import (
 
 def test_rastrigin():
     inputs = create_inputs()
-    function = rastrigin_instance
+    function = rastrigin_instance(3)
     expected_outs = np.array([15, 111, 139, 31, 2, 46, 1180, 3])
     computed_outs = np.array([function.value(x) for x in inputs])
     assert_array_almost_equal(expected_outs, computed_outs)
 
 
 def test_griewank():
-    expected_outs = np.array([2.083, 2.470, 2.773, 2.112, 1.244, 2.608, 7.255, 1.6])
-
-    pass
+    inputs = create_inputs()
+    function = griewank_instance(3)
+    expected_outs = np.array([2.084, 2.470, 2.774, 2.113, 1.245, 2.608, 7.256, 1.599])
+    computed_outs = np.round([function.value(x) for x in inputs], 3)
+    assert_array_almost_equal(expected_outs, computed_outs)
 
 
 def test_levi_no_13():
+    inputs = create_inputs()
+    function = levi_no_13_instance(3)
     expected_outs = np.array([6, 78, 134, 22, 3, 63, 1065, 6])
-
-    pass
+    computed_outs = np.array([function.value(x) for x in inputs])
+    assert_array_almost_equal(expected_outs, computed_outs)
 
 
 def test_rosenbrock():
+    inputs = create_inputs()
+    function = rosenbrock_instance(3)
     expected_outs = np.array([202, 120242, 380598, 55418, 202, 50527, 18909781, 505])
-    pass
+    computed_outs = np.array([function.value(x) for x in inputs])
+    assert_array_almost_equal(expected_outs, computed_outs)
 
 
 def create_inputs():
@@ -56,3 +63,6 @@ def create_inputs():
 
 if __name__ == "__main__":
     test_rastrigin()
+    test_rosenbrock()
+    test_griewank()
+    test_levi_no_13()
