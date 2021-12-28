@@ -9,11 +9,11 @@ from optimization_algorithms import nelder_mead_method
 
 
 # functions to be tested
-from test_functions import rastrigin
-from test_functions import rosenbrock
-from test_functions import levi_no_13
-from test_functions import griewank
-from optimization_algorithms import (
+from test_functions import rastrigin_instance
+from test_functions import rosenbrock_instance
+from test_functions import levi_no_13_instance
+from test_functions import griewank_instance
+from optimization_algorithms_source import (
     find_starting_point,
     naive_optimization,
     newton_method,

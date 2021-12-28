@@ -46,21 +46,45 @@ def initial_simplex(dim, domain):
     return A
 
 
+def stopping_criterion_x(inputs, values, input_tolerance, value_tolerance):
+    eps = 0
+    for input in inputs:
+        eps += abs(np.linalg.norm(input - inputs[0]))
+    if eps < input_tolerance:
+        return True
+    else:
+        return False
+
+
+def stopping_criterion_y(inputs, values, input_tolerance, value_tolerance):
+    eps = 0
+    for value in values:
+        eps += abs(input - values[0])
+    if eps < value_tolerance:
+        return True
+    else:
+        return False
+
+
+def stopping_criterion_y_or_x(inputs, values, input_tolerance, value_tolerance):
+    if stopping_criterion_x(inputs, values, input_tolerance, value_tolerance):
+        return True
+    elif stopping_criterion_y(inputs, values, input_tolerance, value_tolerance):
+        return True
+    else:
+        return False
+
+
 def newton_method(f, df, x_n, eps=10 ** (-6), n=1000):
     """Return a candidate for a root of f, if the newton method starting at x_n converges.
-
     Args:
         f:              a function from \R^n to \R^n whose root we want to find
         df:             the jacobian of f; a function that takes x \in \R^n and returns a n*n matrix
         x_n:            a number within the domain of f from which to start the iteration
         eps:            sensitivity of of the root finding process
         n:              maximum of iterations before stopping the procedure
-
-
-
     Returns:
         out:            either an approximation for a root or a message if the procedure didnt converge
-
     """
     # print("newton method bekommt als x_n: ", x_n)
     f_xn = f(x_n)
@@ -79,6 +103,70 @@ def newton_method(f, df, x_n, eps=10 ** (-6), n=1000):
         return "Didnt converge."
 
 
+def newton_method_new(
+    f, df, x_n, x_tolerance=10 ^ (-6), y_tolerance=10 ^ (-6), computational_budget=1000
+):
+    """Return a candidate for a root of f, if the newton method starting at x_n converges.
+
+    Args:
+        f:              a function from \R^n to \R^n whose root we want to find
+        df:             the jacobian of f; a function that takes x \in \R^n and returns a n*n matrix
+        x_n:            a number within the domain of f from which to start the iteration
+        eps:            sensitivity of of the root finding process
+        n:              maximum of iterations before stopping the procedure
+
+
+
+    Returns:
+        out:            either an approximation for a root or a message if the procedure didnt converge
+
+    """
+    # Based on the inputs we decide which stopping criterion to take:
+    if -np.inf < x_tolerance:
+        if -np.inf < y_tolerance:
+            stopping_criterion = lambda inputs, values: stopping_criterion_y_or_x(
+                inputs, values, x_tolerance, y_tolerance
+            )
+        else:
+            stopping_criterion = lambda inputs, values: stopping_criterion_x(
+                inputs, values, x_tolerance, y_tolerance
+            )
+    elif -np.inf < y_tolerance:
+        stopping_criterion = lambda inputs, values: stopping_criterion_y(
+            inputs, values, x_tolerance, y_tolerance
+        )
+    else:
+        assert (
+            x_tolerance != y_tolerance
+        ), "You should not set both x_tolerance and y_tolerance to -np.inf."
+
+    # keeps track of iterations
+    n = 0
+    x = np.array([])
+    val = np.array([])
+    x.append(x_n)
+    val.append(f(x[0]))
+    n += 1  # increase n because f was called
+    x.append(x[0] + np.linalg.solve(df(x[0]), -val[0]))
+    val.append(f(x[1]))
+    n += 1  # increase n because f was called
+
+    # print("newton method bekommt als x_n: ", x_n)
+    while stopping_criterion(x, val) == False and n < computational_budget:
+        sol = np.linalg.solve(df(x_n), -val[1])
+        n += 1  # increase n because df was called
+        x[0] = x[1]
+        x[1] = x[1] + sol
+        # print("x_n equals to: ", x_n)
+        # np.linalg.lstsq can deal with non invertibel matrices
+        # x_n = x_n + np.linalg.solve(df(x_n), -f_xn)
+        val[0] = val[1]
+        val[1] = f(x[1])
+        n += 1  # increase n because f was called
+
+    return x[1], n
+
+
 def centroid(verts):
     c = np.zeros(len(verts[0]))
     for vert in verts:
@@ -87,58 +175,53 @@ def centroid(verts):
     return c
 
 
-def new_shrink(verts, indexes):
-    x_l = verts[indexes[0]]
-    out = np.array([(vert + x_l) * 0.5 for vert in verts])
-    return out
+# TODO - write a nelder-mead routine for michael that takes f, startpoint x_0
+#      - computational budget/ maximale anzahl an iterationen als argument
+#      - stop criterium für terminate als stopp kriterium
+#      - return die minimalstelle der function
+#      - return die anzahl der functionsevaluationen
 
 
-def accept(verts, x_new):
-    out = np.array(verts[:-1] + [x_new])
-    return out
+#      Wenn stopping_tolerance_x = -inf dann nimm bitte das andere
+#       wennn keines = -inf ist das was als erstes eintrit
+#       wenn beide -inf sind -> fehler
+
+# def minimization(f,starting_point, stopping_tolerance_xwert, stopping_tolerance_functionswert, computational _budget):
+# return optimum, anzahl_evaluationen
+
+
+# TODO the same for the naive-optimization
+
+
+# TODO
+
+# Maybe we could implement the nelder-mead-method as a class such that we can safe, call and change the values alpha, gamma, rho and sigma
 
 
 def nelder_mead_method(f, verts, dim, alpha=1, gamma=2, rho=0.5, sigma=0.5):
     # Pseudo code can be found on: https://en.wikipedia.org/wiki/Nelder%E2%80%93Mead_method
 
     # 0 Order
-    print("nm called with verts = ", verts)
-
     values = np.array([f(vert) for vert in verts])
     indexes = np.argsort(values)
+
     x_0 = np.array([0, 0])
     for index in indexes[:-1]:
         x_0 = x_0 + verts[index]
     x_0 = x_0 / (len(verts) - 1)
 
     x_r = x_0 + alpha * (x_0 - verts[indexes[-1]])
-    print("x_r equals: ", x_r)
     x_e = x_0 + gamma * (x_r - x_0)
     x_c = x_0 + rho * (verts[indexes[-1]] - x_0)
-    for i in indexes:
-        print("verts: ", verts[i], "values: ", values[i])
-    print("x_0: ", x_0, "value: ", f(x_0))
-    print("x_r: ", x_r, "value: ", f(x_r))
-    print("x_e: ", x_e, "value: ", f(x_e))
-    print("x_c: ", x_c, "value: ", f(x_c))
 
     # 1 Termination
 
     if nm_terminate(verts):
-        print("Termination")
         return np.round(verts[indexes[0]])
 
-    # 2 Calculate x_0
-
-    # x_0 = np.sum(np.array([verts[i] for i in indexes[:-1]])) / (len(verts) - 1)
-
     # 3 Reflection
-
-    # x_r = x_0 + alpha * (x_0 - verts[indexes[-1]])
     if values[indexes[0]] <= f(x_r):
-        print("entered if")
         if f(x_r) < values[indexes[-2]]:
-            print("Reflection")
             return nelder_mead_method(
                 f, nm_replace_final(verts, indexes, x_r), dim, alpha, gamma, rho, sigma
             )
@@ -148,12 +231,10 @@ def nelder_mead_method(f, verts, dim, alpha=1, gamma=2, rho=0.5, sigma=0.5):
     if f(x_r) < values[indexes[0]]:
         # x_e = x_0 + gamma * (x_r - x_0)
         if f(x_e) < f(x_r):
-            print("Expansion 1")
             return nelder_mead_method(
                 f, nm_replace_final(verts, indexes, x_e), dim, alpha, gamma, rho, sigma
             )
         else:
-            print("Expansion 2")
             return nelder_mead_method(
                 f, nm_replace_final(verts, indexes, x_r), dim, alpha, gamma, rho, sigma
             )
@@ -162,7 +243,6 @@ def nelder_mead_method(f, verts, dim, alpha=1, gamma=2, rho=0.5, sigma=0.5):
 
     # x_c = x_0 + rho * (verts[indexes[-1]] - x_0)
     if f(x_c) < f(verts[indexes[-1]]):
-        print("Contraction")
         return nelder_mead_method(
             f, nm_replace_final(verts, indexes, x_c), dim, alpha, gamma, rho, sigma
         )
@@ -170,61 +250,6 @@ def nelder_mead_method(f, verts, dim, alpha=1, gamma=2, rho=0.5, sigma=0.5):
     # 6 Shrink
 
     return nelder_mead_method(
-        f, nm_shrink(verts, indexes, sigma), dim, alpha, gamma, rho, sigma
-    )
-
-
-def nelder_mead_method_clean(f, verts, dim, alpha=1, gamma=2, rho=0.5, sigma=0.5):
-    # Pseudo code can be found on: https://en.wikipedia.org/wiki/Nelder%E2%80%93Mead_method
-
-    # 0 Order
-    values = np.array([f(vert) for vert in verts])
-    indexes = np.argsort(values)
-    x_0 = np.array([0, 0])
-    for index in indexes[:-1]:
-        x_0 = x_0 + verts[index]
-    x_0 = x_0 / (len(verts) - 1)
-
-    x_r = x_0 + alpha * (x_0 - verts[indexes[-1]])
-    x_e = x_0 + gamma * (x_r - x_0)
-    x_c = x_0 + rho * (verts[indexes[-1]] - x_0)
-
-    # 1 Termination
-
-    if nm_terminate(verts):
-        return np.round(verts[indexes[0]])
-
-    # 3 Reflection
-    if values[indexes[0]] <= f(x_r):
-        if f(x_r) < values[indexes[-2]]:
-            return nelder_mead_method_clean(
-                f, nm_replace_final(verts, indexes, x_r), dim, alpha, gamma, rho, sigma
-            )
-
-    # 4 Expansion
-
-    if f(x_r) < values[indexes[0]]:
-        # x_e = x_0 + gamma * (x_r - x_0)
-        if f(x_e) < f(x_r):
-            return nelder_mead_method_clean(
-                f, nm_replace_final(verts, indexes, x_e), dim, alpha, gamma, rho, sigma
-            )
-        else:
-            return nelder_mead_method_clean(
-                f, nm_replace_final(verts, indexes, x_r), dim, alpha, gamma, rho, sigma
-            )
-
-    # 5 Contraction
-
-    # x_c = x_0 + rho * (verts[indexes[-1]] - x_0)
-    if f(x_c) < f(verts[indexes[-1]]):
-        return nelder_mead_method_clean(
-            f, nm_replace_final(verts, indexes, x_c), dim, alpha, gamma, rho, sigma
-        )
-
-    # 6 Shrink
-
-    return nelder_mead_method_clean(
         f, nm_shrink(verts, indexes, sigma), dim, alpha, gamma, rho, sigma
     )
 
@@ -259,6 +284,7 @@ def nm_shrink(verts, indexes, sigma):  # passed pytest
     return new_verts
 
 
+# The following naive optimization is a bit messy right now we are working with: newton_based_naive_optimization
 def naive_optimization(
     f, dim, domain, eps_newton=10 ** (-6), eps_derivative=10 ** (-6), k=100, n=1000
 ):
@@ -299,6 +325,17 @@ def naive_optimization(
     optimum = newton_method(df, J, x_0)
     # 5. return output of 4
     return optimum
+
+
+def newton_based_naive_optimization(
+    f,
+    x_0,
+    x_tolerance,
+    y_tolerance,
+):
+    number_of_evaluations = 0
+
+    return optimum, number_of_evaluations
 
 
 if __name__ == "__main__":

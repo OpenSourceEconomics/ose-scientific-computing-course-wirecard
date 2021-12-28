@@ -5,12 +5,12 @@ from numpy.testing import assert_array_equal
 from numpy.testing import assert_array_almost_equal
 
 
-from optimization_algorithms import (
+from optimization_algorithms_source import (
     nm_replace_final,
     nelder_mead_method,
     initial_simplex,
     nm_shrink,
-    nelder_mead_method_clean,
+    nelder_mead_method,
 )
 
 from functions import rastrigin, griewank, levi_no_13, rosenbrock
@@ -42,8 +42,8 @@ def test_nm_shrink():
 def test_nelder_mead_method():
     input_functions = [
         lambda a: 20 * (a[0] + a[1]) ** 2 + a[1] ** 4 + 1,
-        lambda a: (1 / 200) * (a[0] + 1) ** 2 + (np.cos(a[1]) + 1) * a[1] ** 2
-        # lambda a : ()
+        lambda a: (1 / 200) * (a[0] + 1) ** 2 * (np.cos(a[1]) + 1) + a[1] ** 2,
+        lambda a: (1 / 800) * (a[0] - 6) ** 4 * (np.sin(a[1]) + 3) + a[1] ** 4,
     ]
 
     input_functions_hard = [
@@ -52,16 +52,28 @@ def test_nelder_mead_method():
         lambda a: rastrigin(a),
     ]
 
-    expected_minima = [[0, 0], [-1, 0]]
+    expected_minima = [[0, 0], [-1, 0], [6, 0]]
 
     expected_minima_hard = [[0, 0], [1, 1], [0, 0]]
+
+    names_of_functions = [
+        "lambda a: 20 * (a[0] + a[1]) ** 2 + a[1] ** 4 + 1",
+        "lambda a: (1 / 200) * (a[0] + 1) ** 2 * (np.cos(a[1]) + 1) + a[1] ** 2",
+        "lambda a : (1/800) * ( a[0] - 6) ** 4 * (np.sin(a[1])+ 3) + a[1] ** 4",
+    ]
+    names_of_functions_hard = ["griewank", "rosenbrock", "rastrigin"]
+
     computed_minima = [
-        nelder_mead_method_clean(input_function, initial_simplex(2, [-5, 5]), 2)
+        nelder_mead_method(input_function, initial_simplex(2, [-5, 5]), 2)
         for input_function in input_functions
     ]
-    for expected_minimum, computed_minimum in zip(expected_minima, computed_minima):
+    for expected_minimum, computed_minimum, name in zip(
+        expected_minima, computed_minima, names_of_functions
+    ):
         # print("expected minimum: ", expected_minimum, "computed minimum: ", computed_minimum)
-        assert_array_almost_equal(computed_minimum, expected_minimum)
+
+        assert_array_almost_equal(computed_minimum, expected_minimum, err_msg=name)
+        # print(index)
 
 
 if __name__ == "__main__":
