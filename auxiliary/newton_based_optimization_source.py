@@ -32,23 +32,23 @@ def pick_stopp_criterion(x_tolerance, y_tolerance):
         ), "You should not set both x_tolerance and y_tolerance to -np.inf."
 
 
-def stopp_x(x, y, x_tolerance, y_tolerance):
+def stopping_criterion_x(x, y, x_tolerance, y_tolerance):
     if abs(np.linalg.norm(x)) < x_tolerance:
         return False
     else:
         return True
 
 
-def stopp_y(x, y, x_tolerance, y_tolerance):
+def stopping_criterion_y(x, y, x_tolerance, y_tolerance):
     if abs(np.linalg.norm(y)) < y_tolerance:
         return False
     else:
         return True
 
 
-def stopp_x_or_y(x, y, x_tolerance, y_tolerance):
-    if stopp_x(x, y, x_tolerance, y_tolerance):
-        if stopp_y(x, y, x_tolerance, y_tolerance):
+def stopping_criterion_x_or_y(x, y, x_tolerance, y_tolerance):
+    if stopping_criterion_x(x, y, x_tolerance, y_tolerance):
+        if stopping_criterion_y(x, y, x_tolerance, y_tolerance):
             return True
         else:
             return False
@@ -80,40 +80,11 @@ def find_starting_point(f, domain, n, k=10000):
     return domain[0] + (domain[1] - domain[0]) * x
 
 
-def stopping_criterion_x(inputs, values, input_tolerance, value_tolerance):
-    eps = 0
-    for input in inputs:
-        eps = eps + abs(np.linalg.norm(input - inputs[0]))
-    if eps < input_tolerance:
-        return True
-    else:
-        return False
-
-
-def stopping_criterion_y(inputs, values, input_tolerance, value_tolerance):
-    eps = 0
-    for value in values:
-        eps = eps + abs(np.linalg.norm(value - values[0]))
-    if eps < value_tolerance:
-        return True
-    else:
-        return False
-
-
-def stopping_criterion_y_or_x(inputs, values, input_tolerance, value_tolerance):
-    if stopping_criterion_x(inputs, values, input_tolerance, value_tolerance):
-        return True
-    elif stopping_criterion_y(inputs, values, input_tolerance, value_tolerance):
-        return True
-    else:
-        return False
-
-
-def newton_method_another_try(
+def newton_method(
     f,
     df,
     x_n,
-    stopping_criterium=stopp_y,
+    stopping_criterium=stopping_criterion_y,
     x_tolerance=10 ** (-16),
     y_tolerance=10 ** (-16),
     n=1000,
@@ -143,7 +114,7 @@ def newton_method_another_try(
     return x_n, calls_of_f_or_df
 
 
-def newton_method(f, df, x_n, eps=10 ** (-16), n=1000):
+def newton_method_old(f, df, x_n, eps=10 ** (-16), n=1000):
     """Return a candidate for a root of f, if the newton method starting at x_n converges.
     Args:
         f:              a function from \R^n to \R^n whose root we want to find
@@ -227,7 +198,7 @@ def naive_optimization(
     # 3. compute jacobian of the derivative of f
     J = jacobian(df)
     # 4. run newton method on the derivative of f
-    optimum, calls = newton_method_another_try(df, J, x_0)
+    optimum, calls = newton_method(df, J, x_0)
 
     print(calls)
     # 5. return output of 4

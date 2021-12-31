@@ -21,7 +21,7 @@ from functions import (
     rosenbrock_instance,
 )
 
-
+# a very naive routine to approcximate the derivatives of 1 dimensional functions
 def first_derivative_1D(x, f, eps=10 ** (-6)):
     """Return an approximation for the derivative of f at x.
 
@@ -39,6 +39,7 @@ def first_derivative_1D(x, f, eps=10 ** (-6)):
     return out
 
 
+# 1 dimensional newton method that i impememnted to get familiar to the problem
 def newton_method_1D(f, x_n, eps_newton=10 ** (-6), eps_derivative=10 ** (-6), n=1000):
     """Return a candidate for a root of f, if the newton method starting at x_n converges.
 
@@ -68,6 +69,7 @@ def newton_method_1D(f, x_n, eps_newton=10 ** (-6), eps_derivative=10 ** (-6), n
         return x_n
 
 
+# this is a function that michael computed
 def get_starting_points(n, problem_info_object, p):
 
     ### n: number of desired dimensions of the problem
@@ -91,6 +93,7 @@ def get_starting_points(n, problem_info_object, p):
     return df.transpose()
 
 
+# The following is a function that michael implemented
 #### first define a function that performs the optimization routine for 100 different starting points
 #### starting points are randomly generated
 #### do this also for tik tak
@@ -159,6 +162,7 @@ def minimization_guvenen(
     return dframe
 
 
+# This was an implementation of the nelder mead method i considered using for a while
 def new_nelder_mead(f, verts):
     values = np.array([f(vert) for vert in verts])
     indexes = np.argsort(values)
@@ -202,6 +206,30 @@ def new_nelder_mead(f, verts):
         else:
             verts = new_shrink(verts, indexes)
     return new_nelder_mead(f, verts)
+
+
+# this was an implementeation of the newton methid i considered using for a while
+def newton_method_old(f, df, x_n, eps=10 ** (-16), n=1000):
+    """Return a candidate for a root of f, if the newton method starting at x_n converges.
+    Args:
+        f:              a function from \R^n to \R^n whose root we want to find
+        df:             the jacobian of f; a function that takes x \in \R^n and returns a n*n matrix
+        x_n:            a number within the domain of f from which to start the iteration
+        eps:            sensitivity of of the root finding process
+        n:              maximum of iterations before stopping the procedure
+    Returns:
+        out:            either an approximation for a root or a message if the procedure didnt converge
+    """
+    f_xn = f(x_n)
+    count_calls = 1
+    while np.linalg.norm(f_xn) > eps and n > 0:
+        sol = np.linalg.solve(df(x_n), -f_xn)
+        count_calls = count_calls + 1
+        x_n = x_n + sol
+        f_xn = f(x_n)
+        count_calls = count_calls + 1
+        n = n - 2
+    return x_n, count_calls
 
 
 if __name__ == "__main__":
