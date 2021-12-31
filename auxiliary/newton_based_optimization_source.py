@@ -126,7 +126,7 @@ def newton_method_another_try(
         eps:            sensitivity of of the root finding process
         n:              maximum of iterations before stopping the procedure
     Returns:
-        out:            either an approximation for a root or a message if the procedure didnt converge
+        out:             the approximation for a root or a message if the procedure didnt converge
     """
     calls_of_f_or_df = 0
     f_xn = f(x_n)
@@ -164,75 +164,6 @@ def newton_method(f, df, x_n, eps=10 ** (-16), n=1000):
         count_calls = count_calls + 1
         n = n - 2
     return x_n, count_calls
-
-
-def newton_method_new(
-    f, df, x_n, x_tolerance=10 ^ (-6), y_tolerance=10 ^ (-6), computational_budget=1000
-):
-    """Return a candidate for a root of f, if the newton method starting at x_n converges.
-
-    Args:
-        f:              a function from \R^n to \R^n whose root we want to find
-        df:             the jacobian of f; a function that takes x \in \R^n and returns a n*n matrix
-        x_n:            a number within the domain of f from which to start the iteration
-        eps:            sensitivity of of the root finding process
-        n:              maximum of iterations before stopping the procedure
-
-
-
-    Returns:
-        out:            either an approximation for a root or a message if the procedure didnt converge
-
-    """
-    # Based on the inputs we decide which stopping criterion to take:
-    if -np.inf < x_tolerance:
-        if -np.inf < y_tolerance:
-            stopping_criterion = lambda inputs, values: stopping_criterion_y_or_x(
-                inputs, values, x_tolerance, y_tolerance
-            )
-        else:
-            stopping_criterion = lambda inputs, values: stopping_criterion_x(
-                inputs, values, x_tolerance, y_tolerance
-            )
-    elif -np.inf < y_tolerance:
-        stopping_criterion = lambda inputs, values: stopping_criterion_y(
-            inputs, values, x_tolerance, y_tolerance
-        )
-    else:
-        assert (
-            x_tolerance != y_tolerance
-        ), "You should not set both x_tolerance and y_tolerance to -np.inf."
-
-    # keeps track of iterations
-    n = 0
-    x = []
-    val = []
-    x.append(x_n)
-    print("x equals: ", x)
-    print("x[0] equals: ", x[0])
-    new_value = f(x[0])
-    val.append(new_value)
-    n += 1  # increase n because f was called
-    x.append(x[0] + np.linalg.solve(df(x[0]), -val[0]))
-    val.append(f(x[1]))
-    x = np.array(x)
-    val = np.array(val)
-    n += 1  # increase n because f was called
-
-    # print("newton method bekommt als x_n: ", x_n)
-    while stopping_criterion(x, val) == False and n < computational_budget:
-        sol = np.linalg.solve(df(x_n), -val[1])
-        n += 1  # increase n because df was called
-        x[0] = x[1]
-        x[1] = x[1] + sol
-        # print("x_n equals to: ", x_n)
-        # np.linalg.lstsq can deal with non invertibel matrices
-        # x_n = x_n + np.linalg.solve(df(x_n), -f_xn)
-        val[0] = val[1]
-        val[1] = f(x[1])
-        n += 1  # increase n because f was called
-
-    return x[1], n
 
 
 # TODO - write a newto-method routine for michael that takes f, startpoint x_0
