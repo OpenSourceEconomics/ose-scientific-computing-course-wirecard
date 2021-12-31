@@ -5,21 +5,22 @@ import random
 
 from mpl_toolkits.mplot3d import Axes3D
 from numpy.lib.function_base import vectorize
-from optimization_algorithms import nelder_mead_method
-
 
 # functions to be tested
 from test_functions import rastrigin_instance
 from test_functions import rosenbrock_instance
 from test_functions import levi_no_13_instance
 from test_functions import griewank_instance
-from optimization_algorithms_source import (
+from functions import rastrigin, rosenbrock, levi_no_13, griewank
+
+from newton_based_optimization_source import (
     find_starting_point,
     naive_optimization,
     newton_method,
-    nelder_mead_method,
-    initial_simplex,
 )
+
+from nelder_mead_based_optimization_source import initial_simplex, nelder_mead_method
+
 from work_niel import first_derivative_1D, newton_method_1D
 
 
@@ -54,13 +55,28 @@ def plot_test_function(domain, function, name_of_function="some function"):
     pass
 
 
+def critical_function(a):
+    print("input to critical function equals: ", a)
+    out = (1 / 200) * (a[0] + 1) ** 2 * (math.cos(a[1]) + 1) + a[1] ** 2
+    return out
+
+
 if __name__ == "__main__":
 
+    test_critical_function = False
     plot_test_functions = False
     test_newton_1D = False
-    test_newton = False
+    test_newton = True
     test_nelder_mead = True
     test_initial_simplex = True
+
+    if test_critical_function:
+        inputs = [np.array([1, 2]), np.array([7, 6]), np.array([np.pi, 2])]
+        for input in inputs:
+            print(
+                "critical function evaluated at some point equals: ",
+                critical_function(input),
+            )
 
     if test_initial_simplex:
         print(initial_simplex(2, [-10, 10]))
@@ -99,6 +115,18 @@ if __name__ == "__main__":
         print(
             "x -> [2 * x_1 + 2 * x_2 + 1, 2 * x_1 + x_2] hat eine Nulstelle bei: ",
             newton_method(df, J, np.array([20.234, 100.391])),
+        )
+        print(
+            "x -> (x_1 + x_2)**2 - 0.5 * x_2**2 + 1 hat ein minimum bei: ",
+            naive_optimization(f, 2, np.array([1, 1])),
+        )
+
+        # f_1 = lambda a: (1 / 200) * (a[0] + 1) ** 2 * (math.cos(a[1]) + 1) + a[1] ** 2
+        # f_1 = vectorize(critical_function)
+        print("vectorized")
+        print(
+            "The critical function has a minimum at: ",
+            naive_optimization(critical_function, 2, np.array([3, 3])),
         )
 
         f_2 = lambda a: a  # not in the mood to solve this differential equation

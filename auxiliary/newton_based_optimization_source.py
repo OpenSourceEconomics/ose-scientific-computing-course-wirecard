@@ -30,26 +30,10 @@ def find_starting_point(f, domain, n, k=10000):
     return A[index][0]
 
 
-def initial_simplex(dim, domain):
-    """Return a dim- dimensional simplex within the cube domain^n
-    Args:
-        dim:           the dimension we are working with
-        domain:        edges of the domain
-
-    Returns:
-        out:           the verticies of the simplex in an dim+1 dimensional array
-
-    """
-    A = np.random.rand(dim + 1, dim)
-    A = [domain[0] + x * (domain[1] - domain[0]) for x in A]
-
-    return A
-
-
 def stopping_criterion_x(inputs, values, input_tolerance, value_tolerance):
     eps = 0
     for input in inputs:
-        eps += abs(np.linalg.norm(input - inputs[0]))
+        eps = eps + abs(np.linalg.norm(input - inputs[0]))
     if eps < input_tolerance:
         return True
     else:
@@ -59,7 +43,7 @@ def stopping_criterion_x(inputs, values, input_tolerance, value_tolerance):
 def stopping_criterion_y(inputs, values, input_tolerance, value_tolerance):
     eps = 0
     for value in values:
-        eps += abs(input - values[0])
+        eps = eps + abs(np.linalg.norm(value - values[0]))
     if eps < value_tolerance:
         return True
     else:
@@ -87,6 +71,7 @@ def newton_method(f, df, x_n, eps=10 ** (-6), n=1000):
         out:            either an approximation for a root or a message if the procedure didnt converge
     """
     # print("newton method bekommt als x_n: ", x_n)
+    print("x_n equals: ", x_n)
     f_xn = f(x_n)
     while np.linalg.norm(f_xn) > eps and n > 0:
         sol = np.linalg.solve(df(x_n), -f_xn)
@@ -142,13 +127,18 @@ def newton_method_new(
 
     # keeps track of iterations
     n = 0
-    x = np.array([])
-    val = np.array([])
+    x = []
+    val = []
     x.append(x_n)
-    val.append(f(x[0]))
+    print("x equals: ", x)
+    print("x[0] equals: ", x[0])
+    new_value = f(x[0])
+    val.append(new_value)
     n += 1  # increase n because f was called
     x.append(x[0] + np.linalg.solve(df(x[0]), -val[0]))
     val.append(f(x[1]))
+    x = np.array(x)
+    val = np.array(val)
     n += 1  # increase n because f was called
 
     # print("newton method bekommt als x_n: ", x_n)
@@ -167,15 +157,7 @@ def newton_method_new(
     return x[1], n
 
 
-def centroid(verts):
-    c = np.zeros(len(verts[0]))
-    for vert in verts:
-        c = c + vert
-    c = (1 / len(verts)) * c
-    return c
-
-
-# TODO - write a nelder-mead routine for michael that takes f, startpoint x_0
+# TODO - write a newto-method routine for michael that takes f, startpoint x_0
 #      - computational budget/ maximale anzahl an iterationen als argument
 #      - stop criterium für terminate als stopp kriterium
 #      - return die minimalstelle der function
@@ -195,93 +177,7 @@ def centroid(verts):
 
 # TODO
 
-# Maybe we could implement the nelder-mead-method as a class such that we can safe, call and change the values alpha, gamma, rho and sigma
-
-
-def nelder_mead_method(f, verts, dim, alpha=1, gamma=2, rho=0.5, sigma=0.5):
-    # Pseudo code can be found on: https://en.wikipedia.org/wiki/Nelder%E2%80%93Mead_method
-
-    # 0 Order
-    values = np.array([f(vert) for vert in verts])
-    indexes = np.argsort(values)
-
-    x_0 = np.array([0, 0])
-    for index in indexes[:-1]:
-        x_0 = x_0 + verts[index]
-    x_0 = x_0 / (len(verts) - 1)
-
-    x_r = x_0 + alpha * (x_0 - verts[indexes[-1]])
-    x_e = x_0 + gamma * (x_r - x_0)
-    x_c = x_0 + rho * (verts[indexes[-1]] - x_0)
-
-    # 1 Termination
-
-    if nm_terminate(verts):
-        return np.round(verts[indexes[0]])
-
-    # 3 Reflection
-    if values[indexes[0]] <= f(x_r):
-        if f(x_r) < values[indexes[-2]]:
-            return nelder_mead_method(
-                f, nm_replace_final(verts, indexes, x_r), dim, alpha, gamma, rho, sigma
-            )
-
-    # 4 Expansion
-
-    if f(x_r) < values[indexes[0]]:
-        # x_e = x_0 + gamma * (x_r - x_0)
-        if f(x_e) < f(x_r):
-            return nelder_mead_method(
-                f, nm_replace_final(verts, indexes, x_e), dim, alpha, gamma, rho, sigma
-            )
-        else:
-            return nelder_mead_method(
-                f, nm_replace_final(verts, indexes, x_r), dim, alpha, gamma, rho, sigma
-            )
-
-    # 5 Contraction
-
-    # x_c = x_0 + rho * (verts[indexes[-1]] - x_0)
-    if f(x_c) < f(verts[indexes[-1]]):
-        return nelder_mead_method(
-            f, nm_replace_final(verts, indexes, x_c), dim, alpha, gamma, rho, sigma
-        )
-
-    # 6 Shrink
-
-    return nelder_mead_method(
-        f, nm_shrink(verts, indexes, sigma), dim, alpha, gamma, rho, sigma
-    )
-
-
-def nm_terminate(verts):
-    eps = 0
-    for vert in verts:
-        eps += abs(np.linalg.norm(vert - verts[0]))
-    # print("Summed distance = ", eps)
-    if eps < 1e-4:
-        return True
-    if eps > 50:
-        return True
-    else:
-        return False
-
-
-def nm_replace_final(verts, indexes, x_new):  # passed pytest
-    new_verts = []
-    for i in range(len(verts)):
-        new_verts.append(verts[i])
-    new_verts[indexes[-1]] = x_new
-    new_verts = np.array(new_verts)
-    return new_verts
-
-
-def nm_shrink(verts, indexes, sigma):  # passed pytest
-    new_verts = []
-    for i in range(indexes.size):
-        new_verts.append(verts[indexes[0]] + sigma * (verts[i] - verts[indexes[0]]))
-    new_verts = np.array(new_verts)
-    return new_verts
+# Maybe we could implement the neewton-method as a class such that we can safe, call and change the values alpha, gamma, rho and sigma
 
 
 # The following naive optimization is a bit messy right now we are working with: newton_based_naive_optimization
@@ -328,12 +224,16 @@ def naive_optimization(
 
 
 def newton_based_naive_optimization(
-    f,
-    x_0,
-    x_tolerance,
-    y_tolerance,
+    f, x_0, x_tolerance=10 ^ (-6), y_tolerance=10 ^ (-6), computational_budget=1000
 ):
     number_of_evaluations = 0
+
+    df = jacobian(f)
+    J = jacobian(df)
+
+    optimum, number_of_evaluations = newton_method_new(
+        df, J, x_0, x_tolerance, y_tolerance, computational_budget
+    )
 
     return optimum, number_of_evaluations
 
@@ -345,7 +245,3 @@ if __name__ == "__main__":
 
     if test_finding_starting_point:
         print(find_starting_point(lambda a: a[0] + a[1], [4, 6], 2))
-    if test_initial_simplex:
-        simplex = initial_simplex(3, [5, 6])
-        for vert in simplex:
-            print(vert)
