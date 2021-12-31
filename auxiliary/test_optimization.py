@@ -106,7 +106,9 @@ def test_old_newton_opti():
     ]
 
     computed_minima = [
-        np.round(naive_optimization(input_function, 2, [-10, 10]))
+        np.round(
+            naive_optimization(input_function, 2, [-10, 10])[0]
+        )  # [0] because naive optimization returns result and number of function calls
         for input_function in input_functions
     ]
 
@@ -150,9 +152,10 @@ def test_newton_based_optimization():
     names_of_functions_hard = ["griewank", "rosenbrock", "rastrigin"]
 
     computed_minima = [
-        newton_based_naive_optimization(input_function, np.array([-np.pi, np.pi]))
+        newton_based_naive_optimization(input_function, [-10, 10])
         for input_function in input_functions
     ]
+
     print("computations worked")
     for expected_minimum, computed_minimum, name in zip(
         expected_minima, computed_minima, names_of_functions
@@ -201,7 +204,7 @@ def test_nelder_mead_method():
 
 if __name__ == "__main__":
     # test_functions_used_here()
-    # test_nelder_mead_method()
+    test_nelder_mead_method()
 
     test_old_newton_opti()
     # test_newton_based_optimization()
