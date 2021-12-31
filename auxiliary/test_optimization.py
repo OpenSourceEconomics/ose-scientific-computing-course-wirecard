@@ -15,7 +15,10 @@ from nelder_mead_based_optimization_source import (
     nm_shrink,
     nelder_mead_method,
 )
-from newton_based_optimization_source import newton_based_naive_optimization
+from newton_based_optimization_source import (
+    newton_based_naive_optimization,
+    naive_optimization,
+)
 
 from functions import rastrigin, griewank, levi_no_13, rosenbrock
 
@@ -88,14 +91,42 @@ def test_functions_used_here():
         # A.append(J([1,2]))
 
 
+def test_old_newton_opti():
+    input_functions = [
+        lambda a: 20 * (a[0] + a[1]) ** 2 + a[1] ** 4 + 1,
+        lambda a: (1 / 200) * (a[0] + 1) ** 2 * (np.cos(a[1]) + 1) + a[1] ** 2,
+        lambda a: (1 / 800) * (a[0] - 6) ** 4 * (np.sin(a[1]) + 3) + a[1] ** 4,
+    ]
+    expected_minima = [[0, 0], [-1, 0], [6, 0]]
+
+    names_of_functions = [
+        "lambda a: 20 * (a[0] + a[1]) ** 2 + a[1] ** 4 + 1",
+        "lambda a: (1 / 200) * (a[0] + 1) ** 2 * (np.cos(a[1]) + 1) + a[1] ** 2",
+        "lambda a : (1/800) * ( a[0] - 6) ** 4 * (np.sin(a[1])+ 3) + a[1] ** 4",
+    ]
+
+    computed_minima = [
+        np.round(naive_optimization(input_function, 2, [-10, 10]))
+        for input_function in input_functions
+    ]
+
+    print("computations worked")
+    for expected_minimum, computed_minimum, name in zip(
+        expected_minima, computed_minima, names_of_functions
+    ):
+        # print("expected minimum: ", expected_minimum, "computed minimum: ", computed_minimum)
+
+        assert_array_almost_equal(computed_minimum, expected_minimum, err_msg=name)
+
+
 def test_newton_based_optimization():
-    input_functions_raw = [
+    input_functions = [
         lambda a: 20 * (a[0] + a[1]) ** 2 + a[1] ** 4 + 1,
         lambda a: (1 / 200) * (a[0] + 1) ** 2 * (np.cos(a[1]) + 1) + a[1] ** 2,
         lambda a: (1 / 800) * (a[0] - 6) ** 4 * (np.sin(a[1]) + 3) + a[1] ** 4,
     ]
 
-    input_functions = [
+    input_functions_alt = [
         lambda b: input_functions_raw[0](b),
         lambda b: input_functions_raw[1](b),
         lambda b: input_functions_raw[2](b),
@@ -122,13 +153,13 @@ def test_newton_based_optimization():
         newton_based_naive_optimization(input_function, np.array([-np.pi, np.pi]))
         for input_function in input_functions
     ]
+    print("computations worked")
     for expected_minimum, computed_minimum, name in zip(
         expected_minima, computed_minima, names_of_functions
     ):
         # print("expected minimum: ", expected_minimum, "computed minimum: ", computed_minimum)
 
         assert_array_almost_equal(computed_minimum, expected_minimum, err_msg=name)
-        # print(index)
 
 
 def test_nelder_mead_method():
@@ -170,5 +201,8 @@ def test_nelder_mead_method():
 
 if __name__ == "__main__":
     # test_functions_used_here()
-    test_nelder_mead_method()
+    # test_nelder_mead_method()
+
+    test_old_newton_opti()
     # test_newton_based_optimization()
+    print("All tests completed")

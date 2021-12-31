@@ -17,14 +17,6 @@ def initial_simplex(dim, domain):
     return A
 
 
-def centroid(verts):
-    c = np.zeros(len(verts[0]))
-    for vert in verts:
-        c = c + vert
-    c = (1 / len(verts)) * c
-    return c
-
-
 # TODO - write a nelder-mead routine for michael that takes f, startpoint x_0
 #      - computational budget/ maximale anzahl an iterationen als argument
 #      - stop criterium für terminate als stopp kriterium

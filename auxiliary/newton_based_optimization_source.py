@@ -8,7 +8,7 @@ from autograd import grad, jacobian
 # and a naive optimization algorithms that uses the multidimensional newton method
 
 
-def find_starting_point(f, domain, n, k=10000):
+def find_starting_point(f, domain, n, k=1):
     """Returns a candidate to start the local optimum finding process from.
     Args:
         f:              a function from \R^n to \R whose optimum we want to find
@@ -27,7 +27,10 @@ def find_starting_point(f, domain, n, k=10000):
     A = np.random.rand(k, n)
     B = [f(domain[0] + (domain[1] - domain[0]) * x) for x in A]
     index = np.where(B == np.amin(B))
-    return A[index][0]
+    x = A[index][0]
+    y = domain[0] + (domain[1] - domain[0]) * x
+    print("starting point is: ", y)
+    return domain[0] + (domain[1] - domain[0]) * x
 
 
 def stopping_criterion_x(inputs, values, input_tolerance, value_tolerance):
@@ -59,7 +62,7 @@ def stopping_criterion_y_or_x(inputs, values, input_tolerance, value_tolerance):
         return False
 
 
-def newton_method(f, df, x_n, eps=10 ** (-6), n=1000):
+def newton_method(f, df, x_n, eps=10 ** (-16), n=1000):
     """Return a candidate for a root of f, if the newton method starting at x_n converges.
     Args:
         f:              a function from \R^n to \R^n whose root we want to find
@@ -70,18 +73,12 @@ def newton_method(f, df, x_n, eps=10 ** (-6), n=1000):
     Returns:
         out:            either an approximation for a root or a message if the procedure didnt converge
     """
-    # print("newton method bekommt als x_n: ", x_n)
-    print("x_n equals: ", x_n)
     f_xn = f(x_n)
     while np.linalg.norm(f_xn) > eps and n > 0:
         sol = np.linalg.solve(df(x_n), -f_xn)
         x_n = x_n + sol
-        # print("x_n equals to: ", x_n)
-        # np.linalg.lstsq can deal with non invertibel matrices
-        # x_n = x_n + np.linalg.solve(df(x_n), -f_xn)
         f_xn = f(x_n)
         n = n - 1
-    # print("n equals: ",n)
     if np.linalg.norm(f_xn) < eps:
         return x_n
     else:

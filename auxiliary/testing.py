@@ -67,8 +67,8 @@ if __name__ == "__main__":
     plot_test_functions = False
     test_newton_1D = False
     test_newton = True
-    test_nelder_mead = True
-    test_initial_simplex = True
+    test_nelder_mead = False
+    test_initial_simplex = False
 
     if test_critical_function:
         inputs = [np.array([1, 2]), np.array([7, 6]), np.array([np.pi, 2])]
