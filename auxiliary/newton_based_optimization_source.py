@@ -40,12 +40,12 @@ def stopping_criterion_x(x, y, x_tolerance, y_tolerance):
 
 
 def stopping_criterion_y(x, y, x_tolerance, y_tolerance):
-    print("stop y called with y equals: ", y)
-    print(abs(np.linalg.norm(y)))
-    print("tolerance: ", y_tolerance)
+    # print("stop y called with y equals: ", y)
+    # print(abs(np.linalg.norm(y)))
+    # print("tolerance: ", y_tolerance)
     norm = abs(np.linalg.norm(y))
     if norm < y_tolerance:
-        print("return false")
+        # print("return false")
         return False
     else:
         return True
@@ -112,10 +112,10 @@ def newton_method(
     calls_of_f_or_df = calls_of_f_or_df + 1
     while stopping_criterium(x_n, f_xn, x_tolerance, y_tolerance) and n > 0:
         # sol = np.linalg.lstsq(df(x_n), -f_xn)
-        print("df equals: ", df(x_n))
-        print("f_xn equals: ", -f_xn)
+        # print("df equals: ", df(x_n))
+        # print("f_xn equals: ", -f_xn)
         sol = np.linalg.solve(df(x_n), -f_xn)
-        print("sol equals: ", sol)
+        # print("sol equals: ", sol)
         calls_of_f_or_df = calls_of_f_or_df + 1
         # if abs(np.linalg.norm(sol)) < x_tolerance:
         #    break
@@ -176,7 +176,7 @@ def newton_method_old(f, df, x_n, eps=10 ** (-16), n=1000):
 def naive_optimization(
     f, starting_point, x_tolerance=1e-6, y_tolerance=1e-6, computational_budget=100
 ):
-    print("naive y tol: ", y_tolerance)
+    # print("naive y tol: ", y_tolerance)
     """Return a candidate for an optimum of f, if the procedure converges.
 
     Args:
