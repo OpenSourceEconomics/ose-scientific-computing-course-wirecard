@@ -107,7 +107,7 @@ def test_old_newton_opti():
 
     computed_minima = [
         np.round(
-            naive_optimization(input_function, 2, [-10, 10])[0]
+            naive_optimization(input_function, [-10, 10])[0]
         )  # [0] because naive optimization returns result and number of function calls
         for input_function in input_functions
     ]

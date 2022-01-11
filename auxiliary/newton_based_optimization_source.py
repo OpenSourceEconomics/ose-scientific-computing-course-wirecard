@@ -12,17 +12,17 @@ from autograd import grad, jacobian
 def pick_stopp_criterion(x_tolerance, y_tolerance):
     if -np.inf < x_tolerance:
         if -np.inf < y_tolerance:
-            stopping_criterion = lambda inputs, values: stopp_y_or_x(
+            stopping_criterion = lambda inputs, values: stopping_criterion_x_or_y(
                 inputs, values, x_tolerance, y_tolerance
             )
             return stopping_criterion
         else:
-            stopping_criterion = lambda inputs, values: stopp_x(
+            stopping_criterion = lambda inputs, values: stopping_criterion_x(
                 inputs, values, x_tolerance, y_tolerance
             )
             return stopping_criterion
     elif -np.inf < y_tolerance:
-        stopping_criterion = lambda inputs, values: stopp_y(
+        stopping_criterion = lambda inputs, values: stopping_criterion_y(
             inputs, values, x_tolerance, y_tolerance
         )
         return stopping_criterion
@@ -40,7 +40,12 @@ def stopping_criterion_x(x, y, x_tolerance, y_tolerance):
 
 
 def stopping_criterion_y(x, y, x_tolerance, y_tolerance):
-    if abs(np.linalg.norm(y)) < y_tolerance:
+    # print("stop y called with y equals: ", y)
+    # print(abs(np.linalg.norm(y)))
+    # print("tolerance: ", y_tolerance)
+    norm = abs(np.linalg.norm(y))
+    if norm < y_tolerance:
+        # print("return false")
         return False
     else:
         return True
@@ -84,10 +89,10 @@ def newton_method(
     f,
     df,
     x_n,
-    stopping_criterium=stopping_criterion_y,
-    x_tolerance=10 ** (-16),
-    y_tolerance=10 ** (-16),
+    x_tolerance=1e-6,
+    y_tolerance=1e-6,
     n=1000,
+    stopping_criterium=stopping_criterion_y,
 ):
     """Return a candidate for a root of f, if the newton method starting at x_n converges.
     Args:
@@ -99,14 +104,21 @@ def newton_method(
     Returns:
         out:             the approximation for a root or a message if the procedure didnt converge
     """
+
+    # stopping criterion for now defualt y
+
     calls_of_f_or_df = 0
     f_xn = f(x_n)
     calls_of_f_or_df = calls_of_f_or_df + 1
     while stopping_criterium(x_n, f_xn, x_tolerance, y_tolerance) and n > 0:
+        # sol = np.linalg.lstsq(df(x_n), -f_xn)
+        # print("df equals: ", df(x_n))
+        # print("f_xn equals: ", -f_xn)
         sol = np.linalg.solve(df(x_n), -f_xn)
+        # print("sol equals: ", sol)
         calls_of_f_or_df = calls_of_f_or_df + 1
-        if abs(np.linalg.norm(sol)) < x_tolerance:
-            break
+        # if abs(np.linalg.norm(sol)) < x_tolerance:
+        #    break
         x_n = x_n + sol
         f_xn = f(x_n)
         calls_of_f_or_df = calls_of_f_or_df + 1
@@ -162,8 +174,9 @@ def newton_method_old(f, df, x_n, eps=10 ** (-16), n=1000):
 
 # The following naive optimization is a bit messy right now we are working with: newton_based_naive_optimization
 def naive_optimization(
-    f, dim, domain, eps_newton=10 ** (-6), eps_derivative=10 ** (-6), k=100, n=1000
+    f, starting_point, x_tolerance=1e-6, y_tolerance=1e-6, computational_budget=100
 ):
+    # print("naive y tol: ", y_tolerance)
     """Return a candidate for an optimum of f, if the procedure converges.
 
     Args:
@@ -184,6 +197,9 @@ def naive_optimization(
     # 1. find point x_0 to start iteration from
     # For now we treat domain as the starting point of the iteration
 
+    x_0 = np.array(starting_point).astype(float)
+
+    """
     if len(domain) > 2:
         x_0 = domain
         # print("x_0 = domain; x_0 = ", x_0)
@@ -193,12 +209,17 @@ def naive_optimization(
     else:
         # print("domain ist: ",domain)
         print("domain ist nicht so wie sie sein sollte")
+    """
+
     # 2. compute derivative of f
     df = jacobian(f)
     # 3. compute jacobian of the derivative of f
     J = jacobian(df)
     # 4. run newton method on the derivative of f
-    optimum, calls = newton_method(df, J, x_0)
+    stopping_criterion = stopping_criterion_y
+    optimum, calls = newton_method(
+        df, J, x_0, x_tolerance, y_tolerance, computational_budget
+    )
 
     print(calls)
     # 5. return output of 4

@@ -6,7 +6,8 @@
 # ...
 # return optimum, number_of_function_evaluations
 
-from optimization_algorithms_source import nelder_mead_method, naive_optimization
+from newton_based_optimization_source import naive_optimization
+from nelder_mead_based_optimization_source import nelder_mead_method
 
 
 def our_nelder_mead_method(
@@ -26,4 +27,10 @@ def our_newton_based_optimization(
     stopping_tolerance_functionvalue,
     computational_budget,
 ):
-    pass
+    return naive_optimization(
+        f,
+        starting_point,
+        stopping_tolerance_xvalue,
+        stopping_tolerance_functionvalue,
+        computational_budget,
+    )
