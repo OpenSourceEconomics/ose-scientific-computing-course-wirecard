@@ -10,5 +10,7 @@ dependencies:
 - statsmodels
 - pip
 - pip:
+  - nlopt
+  - autograd
 
 
