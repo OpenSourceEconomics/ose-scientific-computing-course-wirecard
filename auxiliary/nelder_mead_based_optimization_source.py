@@ -164,10 +164,12 @@ def call_nelder_mead_method(
     f,
     verts,
     dim,
-    f_difference,
+    f_difference=10,
+    calls=0,
     terminate_criterion=terminate_criterion_x,
     x_tolerance=1e-6,
     y_tolerance=1e-6,
+    computational_budget=1000,
     alpha=1,
     gamma=2,
     rho=0.5,
@@ -177,6 +179,7 @@ def call_nelder_mead_method(
 
     # 0 Order
     values = np.array([f(vert) for vert in verts])
+    calls = calls + len(verts)
     indexes = np.argsort(values)
 
     x_0 = np.array([0, 0])
@@ -190,46 +193,72 @@ def call_nelder_mead_method(
 
     # 1 Termination
 
-    if terminate_criterion(verts, f_difference, x_tolerance, y_tolerance):
-        return np.round(verts[indexes[0]])
+    if (
+        terminate_criterion(verts, f_difference, x_tolerance, y_tolerance)
+        or f_difference < y_tolerance
+        or calls >= computational_budget
+    ):
+        return [np.round(verts[indexes[0]]), calls]
 
     # 3 Reflection
+    calls += 1
     if values[indexes[0]] <= f(x_r):
+        calls += 1
         if f(x_r) < values[indexes[-2]]:
+            calls += 1
             f_difference = abs(f(x_r) - values[indexes[0]])
-            return nelder_mead_method(
-                f, nm_replace_final(verts, indexes, x_r), dim, alpha, gamma, rho, sigma
+            return call_nelder_mead_method(
+                f,
+                nm_replace_final(verts, indexes, x_r),
+                dim,
+                f_difference,
+                calls,
+                terminate_criterion,
+                x_tolerance,
+                y_tolerance,
+                computational_budget,
+                alpha,
+                gamma,
+                rho,
+                sigma,
             )
 
     # 4 Expansion
-
+    calls += 1
     if f(x_r) < values[indexes[0]]:
         # x_e = x_0 + gamma * (x_r - x_0)
+        calls += 1
         if f(x_e) < f(x_r):
+            calls += 1
             f_difference = abs(f(x_e) - values[indexes[0]])
-            return nelder_mead_method(
+            return call_nelder_mead_method(
                 f,
                 nm_replace_final(verts, indexes, x_e),
                 dim,
                 f_difference,
+                calls,
                 terminate_criterion,
                 x_tolerance,
                 y_tolerance,
+                computational_budget,
                 alpha,
                 gamma,
                 rho,
                 sigma,
             )
         else:
+            calls += 1
             f_difference = abs(f(x_r) - values[indexes[0]])
-            return nelder_mead_method(
+            return call_nelder_mead_method(
                 f,
                 nm_replace_final(verts, indexes, x_r),
                 dim,
                 f_difference,
+                calls,
                 terminate_criterion,
                 x_tolerance,
                 y_tolerance,
+                computational_budget,
                 alpha,
                 gamma,
                 rho,
@@ -239,16 +268,20 @@ def call_nelder_mead_method(
     # 5 Contraction
 
     # x_c = x_0 + rho * (verts[indexes[-1]] - x_0)
+    calls += 2
     if f(x_c) < f(verts[indexes[-1]]):
+        calls += 1
         f_difference = abs(f(x_c) - values[indexes[0]])
-        return nelder_mead_method(
+        return call_nelder_mead_method(
             f,
             nm_replace_final(verts, indexes, x_c),
             dim,
             f_difference,
+            calls,
             terminate_criterion,
             x_tolerance,
             y_tolerance,
+            computational_budget,
             alpha,
             gamma,
             rho,
@@ -257,14 +290,16 @@ def call_nelder_mead_method(
 
     # 6 Shrink
 
-    return nelder_mead_method(
+    return call_nelder_mead_method(
         f,
         nm_shrink(verts, indexes, sigma),
         dim,
         f_difference,
+        calls,
         terminate_criterion,
         x_tolerance,
         y_tolerance,
+        computational_budget,
         alpha,
         gamma,
         rho,

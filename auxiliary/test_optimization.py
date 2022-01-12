@@ -227,8 +227,9 @@ def test_call_nelder_mead_method():
     ]
     names_of_functions_hard = ["griewank", "rosenbrock", "rastrigin"]
 
+    print(call_nelder_mead_method(input_functions[0], initial_simplex(2, [-5, 5]), 2))
     computed_minima = [
-        call_nelder_mead_method(input_function, initial_simplex(2, [-5, 5]), 2)
+        call_nelder_mead_method(input_function, initial_simplex(2, [-5, 5]), 2)[0]
         for input_function in input_functions
     ]
     for expected_minimum, computed_minimum, name in zip(
@@ -244,6 +245,7 @@ if __name__ == "__main__":
     # test_functions_used_here()
     test_nelder_mead_method()
     test_call_nelder_mead_method()
+    print("call works")
     test_old_newton_opti()
     # test_newton_based_optimization()
     print("All tests completed")
