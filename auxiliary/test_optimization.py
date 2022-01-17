@@ -17,7 +17,6 @@ from nelder_mead_based_optimization_source import (
     call_nelder_mead_method,
 )
 from newton_based_optimization_source import (
-    newton_based_naive_optimization,
     naive_optimization,
 )
 

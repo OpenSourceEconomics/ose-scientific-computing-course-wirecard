@@ -6,8 +6,13 @@
 # ...
 # return optimum, number_of_function_evaluations
 
+import numpy as np
 from newton_based_optimization_source import naive_optimization
-from nelder_mead_based_optimization_source import nelder_mead_method
+
+from nelder_mead_based_optimization_source import (
+    call_nelder_mead_method,
+    initial_simplex,
+)
 
 
 def our_nelder_mead_method(
@@ -16,8 +21,20 @@ def our_nelder_mead_method(
     stopping_tolerance_xvalue,
     stopping_tolerance_functionvalue,
     computational_budget,
+    eps=0.5,
 ):
-    pass
+
+    eps = np.array([eps] * len(starting_point))
+    verts = initial_simplex(
+        len(starting_point) + 1, [starting_point - eps, starting_point + eps]
+    )
+    return call_nelder_mead_method(
+        f,
+        verts,
+        stopping_tolerance_xvalue,
+        stopping_tolerance_functionvalue,
+        computational_budget,
+    )
 
 
 def our_newton_based_optimization(

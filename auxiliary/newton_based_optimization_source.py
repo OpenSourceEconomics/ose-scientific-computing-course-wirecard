@@ -226,21 +226,6 @@ def naive_optimization(
     return optimum, calls
 
 
-def newton_based_naive_optimization(
-    f, x_0, x_tolerance=10 ^ (-6), y_tolerance=10 ^ (-6), computational_budget=1000
-):
-    number_of_evaluations = 0
-
-    df = jacobian(f)
-    J = jacobian(df)
-
-    optimum, number_of_evaluations = newton_method_new(
-        df, J, x_0, x_tolerance, y_tolerance, computational_budget
-    )
-
-    return optimum, number_of_evaluations
-
-
 if __name__ == "__main__":
 
     test_finding_starting_point = False
