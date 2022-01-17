@@ -110,6 +110,7 @@ def newton_method(
     calls_of_f_or_df = 0
     f_xn = f(x_n)
     calls_of_f_or_df = calls_of_f_or_df + 1
+    n = n - 1
     while stopping_criterium(x_n, f_xn, x_tolerance, y_tolerance) and n > 0:
         # sol = np.linalg.lstsq(df(x_n), -f_xn)
         # print("df equals: ", df(x_n))
@@ -117,6 +118,7 @@ def newton_method(
         sol = np.linalg.solve(df(x_n), -f_xn)
         # print("sol equals: ", sol)
         calls_of_f_or_df = calls_of_f_or_df + 1
+        n = n - 1
         # if abs(np.linalg.norm(sol)) < x_tolerance:
         #    break
         x_n = x_n + sol
