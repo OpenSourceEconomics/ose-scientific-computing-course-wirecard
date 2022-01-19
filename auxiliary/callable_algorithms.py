@@ -26,8 +26,9 @@ def our_nelder_mead_method(
 
     eps = np.array([eps] * len(starting_point))
     verts = initial_simplex(
-        len(starting_point) + 1, [starting_point - eps, starting_point + eps]
+        len(starting_point), [starting_point - eps, starting_point + eps]
     )
+
     return call_nelder_mead_method(
         f,
         verts,
@@ -51,3 +52,13 @@ def our_newton_based_optimization(
         stopping_tolerance_functionvalue,
         computational_budget,
     )
+
+if __name__ == "__main__": 
+    starting_point = np.array([1,2,3])
+    eps = 1e-3
+    eps = np.array([eps] * len(starting_point))
+    verts = initial_simplex(
+        len(starting_point), [starting_point - eps, starting_point + eps]
+    )
+
+    print(verts)

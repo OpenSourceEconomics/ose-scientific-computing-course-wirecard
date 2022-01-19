@@ -107,7 +107,7 @@ def test_old_newton_opti():
 
     computed_minima = [
         np.round(
-            naive_optimization(input_function, [-10, 10])[0]
+            naive_optimization(input_function, [-3, 3])[0]
         )  # [0] because naive optimization returns result and number of function calls
         for input_function in input_functions
     ]
@@ -246,5 +246,5 @@ if __name__ == "__main__":
     test_call_nelder_mead_method()
     print("call works")
     test_old_newton_opti()
-    # test_newton_based_optimization()
+    #test_newton_based_optimization()
     print("All tests completed")
