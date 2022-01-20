@@ -6,11 +6,13 @@ This is a template for course projects. We use [GitHub Classroom](https://classr
 
 Please ensure that a brief description of your project is included in the [README.md](https://github.com/HumanCapitalAnalysis/template-course-project/blob/master/README.md), which provides a proper citation of your baseline article. Also, please set up the following badges that allow to easily access your project notebook.
 
-<a href="https://github.com/OpenSourceEconomics/ose-scientific-computing-course-wirecard/blob/master/student_project.ipynb"
+<a href="https://nbviewer.jupyter.org/github/OpenSourceEconomics/ose-scientific-computing-course-wirecard/blob/master/student_project.ipynb"
    target="_parent">
    <img align="center"
   src="https://raw.githubusercontent.com/jupyter/design/master/logos/Badges/nbviewer_badge.png"
       width="109" height="20">
+</a>
+
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/OpenSourceEconomics/ose-scientific-computing-course-wirecard/HEAD)
 
 ## Reproducibility
