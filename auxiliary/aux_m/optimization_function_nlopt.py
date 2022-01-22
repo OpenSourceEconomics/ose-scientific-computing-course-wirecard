@@ -1770,7 +1770,7 @@ def performance_profile(metrics_agg_frame,color_vector,marker_vector,algo_names)
     #plt.xscale('log')
     #success_results_frame_1=success_results_frame.drop('comp_budget', 1)
     for i in range(len(metrics_agg_frame.columns)-1):
-        plt.plot(metrics_agg_frame.alpha, success_results_frame.iloc[:,i], color=color_vector[i], linestyle='dashed',
+        plt.plot(metrics_agg_frame.alpha, metrics_agg_frame.iloc[:,i], color=color_vector[i], linestyle='dashed',
                  linewidth = 2,marker=marker_vector[i], markerfacecolor=color_vector[i], markersize=8,label=algo_names[i])
     plt.ylim(-0.05,1.1)
     plt.xlim(0,30)
