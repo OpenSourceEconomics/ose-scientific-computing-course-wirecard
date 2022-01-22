@@ -624,7 +624,7 @@ def deviation_profile_general(deviation_results_frame,color_vector,marker_vector
     for i in range(len(deviation_results_frame.columns)-1):
         plt.plot(deviation_results_frame.comp_budget, deviation_results_frame.iloc[:,i+1], color=color_vector[i], linestyle='dashed',
                  linewidth = 2,marker=marker_vector[i], markerfacecolor=color_vector[i], markersize=8,label=algo_names[i])
-    plt.ylim(1e-7,100)
+    plt.ylim(1e-11,100)
     plt.xlim(0,102000)
     #plt.xscale("log")
  
