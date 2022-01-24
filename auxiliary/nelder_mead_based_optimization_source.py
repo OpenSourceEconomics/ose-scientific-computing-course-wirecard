@@ -118,6 +118,25 @@ def terminate_criterion_y(verts, f_difference, x_tolerance, y_tolerance):
         return False
 
 
+def nm_replace_final(verts, indexes, x_new):
+    """Replaces the verticy with the highest associated function value with x_new.
+    Args:
+        verts:      Array of verticies
+        indexes:    Arrays if intergers ordering verts according to assiciated function values
+        x_new:      New verticy  to be added to verts
+
+    Returns:
+        out:            a candidate in domain^n to start the local search for an optimum from
+
+    """
+    new_verts = []
+    for i in range(len(verts)):
+        new_verts.append(verts[i])
+    new_verts[indexes[-1]] = x_new
+    new_verts = np.array(new_verts)
+    return new_verts
+
+
 # TODO
 
 # Maybe we could implement the nelder-mead-method as a class such that we can safe, call and change the values alpha, gamma, rho and sigma
