@@ -10,6 +10,17 @@ from autograd import grad, jacobian
 
 
 def pick_stopp_criterion(x_tolerance, y_tolerance):
+    """Return the correct termination criterion.
+
+    Args:
+        x_tolerance:    a real valued number or -infty
+        y_tolerance:    a real valued number or -infty
+
+
+    Returns:
+        stopping_criterion: The stopping-criterion we want to use in the recursion of the nelder-mead_algorithm
+
+    """
     if -np.inf < x_tolerance:
         if -np.inf < y_tolerance:
             stopping_criterion = lambda inputs, values: stopping_criterion_x_or_y(
@@ -33,6 +44,18 @@ def pick_stopp_criterion(x_tolerance, y_tolerance):
 
 
 def stopping_criterion_x(x, y, x_tolerance, y_tolerance):
+    """Return False if x < x_tolerance, else True.
+
+    Args:
+        x:          The current x value
+        y:          the current y value
+        x_tolerance:    a real valued number or -infty
+        y_tolerance:    a real valued number or -infty
+
+    Returns:
+        out: Boolean
+
+    """
     if abs(np.linalg.norm(x)) < x_tolerance:
         return False
     else:
@@ -40,9 +63,18 @@ def stopping_criterion_x(x, y, x_tolerance, y_tolerance):
 
 
 def stopping_criterion_y(x, y, x_tolerance, y_tolerance):
-    # print("stop y called with y equals: ", y)
-    # print(abs(np.linalg.norm(y)))
-    # print("tolerance: ", y_tolerance)
+    """Return True if y < y_tolerance, else false.
+
+    Args:
+        x:          The current x value
+        y:          the current y value
+        x_tolerance:    a real valued number or -infty
+        y_tolerance:    a real valued number or -infty
+
+    Returns:
+        out: Boolean
+
+    """
     norm = abs(np.linalg.norm(y))
     if norm < y_tolerance:
         # print("return false")
@@ -52,6 +84,18 @@ def stopping_criterion_y(x, y, x_tolerance, y_tolerance):
 
 
 def stopping_criterion_x_or_y(x, y, x_tolerance, y_tolerance):
+    """Return True if both terminate_criterion_y and terminate_criterion_x are True, else false.
+
+    Args:
+        verts:          The verticies of a simplex
+        f_difference:   The absolute difference of the last and secondlast function_value
+        x_tolerance:    a real valued number or -infty
+        y_tolerance:    a real valued number or -infty
+
+    Returns:
+        out: Boolean
+
+    """
     if stopping_criterion_x(x, y, x_tolerance, y_tolerance):
         if stopping_criterion_y(x, y, x_tolerance, y_tolerance):
             return True
