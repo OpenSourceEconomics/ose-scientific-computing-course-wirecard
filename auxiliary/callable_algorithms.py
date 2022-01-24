@@ -9,7 +9,7 @@
 import numpy as np
 from newton_based_optimization_source import naive_optimization
 
-from nelder_mead_based_optimization_source import(
+from nelder_mead_based_optimization_source import (
     call_nelder_mead_method,
     initial_simplex,
 )
@@ -30,12 +30,13 @@ def our_nelder_mead_method(
         starting point:                     a point within the domain of f around which the approximation starts
         stopping_tolerance_xvalue:          the tolerance of the stopping criterion in the x argument
         stopping_tolerance_functionvalue:   the tolerance of the stopping criterion in the function value
-        computational_budget:               maximal number of function calls after which the algortithm terminates 
+        computational_budget:               maximal number of function calls after which the algortithm terminates
         eps:                                a measure to control the size of the inital simplex
 
 
     Returns:
-        out: an approximation of a local optimum of the function, number of evaluations of f 
+        out_1: an approximation of a local optimum of the function
+        out_2: number of evaluations of f
 
     """
     eps = np.array([eps] * len(starting_point))
@@ -61,17 +62,18 @@ def our_newton_based_optimization(
 ):
     """Return an approximation of a local optimum.
 
-        Args:
-            f:                                  a real valued function
-            starting point:                     a point within the domain of f around which the approximation starts
-            stopping_tolerance_xvalue:          the tolerance of the stopping criterion in the x argument
-            stopping_tolerance_functionvalue:   the tolerance of the stopping criterion in the function value
-            computational_budget:               maximal number of function calls after which the algortithm terminates 
-            
-        Returns:
-            out: an approximation of a local optimum of the function, number of evaluations of f 
+    Args:
+        f:                                  a real valued function
+        starting point:                     a point within the domain of f around which the approximation starts
+        stopping_tolerance_xvalue:          the tolerance of the stopping criterion in the x argument
+        stopping_tolerance_functionvalue:   the tolerance of the stopping criterion in the function value
+        computational_budget:               maximal number of function calls after which the algortithm terminates
 
-        """
+    Returns:
+        out_1: an approximation of a local optimum of the function
+        out_2: number of evaluations of f
+
+    """
     return naive_optimization(
         f,
         starting_point,
@@ -80,5 +82,6 @@ def our_newton_based_optimization(
         computational_budget,
     )
 
-if __name__ == "__main__": 
+
+if __name__ == "__main__":
     pass

@@ -1,7 +1,6 @@
 import numpy as np
 
 
-
 def initial_simplex(dim, domain):
     """Return a dim- dimensional simplex within the cube domain^n
     Args:
@@ -9,7 +8,7 @@ def initial_simplex(dim, domain):
         domain:        edges of the domain
 
     Returns:
-        out:           the verticies of the simplex in an dim+1 dimensional array
+        A:           the verticies of the simplex in an dim+1 dimensional array
 
     """
     A = np.random.rand(dim + 1, dim)
@@ -19,6 +18,17 @@ def initial_simplex(dim, domain):
 
 
 def pick_terminate_criterion(x_tolerance, y_tolerance):
+    """Return the correct termination criterion.
+
+    Args:
+        x_tolerance:    a real valued number or -infty
+        y_tolerance:    a real valued number or -infty
+
+
+    Returns:
+        out:
+
+    """
     if -np.inf < x_tolerance:
         if -np.inf < y_tolerance:
             stopping_criterion = lambda inputs, values: terminate_criterion_x_or_y(
@@ -175,7 +185,7 @@ def call_nelder_mead_method(
     gamma=2,
     rho=0.5,
     sigma=0.5,
-    values = []
+    values=[],
 ):
     # Pseudo code can be found on: https://en.wikipedia.org/wiki/Nelder%E2%80%93Mead_method
     print("Calls is now: ", calls)
@@ -209,7 +219,7 @@ def call_nelder_mead_method(
     if values[indexes[0]] <= f_x_r:
         if f_x_r < values[indexes[-2]]:
             f_difference = abs(f_x_r - values[indexes[0]])
-            values[indexes[-1]] = f_x_r 
+            values[indexes[-1]] = f_x_r
             return call_nelder_mead_method(
                 f,
                 nm_replace_final(verts, indexes, x_r),
@@ -224,18 +234,18 @@ def call_nelder_mead_method(
                 gamma,
                 rho,
                 sigma,
-                values
+                values,
             )
 
     # 4 Expansion
-    
+
     if f_x_r < values[indexes[0]]:
         # x_e = x_0 + gamma * (x_r - x_0)
         f_x_e = f(x_e)
         calls += 1
         if f_x_e < f_x_r:
             f_difference = abs(f_x_e - values[indexes[0]])
-            values[indexes[-1]] = f_x_e 
+            values[indexes[-1]] = f_x_e
             return call_nelder_mead_method(
                 f,
                 nm_replace_final(verts, indexes, x_e),
@@ -250,11 +260,11 @@ def call_nelder_mead_method(
                 gamma,
                 rho,
                 sigma,
-                values
+                values,
             )
         else:
             f_difference = abs(f_x_r - values[indexes[0]])
-            values[indexes[-1]] = f_x_r 
+            values[indexes[-1]] = f_x_r
             return call_nelder_mead_method(
                 f,
                 nm_replace_final(verts, indexes, x_r),
@@ -269,7 +279,7 @@ def call_nelder_mead_method(
                 gamma,
                 rho,
                 sigma,
-                values
+                values,
             )
 
     # 5 Contraction
@@ -294,7 +304,7 @@ def call_nelder_mead_method(
             gamma,
             rho,
             sigma,
-            values
+            values,
         )
 
     # 6 Shrink
@@ -312,7 +322,7 @@ def call_nelder_mead_method(
         alpha,
         gamma,
         rho,
-        sigma
+        sigma,
     )
 
 
