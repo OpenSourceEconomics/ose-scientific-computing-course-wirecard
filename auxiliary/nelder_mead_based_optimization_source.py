@@ -26,7 +26,7 @@ def pick_terminate_criterion(x_tolerance, y_tolerance):
 
 
     Returns:
-        out:
+        stopping_criterion: The stopping-criterion we want to use in the recursion of the nelder-mead_algorithm
 
     """
     if -np.inf < x_tolerance:
@@ -52,6 +52,18 @@ def pick_terminate_criterion(x_tolerance, y_tolerance):
 
 
 def terminate_criterion_x_or_y(verts, f_difference, x_tolerance, y_tolerance):
+    """Return True if both terminate_criterion_y and terminate_criterion_x are True, else false.
+
+    Args:
+        verts:          The verticies of a simplex
+        f_difference:   The absolute difference of the last and secondlast function_value
+        x_tolerance:    a real valued number or -infty
+        y_tolerance:    a real valued number or -infty
+
+    Returns:
+        out: Boolean
+
+    """
     if terminate_criterion_x(verts, f_difference, x_tolerance, y_tolerance):
         if terminate_criterion_y(verts, f_difference, x_tolerance, y_tolerance):
             return True
@@ -62,6 +74,18 @@ def terminate_criterion_x_or_y(verts, f_difference, x_tolerance, y_tolerance):
 
 
 def terminate_criterion_x(verts, f_difference, x_tolerance, y_tolerance):
+    """Return True if Var(verts) < x_tolerance, else false.
+
+    Args:
+        verts:          The verticies of a simplex
+        f_difference:   The absolute difference of the last and secondlast function_value
+        x_tolerance:    a real valued number or -infty
+        y_tolerance:    a real valued number or -infty
+
+    Returns:
+        out: Boolean
+
+    """
     eps = 0
     for vert in verts:
         eps += abs(np.linalg.norm(vert - verts[0]))
@@ -76,25 +100,22 @@ def terminate_criterion_x(verts, f_difference, x_tolerance, y_tolerance):
 
 
 def terminate_criterion_y(verts, f_difference, x_tolerance, y_tolerance):
-    pass
+    """Return True if f_difference < y_tolerance, else false.
 
+    Args:
+        verts:          The verticies of a simplex
+        f_difference:   The absolute difference of the last and secondlast function_value
+        x_tolerance:    a real valued number or -infty
+        y_tolerance:    a real valued number or -infty
 
-# TODO - write a nelder-mead routine for michael that takes f, startpoint x_0
-#      - computational budget/ maximale anzahl an iterationen als argument
-#      - stop criterium für terminate als stopp kriterium
-#      - return die minimalstelle der function
-#      - return die anzahl der functionsevaluationen
+    Returns:
+        out: Boolean
 
-
-#      Wenn stopping_tolerance_x = -inf dann nimm bitte das andere
-#       wennn keines = -inf ist das was als erstes eintrit
-#       wenn beide -inf sind -> fehler
-
-# def minimization(f,starting_point, stopping_tolerance_xwert, stopping_tolerance_functionswert, computational _budget):
-# return optimum, anzahl_evaluationen
-
-
-# TODO the same for the naive-optimization
+    """
+    if f_difference < y_tolerance:
+        return True
+    else:
+        return False
 
 
 # TODO
@@ -104,7 +125,20 @@ def terminate_criterion_y(verts, f_difference, x_tolerance, y_tolerance):
 
 def nelder_mead_method(f, verts, dim, alpha=1, gamma=2, rho=0.5, sigma=0.5):
     # Pseudo code can be found on: https://en.wikipedia.org/wiki/Nelder%E2%80%93Mead_method
+    """Return an approximation of a local optimum.
 
+    Args:
+        f:                                  a real valued function
+        starting point:                     a point within the domain of f around which the approximation starts
+        stopping_tolerance_xvalue:          the tolerance of the stopping criterion in the x argument
+        stopping_tolerance_functionvalue:   the tolerance of the stopping criterion in the function value
+        computational_budget:               maximal number of function calls after which the algortithm terminates
+
+    Returns:
+        out_1: an approximation of a local optimum of the function
+        out_2: number of evaluations of f
+
+    """
     # 0 Order
     values = np.array([f(vert) for vert in verts])
     indexes = np.argsort(values)
