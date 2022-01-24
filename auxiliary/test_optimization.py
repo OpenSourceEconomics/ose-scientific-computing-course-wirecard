@@ -163,6 +163,6 @@ if __name__ == "__main__":
     # test_nelder_mead_method()
     test_call_nelder_mead_method()
 
-    # test_old_newton_opti()
+    test_old_newton_opti()
 
     print("All tests completed")

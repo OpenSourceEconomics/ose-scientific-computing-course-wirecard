@@ -202,7 +202,7 @@ def naive_optimization(
     stopping_criterion = pick_stopp_criterion(x_tolerance, y_tolerance)
     # 5. run newton method on the derivative of f
     optimum, calls = newton_method(
-        df, J, x_0, x_tolerance, y_tolerance, computational_budget, stopping_criterion
+        df, J, x_0, x_tolerance, y_tolerance, computational_budget
     )
     # 6. return output of 4
     return optimum, calls
