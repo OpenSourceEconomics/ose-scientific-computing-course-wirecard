@@ -1712,7 +1712,7 @@ def get_performance_metrics_alpha(performance_metrics_object,alpha,cols):
         for j in range(len(alpha)):
             
             alpha_j=alpha[j]
-            less_vector=np.less(array_metrics_i,alpha_j)
+            less_vector=np.less_equal(array_metrics_i,alpha_j)
             sum_less=sum(less_vector)
             df.append(sum_less)
         
@@ -1766,7 +1766,7 @@ def get_metrics_aggregated(metrics_list_object,no_start_points,no_budgets,cols,a
 
 
 def performance_profile(metrics_agg_frame,color_vector,marker_vector,algo_names):
-    plt.figure(figsize=(20,10))
+    plt.figure(figsize=(10,10))
     #plt.xscale('log')
     #success_results_frame_1=success_results_frame.drop('comp_budget', 1)
     for i in range(len(metrics_agg_frame.columns)-1):
@@ -1783,6 +1783,32 @@ def performance_profile(metrics_agg_frame,color_vector,marker_vector,algo_names)
  
     # giving a title to my graph
     plt.title('Performance profile')
+    plt.legend()
+
+    # function to show the plot
+    return plt.show()
+
+
+
+def deviation_profile_rosen(deviation_results_frame,color_vector,marker_vector,algo_names):
+    plt.figure(figsize=(20,10))
+    plt.xscale('log')
+    plt.yscale('log')
+    #success_results_frame_1=success_results_frame.drop('comp_budget', 1)
+    for i in range(len(deviation_results_frame.columns)-1):
+        plt.plot(deviation_results_frame.comp_budget, deviation_results_frame.iloc[:,i+1], color=color_vector[i], linestyle='dashed',
+                 linewidth = 2,marker=marker_vector[i], markerfacecolor=color_vector[i], markersize=8,label=algo_names[i])
+    plt.ylim(1e-11,1e9)
+    plt.xlim(0,102000)
+    #plt.xscale("log")
+ 
+    # naming the x axis
+    plt.xlabel('Comp_budget')
+    # naming the y axis
+    plt.ylabel('Deviation')
+ 
+    # giving a title to my graph
+    plt.title('Deviation_Profile')
     plt.legend()
 
     # function to show the plot
