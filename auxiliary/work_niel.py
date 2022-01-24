@@ -319,5 +319,22 @@ def nm_terminate(verts):
         return False
 
 
+def nm_replace_final(verts, indexes, x_new):  # passed pytest
+    new_verts = []
+    for i in range(len(verts)):
+        new_verts.append(verts[i])
+    new_verts[indexes[-1]] = x_new
+    new_verts = np.array(new_verts)
+    return new_verts
+
+
+def nm_shrink(verts, indexes, sigma):  # passed pytest
+    new_verts = []
+    for i in range(indexes.size):
+        new_verts.append(verts[indexes[0]] + sigma * (verts[i] - verts[indexes[0]]))
+    new_verts = np.array(new_verts)
+    return new_verts
+
+
 if __name__ == "__main__":
     pass

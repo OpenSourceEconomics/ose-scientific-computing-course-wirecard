@@ -142,11 +142,17 @@ def call_nelder_mead_method(
     """Return an approximation of a local optimum.
 
     Args:
-        f:                                  a real valued function
-        starting point:                     a point within the domain of f around which the approximation starts
-        stopping_tolerance_xvalue:          the tolerance of the stopping criterion in the x argument
-        stopping_tolerance_functionvalue:   the tolerance of the stopping criterion in the function value
-        computational_budget:               maximal number of function calls after which the algortithm terminates
+        f:                                  a real valued n_dimensional function
+        verts:                              an array with n+1 n-dimensional vectors
+        dim:                                a integer (equal to n)
+        f_difference:                       the difference between the last and second last best approximation
+        calls:                              the number of evaluations of f so far
+        terminate_criterion:                the termination criterion we are using (a function that returns a boolean)
+        x_tolerance:                        A positive real number
+        y_tolerance:                        A positive real number
+        computational_budget:               An integer: the maximum number of funciton evaluations
+        alpha, gamma, rho, sigma:           positive real numbers that influence how the algorithms behaves
+        values:                             previously evaluated function values
 
     Returns:
         out_1: an approximation of a local optimum of the function
@@ -154,7 +160,7 @@ def call_nelder_mead_method(
     """
 
     # Pseudo code can be found on: https://en.wikipedia.org/wiki/Nelder%E2%80%93Mead_method
-    print("Calls is now: ", calls)
+
     # 0 Order
     if values == []:
         values = np.array([f(vert) for vert in verts])
@@ -290,20 +296,3 @@ def call_nelder_mead_method(
         rho,
         sigma,
     )
-
-
-def nm_replace_final(verts, indexes, x_new):  # passed pytest
-    new_verts = []
-    for i in range(len(verts)):
-        new_verts.append(verts[i])
-    new_verts[indexes[-1]] = x_new
-    new_verts = np.array(new_verts)
-    return new_verts
-
-
-def nm_shrink(verts, indexes, sigma):  # passed pytest
-    new_verts = []
-    for i in range(indexes.size):
-        new_verts.append(verts[indexes[0]] + sigma * (verts[i] - verts[indexes[0]]))
-    new_verts = np.array(new_verts)
-    return new_verts
