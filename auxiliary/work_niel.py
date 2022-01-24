@@ -232,5 +232,92 @@ def newton_method_old(f, df, x_n, eps=10 ** (-16), n=1000):
     return x_n, count_calls
 
 
+# this was an old implementation of the nelder-mead method, we are not using anymore
+
+
+def nelder_mead_method(f, verts, dim, alpha=1, gamma=2, rho=0.5, sigma=0.5):
+    """Return an approximation of a local optimum.
+
+    Args:
+        f:                                  a real valued function
+        starting point:                     a point within the domain of f around which the approximation starts
+        stopping_tolerance_xvalue:          the tolerance of the stopping criterion in the x argument
+        stopping_tolerance_functionvalue:   the tolerance of the stopping criterion in the function value
+        computational_budget:               maximal number of function calls after which the algortithm terminates
+
+    Returns:
+        out_1: an approximation of a local optimum of the function
+        out_2: number of evaluations of f
+    """
+
+    # Pseudo code can be found on: https://en.wikipedia.org/wiki/Nelder%E2%80%93Mead_method
+
+    # 0 Order
+    values = np.array([f(vert) for vert in verts])
+    indexes = np.argsort(values)
+
+    x_0 = np.array([0, 0])
+    for index in indexes[:-1]:
+        x_0 = x_0 + verts[index]
+    x_0 = x_0 / (len(verts) - 1)
+
+    x_r = x_0 + alpha * (x_0 - verts[indexes[-1]])
+    x_e = x_0 + gamma * (x_r - x_0)
+    x_c = x_0 + rho * (verts[indexes[-1]] - x_0)
+
+    # 1 Termination
+
+    if nm_terminate(verts):
+        return np.round(verts[indexes[0]])
+
+    # 3 Reflection
+    if values[indexes[0]] <= f(x_r):
+        if f(x_r) < values[indexes[-2]]:
+            return nelder_mead_method(
+                f, nm_replace_final(verts, indexes, x_r), dim, alpha, gamma, rho, sigma
+            )
+
+    # 4 Expansion
+
+    if f(x_r) < values[indexes[0]]:
+        # x_e = x_0 + gamma * (x_r - x_0)
+        if f(x_e) < f(x_r):
+            return nelder_mead_method(
+                f, nm_replace_final(verts, indexes, x_e), dim, alpha, gamma, rho, sigma
+            )
+        else:
+            return nelder_mead_method(
+                f, nm_replace_final(verts, indexes, x_r), dim, alpha, gamma, rho, sigma
+            )
+
+    # 5 Contraction
+
+    # x_c = x_0 + rho * (verts[indexes[-1]] - x_0)
+    if f(x_c) < f(verts[indexes[-1]]):
+        return nelder_mead_method(
+            f, nm_replace_final(verts, indexes, x_c), dim, alpha, gamma, rho, sigma
+        )
+
+    # 6 Shrink
+
+    return nelder_mead_method(
+        f, nm_shrink(verts, indexes, sigma), dim, alpha, gamma, rho, sigma
+    )
+
+
+def nm_terminate(verts):
+
+    eps = 0
+    for vert in verts:
+        eps += abs(np.linalg.norm(vert - verts[0]))
+    # print("Summed distance = ", eps)
+    if eps < 1e-4:
+        return True
+    if eps > 50:
+        return True
+    else:
+        return False
+
+
 if __name__ == "__main__":
     pass
