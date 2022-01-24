@@ -168,80 +168,43 @@ def newton_method(
     return x_n, calls_of_f_or_df
 
 
-# TODO - write a newto-method routine for michael that takes f, startpoint x_0
-#      - computational budget/ maximale anzahl an iterationen als argument
-#      - stop criterium für terminate als stopp kriterium
-#      - return die minimalstelle der function
-#      - return die anzahl der functionsevaluationen
-
-
-#      Wenn stopping_tolerance_x = -inf dann nimm bitte das andere
-#       wennn keines = -inf ist das was als erstes eintrit
-#       wenn beide -inf sind -> fehler
-
-# def minimization(f,starting_point, stopping_tolerance_xwert, stopping_tolerance_functionswert, computational _budget):
-# return optimum, anzahl_evaluationen
-
-
-# TODO the same for the naive-optimization
-
-
 # TODO
 
 # Maybe we could implement the neewton-method as a class such that we can safe, call and change the values alpha, gamma, rho and sigma
 
 
-# The following naive optimization is a bit messy right now we are working with: newton_based_naive_optimization
 def naive_optimization(
     f, starting_point, x_tolerance=1e-6, y_tolerance=1e-6, computational_budget=100
 ):
-    # print("naive y tol: ", y_tolerance)
     """Return a candidate for an optimum of f, if the procedure converges.
 
     Args:
-        f:              a function from \R^n to \R whose optimum we want to find
-        dim:            dimension of the function
-        domain:         an array A = [a,b] that defines the domain of the function (always a square) or None
-        eps_newton:     sensitivity of the root finding process
-        eps_derivative: sensitivity of the derivative approximation
-        k:              number of gridpoints in each axis
-        n:              maximum of iterations before stopping the procedure
-
-
+        f:                  a function from \R^n to \R whose optimum we want to find
+        starting_point:     the starting point of the iteration
+        x_tolerance:        a positive real number
+        y_tolerance:        a positive real number
+        computation_budget: the number of maximal function evaluations
 
     Returns:
         out: either an approximation for an optimum or a message if the procedure didnt converge
 
     """
-    # 1. find point x_0 to start iteration from
-    # For now we treat domain as the starting point of the iteration
+
+    # 1. Set the starting point of the iteration
 
     x_0 = np.array(starting_point).astype(float)
-
-    """
-    if len(domain) > 2:
-        x_0 = domain
-        # print("x_0 = domain; x_0 = ", x_0)
-    elif len(domain) == 2:
-        x_0 = np.array(find_starting_point(f, domain, dim)).astype(float)
-        # print("x_0 by find_starting_point; x_0 = ", x_0)
-    else:
-        # print("domain ist: ",domain)
-        print("domain ist nicht so wie sie sein sollte")
-    """
 
     # 2. compute derivative of f
     df = jacobian(f)
     # 3. compute jacobian of the derivative of f
     J = jacobian(df)
-    # 4. run newton method on the derivative of f
-    stopping_criterion = stopping_criterion_y
+    # 4. choose stopping criterion
+    stopping_criterion = pick_stopp_criterion(x_tolerance, y_tolerance)
+    # 5. run newton method on the derivative of f
     optimum, calls = newton_method(
-        df, J, x_0, x_tolerance, y_tolerance, computational_budget
+        df, J, x_0, x_tolerance, y_tolerance, computational_budget, stopping_criterion
     )
-
-    print(calls)
-    # 5. return output of 4
+    # 6. return output of 4
     return optimum, calls
 
 
