@@ -336,5 +336,31 @@ def nm_shrink(verts, indexes, sigma):  # passed pytest
     return new_verts
 
 
+# another old newton method we are not using anymore but i feel not ready to delete it yet
+
+
+def newton_method_old(f, df, x_n, eps=10 ** (-16), n=1000):
+    """Return a candidate for a root of f, if the newton method starting at x_n converges.
+    Args:
+        f:              a function from \R^n to \R^n whose root we want to find
+        df:             the jacobian of f; a function that takes x \in \R^n and returns a n*n matrix
+        x_n:            a number within the domain of f from which to start the iteration
+        eps:            sensitivity of of the root finding process
+        n:              maximum of iterations before stopping the procedure
+    Returns:
+        out:            either an approximation for a root or a message if the procedure didnt converge
+    """
+    f_xn = f(x_n)
+    count_calls = 1
+    while np.linalg.norm(f_xn) > eps and n > 0:
+        sol = np.linalg.solve(df(x_n), -f_xn)
+        count_calls = count_calls + 1
+        x_n = x_n + sol
+        f_xn = f(x_n)
+        count_calls = count_calls + 1
+        n = n - 2
+    return x_n, count_calls
+
+
 if __name__ == "__main__":
     pass

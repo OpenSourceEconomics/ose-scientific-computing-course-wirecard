@@ -113,14 +113,10 @@ def find_starting_point(f, domain, n, k=10000):
         n:              the dimension of the domain of the function
         k:              the amount of random points we draw to run the optimization on.
 
-
-
-
     Returns:
         out:            a candidate in domain^n to start the local search for an optimum from
 
     """
-    # print("find_starting point bekommt n == ", n)
     A = np.random.rand(k, n)
     B = [f(domain[0] + (domain[1] - domain[0]) * x) for x in A]
     index = np.where(B == np.amin(B))
@@ -140,59 +136,36 @@ def newton_method(
 ):
     """Return a candidate for a root of f, if the newton method starting at x_n converges.
     Args:
-        f:              a function from \R^n to \R^n whose root we want to find
-        df:             the jacobian of f; a function that takes x \in \R^n and returns a n*n matrix
-        x_n:            a number within the domain of f from which to start the iteration
-        eps:            sensitivity of of the root finding process
-        n:              maximum of iterations before stopping the procedure
+        f:                   a function from \R^n to \R^n whose root we want to find
+        df:                  the jacobian of f; a function that takes x \in \R^n and returns a n*n matrix
+        x_n:                 a number within the domain of f from which to start the iteration
+        x_tolerance:         a postitive real number
+        y_tolerance:         a positive real number
+        n:                   maximum of iterations before stopping the procedure
+        stopping_criterim:   a function that returns a boolean
     Returns:
-        out:             the approximation for a root or a message if the procedure didnt converge
+        out_1:          candidate for the root
+        out_2:          number of function evaluations
     """
 
-    # stopping criterion for now defualt y
+    # default stopping criterion for now y
 
     calls_of_f_or_df = 0
     f_xn = f(x_n)
     calls_of_f_or_df = calls_of_f_or_df + 1
     n = n - 1
     while stopping_criterium(x_n, f_xn, x_tolerance, y_tolerance) and n > 0:
-        # sol = np.linalg.lstsq(df(x_n), -f_xn)
-        # print("df equals: ", df(x_n))
-        # print("f_xn equals: ", -f_xn)
+
         sol = np.linalg.solve(df(x_n), -f_xn)
-        # print("sol equals: ", sol)
+
         calls_of_f_or_df = calls_of_f_or_df + 1
         n = n - 1
-        # if abs(np.linalg.norm(sol)) < x_tolerance:
-        #    break
+
         x_n = x_n + sol
         f_xn = f(x_n)
         calls_of_f_or_df = calls_of_f_or_df + 1
         n = n - 1
     return x_n, calls_of_f_or_df
-
-
-def newton_method_old(f, df, x_n, eps=10 ** (-16), n=1000):
-    """Return a candidate for a root of f, if the newton method starting at x_n converges.
-    Args:
-        f:              a function from \R^n to \R^n whose root we want to find
-        df:             the jacobian of f; a function that takes x \in \R^n and returns a n*n matrix
-        x_n:            a number within the domain of f from which to start the iteration
-        eps:            sensitivity of of the root finding process
-        n:              maximum of iterations before stopping the procedure
-    Returns:
-        out:            either an approximation for a root or a message if the procedure didnt converge
-    """
-    f_xn = f(x_n)
-    count_calls = 1
-    while np.linalg.norm(f_xn) > eps and n > 0:
-        sol = np.linalg.solve(df(x_n), -f_xn)
-        count_calls = count_calls + 1
-        x_n = x_n + sol
-        f_xn = f(x_n)
-        count_calls = count_calls + 1
-        n = n - 2
-    return x_n, count_calls
 
 
 # TODO - write a newto-method routine for michael that takes f, startpoint x_0
