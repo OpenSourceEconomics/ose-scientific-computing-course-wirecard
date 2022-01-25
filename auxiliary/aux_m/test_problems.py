@@ -98,6 +98,36 @@ def problem_application_correct_1(x,grad):
     
     #### disutility is coded without lambda
     return disutility_volatility
+
+
+
+def problem_ackley(x):
+    a=20
+    b=0.2
+    c=2*np.pi
+    x = np.asarray_chkfinite(x) 
+    n = len(x)
+    s1 = np.sum( x**2 )
+    s2 = np.sum( cos( c * x ))
+    return -a*np.exp( -b*np.sqrt( s1 / n )) - np.exp( s2 / n ) + a + np.exp(1)
+
+
+
+def problem_schwefel(x):  # schw.m
+    x = np.asarray_chkfinite(x)
+    n = len(x)
+    return 418.9829*n - np.sum( x * np.sin( np.sqrt( np.abs( x ))))
+
+
+
+def problem_zakharov(x):  
+    x = np.asarray_chkfinite(x)
+    n = len(x)
+    j = np.arange( 1., n+1 )
+    s2 = np.sum( j * x ) / 2
+    return np.sum( x**2 ) + s2**2 + s2**4
+
+
     
 
     

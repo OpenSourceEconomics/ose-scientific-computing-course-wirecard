@@ -196,7 +196,87 @@ class markowitz_info:     ##### This class stores the general information for ma
         self.name=name
         problem_solver=np.array([0.4411,0.3656,0.1933])  
         self.solver=problem_solver     
-        self.solver_function_value=np.array([0.0052820694790865])  
+        self.solver_function_value=np.array([0.0052820694790865]) 
+        
+        
+        
+        
+class ackley_info:     ##### This class stores the general information for a griewank function 
+    
+    def __init__(self,dim):   ### arguments are the number of dimensions of the problem and the parameter a
+        domain=([-32.768]*dim,[32.768]*dim) 
+        self.domain=domain   ### returns the domain of the function        
+        self.lower_bound=([-32.768]*dim)  ### returns thw lower bound of the function
+        self.upper_bound=([32.768]*dim)   ### returns the upper bound of the function
+        name= 'Ackley Function'
+        self.name=name
+        problem_solver=np.array([0]*dim)  
+        self.solver=problem_solver     ### returns the known solution to the problem
+        def function_value(x):   
+            a=20
+            b=0.2
+            c=2*np.pi
+            x = np.asarray_chkfinite(x) 
+            n = len(x)
+            s1 = np.sum( x**2 )
+            s2 = np.sum( cos( c * x ))
+            return -a*np.exp( -b*np.sqrt( s1 / n )) - np.exp( s2 / n ) + a + np.exp(1)
+
+        self.solver_function_value=function_value(problem_solver)  ### returns the function value of the known solution to the problem
+        
+        
+        
+        
+class schwefel_info:     ##### This class stores the general information for a griewank function 
+    
+    def __init__(self,dim):   ### arguments are the number of dimensions of the problem and the parameter a
+        domain=([-500]*dim,[500]*dim) 
+        self.domain=domain   ### returns the domain of the function        
+        self.lower_bound=([-500]*dim)  ### returns thw lower bound of the function
+        self.upper_bound=([500]*dim)   ### returns the upper bound of the function
+        name= 'Schwefel Function'
+        self.name=name
+        problem_solver=np.array([420.968746]*dim)  
+        self.solver=problem_solver     ### returns the known solution to the problem
+        def function_value(x):
+            x = np.asarray_chkfinite(x)
+            n = len(x)
+            return 418.9829*n - np.sum( x * np.sin( np.sqrt( np.abs( x ))))
+        
+        self.solver_function_value=function_value(problem_solver)  ### returns the function value of the known solution to the problem
+        
+        
+class zakharov_info:     ##### This class stores the general information for a griewank function 
+    
+    def __init__(self,dim):   ### arguments are the number of dimensions of the problem and the parameter a
+        domain=([-50]*dim,[50]*dim) 
+        self.domain=domain   ### returns the domain of the function        
+        self.lower_bound=([-50]*dim)  ### returns thw lower bound of the function
+        self.upper_bound=([50]*dim)   ### returns the upper bound of the function
+        name= 'Zakharov Function'
+        self.name=name
+        problem_solver=np.array([0]*dim)  
+        self.solver=problem_solver     ### returns the known solution to the problem
+        def function_value(x):
+            x = np.asarray_chkfinite(x)
+            n = len(x)
+            j = np.arange( 1., n+1 )
+            s2 = np.sum( j * x ) / 2
+            return np.sum( x**2 ) + s2**2 + s2**4
+
+
+        self.solver_function_value=function_value(problem_solver)  ### returns the function value of the known solution to the problem
+        
+        
+        
+        
+
+        
+        
+        
+        
+        
+
         
 
 
