@@ -1596,14 +1596,14 @@ def minimization_guvenen_application(f,computational_budget,algo,x_0,n,problem_i
 ############## Data Pofile application
 
 def data_profile_application(success_results_frame,color_vector,marker_vector,algo_names):
-    plt.figure(figsize=(20,10))
+    plt.figure(figsize=(10,10))
     #plt.xscale('log')
     #success_results_frame_1=success_results_frame.drop('comp_budget', 1)
     for i in range(len(success_results_frame.columns)-1):
         plt.plot(success_results_frame.comp_budget, success_results_frame.iloc[:,i+1], color=color_vector[i], linestyle='dashed',
                  linewidth = 2,marker=marker_vector[i], markerfacecolor=color_vector[i], markersize=8,label=algo_names[i])
     plt.ylim(-0.05,1.1)
-    plt.xlim(0,1500)
+    plt.xlim(0,1005)
     #plt.xscale("log")
  
     # naming the x axis
