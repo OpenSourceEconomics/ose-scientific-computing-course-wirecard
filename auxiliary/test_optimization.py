@@ -2,6 +2,7 @@ import pandas as pd
 import math
 import autograd.numpy as np
 from autograd import grad, jacobian
+from aux_m.test_problems import problem_application_correct_1
 
 
 from numpy.testing import assert_array_equal
@@ -158,11 +159,43 @@ def test_call_nelder_mead_method():
         # print(index)
 
 
+def problem_application(x):
+
+    #### define problem of the application 3 dimensional case
+    B = 1
+    lambda_param = 1
+    alpha_1 = 0.0427
+    alpha_2 = 0.0015
+    alpha_3 = 0.0285
+    sigma_x_1 = 0.01  ### square std deviation to get variance
+    sigma_x_2 = 0.01089936
+    sigma_x_3 = 0.01990921
+    sigma_x_12 = 0.0018
+    sigma_x_13 = 0.0011
+    sigma_x_23 = 0.0026
+
+    # exp_returns=-alpha_1*x[0]-alpha_2*x[1]-alpha_3*x[2]
+
+    disutility_volatility = (
+        (sigma_x_1 * (x[0] ** 2))
+        + (x[1] ** 2) * sigma_x_2
+        + (x[2] ** 2) * sigma_x_3
+        + 2 * sigma_x_12 * x[0] * x[1]
+        + 2 * sigma_x_13 * x[0] * x[2]
+        + 2 * x[1] * x[2] * sigma_x_23
+    )
+
+    #### disutility is coded without lambda
+    return disutility_volatility
+
+
 if __name__ == "__main__":
     # test_functions_used_here()
     # test_nelder_mead_method()
     test_call_nelder_mead_method()
-
-    test_old_newton_opti()
+    verts = [[1, 1, 1], [0, 1, 0], [1, 0, 0], [1, 0, 0]]
+    result = call_nelder_mead_method(problem_application, verts, 3)
+    print(result)
+    # test_old_newton_opti()
 
     print("All tests completed")
