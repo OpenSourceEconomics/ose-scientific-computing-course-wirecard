@@ -1,10 +1,19 @@
-# OSE data science project template
+# Benchmarking Global Optimization Algorithms
 
-This is a template for course projects. We use [GitHub Classroom](https://classroom.github.com) to administrate our student projects and so you need to sign up for a [GitHub Account](http://github.com).
+Course: OSE-Scientific-Computing|M.Sc. Economics/ Ph.D. Economics| University of Bonn|<br> 
+Authors: **Michael Hannes Gerards (Student ID: 3175485)** and **Daniel Nogues Kollert**
+##
+This project contains a benchmarking experiment. We compare a collection of different optimization algorithms which are implemented within the NLOPT library. Our project reports **data-profiles,deviation-profiles and performance profiles**.<br> The benchmarking experiment follows in great parts the methodology outlined in the following paper:<br>
+#
+[Arnoud, Antoine and Guvenen, Fatih and Kleineberg, Tatjana](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3465350#)
+<br> Benchmarking Global Optimizers
+<br> (October 2019). NBER Working Paper No. w26340
+#
+Another great part of our project is devoted to the implementation of two optimization algorithms. We successfully implemented the **Newton root finding method** and the **Nelder Mead** optimization algorithm by ourself. These algorithms are not included in the benchmarking experiment, due to the fact that they still require a lot of solving time. This solving time would be huge if we would apply these algorithms on our benchmarking experiment. However these algorithms are successfully implemented and are capable to solve test problems. We will continue to work in order to increase the speed of these algorithms. 
+##
+You can easily access this project by simply clicking on the badges shown below:
+## 
 
-## Project overview
-
-Please ensure that a brief description of your project is included in the [README.md](https://github.com/HumanCapitalAnalysis/template-course-project/blob/master/README.md), which provides a proper citation of your baseline article. Also, please set up the following badges that allow to easily access your project notebook.
 
 <a href="https://nbviewer.jupyter.org/github/OpenSourceEconomics/ose-scientific-computing-course-wirecard/blob/master/student_project.ipynb"
    target="_parent">
@@ -16,46 +25,25 @@ Please ensure that a brief description of your project is included in the [READM
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/OpenSourceEconomics/ose-scientific-computing-course-wirecard/HEAD)
 
 ## Reproducibility
-
-To ensure full reproducibility of your project, please try to set up a [GitHub Actions CI](https://docs.github.com/en/actions) as your continuous integration service. An introductory tutorial for [conda](https://conda.io) and [GitHub Actions](https://docs.github.com/en/actions/learn-github-actions/introduction-to-github-actions) is provided [here](https://github.com/OpenSourceEconomics/ose-template-course-project/blob/master/tutorial_conda_actions.ipynb). While not at all mandatory, setting up a proper continuous integration workflow is an extra credit that can improve the final grade.
+In order to ensure full reproducibility of our project, we have set up a continous integration environment using Github Actions which can be checked by clicking on the badge shown below:
 
 [![Continuous Integration](https://github.com/OpenSourceEconomics/ose-scientific-computing-course-wirecard/actions/workflows/ci.yml/badge.svg)](https://github.com/OpenSourceEconomics/ose-scientific-computing-course-wirecard/actions/workflows/ci.yml)
 
-In some cases you might not be able to run parts of your code on  [GitHub Actions CI](https://docs.github.com/en/actions) as, for example, the computation of results takes multiple hours. In those cases you can add the result in a file to your repository and load it in the notebook. See below for an example code.
-
-```python
-# If we are running on GitHub Actions CI we will simply load a file with existing results.
-if os.environ.get("CI") == "true":
-  rslt = pkl.load(open('stored_results.pkl', 'br'))
-else:
-  rslt = compute_results()
-
-# Now we are ready for further processing.
-...
-```
-
-However, if you decide to do so, please be sure to provide an explanation in your notebook explaining why exactly this is required in your case.
-
 ## Structure of notebook
 
-A typical project notebook has the following structure:
+Section two of our project notebook begins with an introduction to the topic of global optimization. In this section the general optimization problem is formulated that we face for the benchmarking experiment. Section three explains the difference between derivative free algorithms an gradient based algorithms. This section also explains in detail which algorithms were included in our benchmarking experiment and how these algorithms were configurated. In section four a detailed overview is given about the test problems considered in Guvenen et al. (2019). This section is followed by a detailed explanation of our benchmarking approach (section 5). Our results are presented in section 6. Here we report **data-profiles and deviation profiles** and in subsection 6.5 we report **performance profiles** which are based on the four test problems considered in Guvenen et al. (2019). Section seven is an extension, in which we extend the collection of test problems considered. We include the Ackley function, Zakharov function and Easom function. The quality of the study conducted by Guvenen et al. (2019) is discussed in section eight. In section nine we provide an economic application. We employ two algorithms of the NLOPT library in order to minimize the volatility of a three asset portfolio. Section ten concludes.   
 
-* presentation of baseline article with proper citation and brief summary
+## Repository
 
-* using causal graphs to illustrate the authors' identification strategy
+This project is created using a python environment. The results are represented in the notebook [student_project.ipynb](https://github.com/OpenSourceEconomics/ose-scientific-computing-course-wirecard/blob/master/student_project.ipynb) which is in the main branch of this repository. The best way to view all contents of this study, is to download the whole Github repository [ose-scientific-computing-wirecard](https://github.com/OpenSourceEconomics/ose-scientific-computing-course-wirecard). NBviewer and other viewing options like my-Binder **may not display all illustrations fully as in a local jupyter-notebook environment**. But the best way to view this project online should be via my-Binder. The results generated by our analysis can be found in the folder [data/Results](https://github.com/OpenSourceEconomics/ose-scientific-computing-course-wirecard/tree/master/data/Results). The notebooks (and seeeds) which were used in order to generate the results can be found in the folder [data/dat_generation_files](https://github.com/OpenSourceEconomics/ose-scientific-computing-course-wirecard/tree/master/data/dat_generation_files). The auxiliary files necessary for the project notebook and for the result generation can be found in the folder [auxiliary/aux_m](https://github.com/OpenSourceEconomics/ose-scientific-computing-course-wirecard/tree/master/auxiliary/aux_m). All other files in the auxiliary file are files for the algorithms we implemented by ourselves. The results for the economic application can be found in the folder [data/application_result](https://github.com/OpenSourceEconomics/ose-scientific-computing-course-wirecard/tree/master/data/application_result). In these result folders we do not only provide the results, we also provide the starting points which were used.
 
-* replication of selected key results
+## Main References
 
-* critical assessment of quality
+- Arnoud, Antoine and Guvenen, Fatih and Kleineberg, Tatjana Benchmarking Global Optimizers (October 2019). NBER Working Paper No. w26340
+- Bartz Beielstein, Thomas et al. (2020). Benchmarking in Optimization: Best Practice and Open issues
+- Beiranvand, Vahid; Hare, Warren and Lucet,Yves (2017). Best Practices for comparing optimization algorithms, Optimization and Engineering, Springer Science and Business Media
+- Eisenhauer, P. (2021). [OSE-Scientific-Computing](https://ose-scientific-computing.readthedocs.io/en/latest/)
+- Gehlen, A. (2019). Course-project-template.
 
-* independent contribution, e.g. additional external evidence, robustness checks, visualization
 
-There might be good reason to deviate from this structure. If so, please simply document your reasoning and go ahead. Please use the opportunity to review other student projects for some inspirations as well.
 
-## Project Example
-
-The notebook [example_project.ipynb](https://github.com/OpenSourceEconomics/ose-template-course-project/blob/master/example_project.ipynb) contains an example project by [Annica Gehlen](https://github.com/amageh) from the 2019 iteration of the [OSE data science](https://github.com/OpenSourceEconomics/ose-course-data-science) class at Bonn University. It replicates the results from the following paper:
-
-* Lindo, J. M., Sanders, N. J., & Oreopoulos, P. (2010). [Ability, Gender, and Performance Standards: Evidence from Academic Probation](https://www.aeaweb.org/articles?id=10.1257/app.2.2.95). *American Economic Journal: Applied Economics*, 2(2), 95-117.
-
-Lindo et al. (2010) examine the effects of academic probation on student outcomes using a regression discontinuity design. The analysis is based on data from a large Canadian university and evaluates whether academic probation is successful in improving the performance of low scoring students. Consistent with a model of performance standards, the authors find that being placed on probation in the first year of university induces some students to drop out of school while it improves the grades of students who continue their studies. In a more general sense, academic probation can offer insights into how agents respond to negative incentives and the threat of punishment in a real-world context.
