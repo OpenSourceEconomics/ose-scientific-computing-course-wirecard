@@ -16,7 +16,8 @@ np.set_printoptions(precision=20)
 pd.set_option("display.precision", 14)
 
 
-
+#### this file contains classes which store general information about a test problem as for example optimum, domain, upper bound
+#### lower bound, function value of optimum, name of test problem
 
 
 
@@ -66,7 +67,7 @@ class rastrigin_info:     ##### This class stores the general information for a 
     
     
     
-class levi_info:     ##### This class stores the general information for a levi_no_13 function 
+class levi_info:     ##### This class stores the general information for a levi function 
     
     def __init__(self,dim):   ### arguments are the number of dimensions of the problem and the parameter a
         domain=([-10]*dim,[10]*dim) 
@@ -201,7 +202,7 @@ class markowitz_info:     ##### This class stores the general information for ma
         
         
         
-class ackley_info:     ##### This class stores the general information for a griewank function 
+class ackley_info:     ##### This class stores the general information for a ackley function 
     
     def __init__(self,dim):   ### arguments are the number of dimensions of the problem and the parameter a
         domain=([-32.768]*dim,[32.768]*dim) 
@@ -227,7 +228,7 @@ class ackley_info:     ##### This class stores the general information for a gri
         
         
         
-class schwefel_info:     ##### This class stores the general information for a griewank function 
+class schwefel_info:     ##### This class stores the general information for a schwefel function 
     
     def __init__(self,dim):   ### arguments are the number of dimensions of the problem and the parameter a
         domain=([-500]*dim,[500]*dim) 
@@ -246,7 +247,7 @@ class schwefel_info:     ##### This class stores the general information for a g
         self.solver_function_value=function_value(problem_solver)  ### returns the function value of the known solution to the problem
         
         
-class zakharov_info:     ##### This class stores the general information for a griewank function 
+class zakharov_info:     ##### This class stores the general information for a zakharov function 
     
     def __init__(self,dim):   ### arguments are the number of dimensions of the problem and the parameter a
         domain=([-50]*dim,[50]*dim) 

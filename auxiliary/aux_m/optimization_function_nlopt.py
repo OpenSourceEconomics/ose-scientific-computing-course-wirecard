@@ -18,298 +18,6 @@ pd.set_option("display.precision", 14)
 
 
 
-
-###### The function that performs the optimization routine for nlopt algorithms
-
-
-
-
-
-def minimization_guvenen_4(f,computational_budget,algo,x_0,n,problem_info,x_tol_abs,f_tol_abs,local_tolerance_x=None,local_tolerance_f=None):
-    
-    
-    
-    
-    ##################################     Input that need to be specified ################################
-    #######################################################################################################
-    
-    
-    ## x_tol: is the absolute Tolerance allowed
-    ## f_tol: tolerance in function value allowed
-    ## f: we need to specify the objective function
-    ## computational budget: is a vector that contains different computational budgets between 0 and 10^5
-    ## algo: specify the algorithm you want to use from the nlopt library -> argument has to have the form:
-    ######## nlopt.algorithm_name e.g. nlopt.GN_ISRES for ISRES Algorithm
-    ## algorithm: specify the algorithm 
-    ## x_0: contains the randomly generated starting points -> pandas dataframe containing starting values
-    ## n: number of dimensions the problem should have
-    ## problem_info: object that that contains known information about the objective function 
-                    ## as for example the domain
-                    ## the best solver
-                    ## function value of the best solver etc
-    ### If you want to stop the optimization routine when the x_tol_abs for convergence is met 
-    ########   -> plug in -inf for f_tol_abs
-    ##### If you want to stop the optimization routine when the f_tol_abs convergence criterion is met specify:
-    ######## -> x_tol_abs=-inf
-    
-    ######################################      Output       ################################################
-    
-    #### returns a dataframe containing:
-    #### a vector of the optimizer -> first n columns # coordinate vector
-    #### the function value of the optimizer -> next column                ##### this is done 100 times
-    #### number of function evaluations -> next columns                      #### for all 100 starting points
-    ### accuracy measures as specified in Guvenen et al. 
-    
-    #np.set_printoptions(precision=20)
-    
-    fwrapped=lambda x,grad:f(x)
-    
-    if algo==19:
-        
-        global_optimum=nlopt.opt(nlopt.GN_CRS2_LM,n)
-        global_optimum.set_lower_bounds(problem_info.lower_bound)
-        global_optimum.set_upper_bounds(problem_info.upper_bound)
-        global_optimum.set_min_objective(fwrapped)
-        global_optimum.set_xtol_abs(x_tol_abs)
-        global_optimum.set_ftol_abs(f_tol_abs)
-        comp_budge=np.array(computational_budget)
-        df=[]
-        for j in range(comp_budge.size):
-            comp_budge_j=comp_budge[j]
-            global_optimum.set_maxeval(comp_budge_j)
-            for i in range(len(x_0)):
-                #start_point_i=np.array(x_0.iloc[i])
-                optimizer=global_optimum.optimize(np.array(x_0.iloc[i]))
-                function_val=f(optimizer)
-                num_evals=np.array(global_optimum.get_numevals())
-            #### define accuracy measures
-                comp_budget=comp_budge_j
-                abs_diff=np.abs(np.subtract(problem_info.solver,optimizer)) ### account for multiple glob min missing
-                success_crit_x=np.amax(abs_diff)
-                success_crit_f=np.abs(np.subtract(problem_info.solver_function_value,function_val))
-            
-                information=np.hstack((problem_info.name,function_val,num_evals,comp_budget,success_crit_x,success_crit_f,optimizer))
-                df.append(information)
-            
-        
-        dframe=pd.DataFrame(df)
-        dframe_1=dframe.rename(columns={0:"problem",1:"f_val_opt",2:"f_evals",
-                                        3:"comp_budget",4:"success_crit_x",5:"success_crit_f"})
-        
-        return dframe_1
-    
-    elif algo==42:
-        
-        global_optimum=nlopt.opt(nlopt.GN_ESCH,n)
-        global_optimum.set_lower_bounds(problem_info.lower_bound)
-        global_optimum.set_upper_bounds(problem_info.upper_bound)
-        global_optimum.set_min_objective(fwrapped)
-        global_optimum.set_xtol_abs(x_tol_abs)
-        global_optimum.set_ftol_abs(f_tol_abs)
-        comp_budge=np.array(computational_budget)
-        df=[]
-        for j in range(comp_budge.size):
-            comp_budge_j=comp_budge[j]
-            global_optimum.set_maxeval(comp_budge_j)
-            for i in range(len(x_0)):
-                #start_point_i=np.array(x_0.iloc[i])
-                optimizer=global_optimum.optimize(np.array(x_0.iloc[i]))
-                function_val=f(optimizer)
-                num_evals=np.array(global_optimum.get_numevals())
-            #### define accuracy measures
-                comp_budget=comp_budge_j
-                abs_diff=np.abs(np.subtract(problem_info.solver,optimizer)) ### account for multiple glob min missing
-                success_crit_x=np.amax(abs_diff)
-                success_crit_f=np.abs(np.subtract(problem_info.solver_function_value,function_val))
-            
-                information=np.hstack((problem_info.name,function_val,num_evals,comp_budget,success_crit_x,success_crit_f,optimizer))
-                df.append(information)
-            
-        
-        dframe=pd.DataFrame(df)
-        dframe_1=dframe.rename(columns={0:"problem",1:"f_val_opt",2:"f_evals",
-                                        3:"comp_budget",4:"success_crit_x",5:"success_crit_f"})
-        
-        return dframe_1
-    
-    
-    
-    elif algo==35:
-        
-        global_optimum=nlopt.opt(nlopt.GN_ISRES,n)
-        global_optimum.set_lower_bounds(problem_info.lower_bound)
-        global_optimum.set_upper_bounds(problem_info.upper_bound)
-        global_optimum.set_min_objective(fwrapped)
-        global_optimum.set_xtol_abs(x_tol_abs)
-        global_optimum.set_ftol_abs(f_tol_abs)
-        comp_budge=np.array(computational_budget)
-        df=[]
-        for j in range(comp_budge.size):
-            comp_budge_j=comp_budge[j]
-            global_optimum.set_maxeval(comp_budge_j)
-            for i in range(len(x_0)):
-                #start_point_i=np.array(x_0.iloc[i])
-                optimizer=global_optimum.optimize(np.array(x_0.iloc[i]))
-                function_val=f(optimizer)
-                num_evals=np.array(global_optimum.get_numevals())
-            #### define accuracy measures
-                comp_budget=comp_budge_j
-                abs_diff=np.abs(np.subtract(problem_info.solver,optimizer)) ### account for multiple glob min missing
-                success_crit_x=np.amax(abs_diff)
-                success_crit_f=np.abs(np.subtract(problem_info.solver_function_value,function_val))
-            
-                information=np.hstack((problem_info.name,function_val,num_evals,comp_budget,success_crit_x,success_crit_f,optimizer))
-                df.append(information)
-            
-        
-        dframe=pd.DataFrame(df)
-        dframe_1=dframe.rename(columns={0:"problem",1:"f_val_opt",2:"f_evals",
-                                        3:"comp_budget",4:"success_crit_x",5:"success_crit_f"})
-        
-        return dframe_1
-    
-    
-    
-    
-    
-    elif algo==20:
-        
-        global_optimum=nlopt.opt(nlopt.GN_MLSL,n)
-        local_opt=nlopt.opt(nlopt.LN_NELDERMEAD,10)
-        local_opt.set_xtol_abs(local_tolerance_x)
-        local_opt.set_ftol_abs(local_tolerance_f)
-        global_optimum.set_local_optimizer(local_opt)
-        global_optimum.set_lower_bounds(problem_info.lower_bound)
-        global_optimum.set_upper_bounds(problem_info.upper_bound)
-        global_optimum.set_min_objective(fwrapped)
-        global_optimum.set_xtol_abs(x_tol_abs)
-        global_optimum.set_ftol_abs(f_tol_abs)
-        comp_budge=np.array(computational_budget)
-        df=[]
-        for j in range(comp_budge.size):
-            comp_budge_j=comp_budge[j]
-            global_optimum.set_maxeval(comp_budge_j)
-            for i in range(len(x_0)):
-                #start_point_i=np.array(x_0.iloc[i])
-                optimizer=global_optimum.optimize(np.array(x_0.iloc[i]))
-                function_val=f(optimizer)
-                num_evals=np.array(global_optimum.get_numevals())
-            #### define accuracy measures
-                comp_budget=comp_budge_j
-                abs_diff=np.abs(np.subtract(problem_info.solver,optimizer)) ### account for multiple glob min missing
-                success_crit_x=np.amax(abs_diff)
-                success_crit_f=np.abs(np.subtract(problem_info.solver_function_value,function_val))
-            
-                information=np.hstack((problem_info.name,function_val,num_evals,comp_budget,success_crit_x,success_crit_f,optimizer))
-                df.append(information)
-            
-        
-        dframe=pd.DataFrame(df)
-        dframe_1=dframe.rename(columns={0:"problem",1:"f_val_opt",2:"f_evals",
-                                        3:"comp_budget",4:"success_crit_x",5:"success_crit_f"})
-        
-        return dframe_1
-    
-    
-    
-    
-    elif algo==8:
-        
-        global_optimum=nlopt.opt(nlopt.GD_STOGO,n)
-        global_optimum.set_lower_bounds(problem_info.lower_bound)
-        global_optimum.set_upper_bounds(problem_info.upper_bound)
-        global_optimum.set_min_objective(f)
-        global_optimum.set_xtol_abs(x_tol_abs)
-        global_optimum.set_ftol_abs(f_tol_abs)
-        comp_budge=np.array(computational_budget)
-        df=[]
-        for j in range(comp_budge.size):
-            comp_budge_j=comp_budge[j]
-            global_optimum.set_maxeval(comp_budge_j)
-            for i in range(len(x_0)):
-                #start_point_i=np.array(x_0.iloc[i])
-                optimizer=global_optimum.optimize(np.array(x_0.iloc[i]))
-                function_val=f(optimizer)
-                num_evals=np.array(global_optimum.get_numevals())
-            #### define accuracy measures
-                comp_budget=comp_budge_j
-                abs_diff=np.abs(np.subtract(problem_info.solver,optimizer)) ### account for multiple glob min missing
-                success_crit_x=np.amax(abs_diff)
-                success_crit_f=np.abs(np.subtract(problem_info.solver_function_value,function_val))
-            
-                information=np.hstack((problem_info.name,function_val,
-                                       num_evals,comp_budget,success_crit_x,success_crit_f,optimizer))
-                df.append(information)
-            
-        
-        dframe=pd.DataFrame(df)
-        dframe_1=dframe.rename(columns={0:"problem",1:"f_val_opt",2:"f_evals",
-                                        3:"comp_budget",4:"success_crit_x",5:"success_crit_f"})
-        
-        return dframe_1
-    
-    
-    
-    
-    
-    
-def get_success_results_correct_x(results,tau,computational_budget):
-    
-    ###### first drop all Problems where f_eval > max_eval allowed
-    results.comp_budget=results['comp_budget'].astype(float)
-    results.f_evals=results['f_evals'].astype(float)
-    
-    vector_trues=np.less_equal(results.f_evals,results.comp_budget)
-    
-    #### create dataframe
-    
-    d = {'comp_budget': results.comp_budget, 'f_evals': results.f_evals,'success_crit_x': results.success_crit_x,'trues':vector_trues}
-    df = pd.DataFrame(data=d)
-    df_filtered=df[df['trues']==True]
-    df_filtered
-    results.comp_budget=results['comp_budget'].astype(int)
-    comp_budge=np.array(computational_budget)
-    
-    df=[]
-    for i in range (comp_budge.size):
-        comp_b_i=computational_budget[i]
-        data_i=df_filtered[df_filtered.comp_budget==comp_b_i]
-        success_criterion_i=np.array(data_i.success_crit_x)
-        success_crit=success_criterion_i.astype(np.float)
-        comparison_vector=np.full((1,success_crit.size),tau)
-        result_r=np.less(success_crit,comparison_vector)
-        df_describe=pd.DataFrame(np.transpose(result_r))
-        df_101=df_describe.rename(columns={0:"results"})
-        trues=df_101[df_101.results==True]
-        success_prob=np.array(trues.size/100)
-        stats=np.hstack((comp_b_i,success_prob))
-        df.append(stats)
-    
-    dataframe_success=pd.DataFrame(df)
-    dataframe_success_1= dataframe_success.rename(columns={0:"comp_budget",1:'success_prob'})
-    
-    return dataframe_success_1
-
-
-
-def success_results_x_all(results_list,tau,computational_budget,cols): #### columns argument of type columns={0:"comp_budget",1:"first algo name".....}
-    #df.insert(0, 'new_column', ['a','b','c'])
-    df=[]
-    df.append(np.array(computational_budget))
-    for i in range(len(results_list)):
-        success_result_i=get_success_results_correct_x(results_list[i],tau,computational_budget)
-        #success_result_i_array=np.array(success_result_i.iloc[:,1]).reshape(len(computational_budget),1)
-        df.append(success_result_i.iloc[:,1])
-    
-    dataframe_success=pd.DataFrame(df)
-    dataframe_success_1=dataframe_success.transpose()
-    dataframe_success_2= dataframe_success_1.rename(columns=cols)
-    
-    return dataframe_success_2
-
-
-
-
 def data_profile(success_results_frame,color_vector):
     plt.figure(figsize=(10,5))
     plt.xscale('log')
@@ -337,6 +45,12 @@ def data_profile(success_results_frame,color_vector):
     
     
 def get_success_results_correct(results,tau,computational_budget,success_criterion):
+    
+    #### arguments:
+    #### results frame of a single algorithm
+    #### tau: desired tolerance level
+    #### computational budget: vector that contains the computational budgets
+    #### success criterion: 0 for X-VAL, 1 for F-VAL
     
     no_start_points=len(results)/len(computational_budget)
     
@@ -409,7 +123,9 @@ def get_success_results_correct(results,tau,computational_budget,success_criteri
     
         return dataframe_success_1
     
-    
+###### the function below performs the success results function for a list of result dataframes and returns a dataframe of success probabilities with a column
+###### for each algorithm (result frame)
+
 def success_results_all(results_list,tau,computational_budget,cols,success_criterion): 
     #### columns argument of type columns={0:"comp_budget",1:"first algo name".....}
     #df.insert(0, 'new_column', ['a','b','c'])
@@ -426,6 +142,10 @@ def success_results_all(results_list,tau,computational_budget,cols,success_crite
     
     return dataframe_success_2
 
+
+##### this function plots the data profile
+#### arguments: success results frame generated by the function success_results_all, vector of matplotlib colors, vector of markers,
+##### a string vector containing algorithm names
 
 
 def data_profile_general(success_results_frame,color_vector,marker_vector,algo_names):
@@ -454,6 +174,8 @@ def data_profile_general(success_results_frame,color_vector,marker_vector,algo_n
 
 
 ###### filter function that drops all sucessfull implementations
+##### only failed implementations remain
+#### arguments: results frame ,tau: desired tolerance, success criterion: 0-> X-VAL, 1-> F-VAL, n: dimension number of test function
 
 
 def filter_dataframe(results,tau,success_criterion,n):
@@ -586,7 +308,7 @@ def mean_deviation_frame(dataframe_deviation,computational_budget):
 
 
 def get_deviation_results_all(results_list,tau,success_criterion,computational_budget,info_object,cols_algo_names,n,computation_method_x=None):
-    
+    ### this function computes the deviation results for each algorithm on a specific problem and success criterion chosen
     ### results_list: list containing results dataframes of algorithms to consider
     ### tau: desired tolerance of success
     ### success_criterion: 0->x_criterion/ 1-> f_val_criterion
@@ -614,7 +336,7 @@ def get_deviation_results_all(results_list,tau,success_criterion,computational_b
 
 
 
-
+##### the function below plots the mean deviations of failed implementations across all budgets considered
 
 def deviation_profile_general(deviation_results_frame,color_vector,marker_vector,algo_names):
     plt.figure(figsize=(20,10))
@@ -645,6 +367,11 @@ def deviation_profile_general(deviation_results_frame,color_vector,marker_vector
 def filter_dataframe_converged(results,tau,success_criterion,n):
     
     #### add column that indicates whether success criterion was met-> converged
+    #### arguments:
+    #### results: dataframe containing results for a given algorithm and problem
+    #### tau: desired tolerance level
+    #### success_criterion: 0 for X-VAL and 1 fo F-VAl
+    #### n: number of dimensions of the test problem
     
     cols_dev=('f_evals','comp_budget','f_val_opt','success_crit_x','success_crit_f','6','7','8','9','10','11','12','13','14','15')
     res_filtered=results.loc[:,cols_dev[0:(n+5)]]
@@ -805,8 +532,8 @@ def minimization_guvenen_all(f,computational_budget,algo,x_0,n,problem_info,x_to
     #######################################################################################################
     
     
-    ## x_tol: is the absolute Tolerance allowed
-    ## f_tol: tolerance in function value allowed
+    ## x_tol_abs: is the absolute Tolerance chosen
+    ## f_tol_abs: tolerance in function value chosen
     ## f: we need to specify the objective function
     ## computational budget: is a vector that contains different computational budgets between 0 and 10^5
     ## algo: specify the algorithm you want to use from the nlopt library -> argument has to have the form:
@@ -818,6 +545,8 @@ def minimization_guvenen_all(f,computational_budget,algo,x_0,n,problem_info,x_to
                     ## as for example the domain
                     ## the best solver
                     ## function value of the best solver etc
+    ### local_tolerance_x= for MLSL algorithms we have to choose a tolerance for the loacl optimization stage
+    ### local_tolerance_f= for MLSL algorithms we have to choose a tolerance for the loacl optimization stage
     ### If you want to stop the optimization routine when the x_tol_abs for convergence is met 
     ########   -> plug in -inf for f_tol_abs
     ##### If you want to stop the optimization routine when the f_tol_abs convergence criterion is met specify:
@@ -826,12 +555,17 @@ def minimization_guvenen_all(f,computational_budget,algo,x_0,n,problem_info,x_to
     ######################################      Output       ################################################
     
     #### returns a dataframe containing:
-    #### a vector of the optimizer -> columns #6-15 coordinate vector
-    #### the function value of the optimizer -> next column                ##### this is done 100 times
-    #### number of function evaluations -> next columns                      #### for all 100 starting points
+    #### name of the problem column zero
+    #### function value of returned optimum column one
+    #### number of function evaluations needed to get that optimum column two
+    #### computational budget hat is set column three
+    #### calculated success criterion x column four
+    #### calculated success criterion f column five
+    #### a vector of the optimizer -> columns #6-15 (coordinate vector)
     ### accuracy measures as specified in Guvenen et al. 
     
-   ###### define the polishing search at the end of each global optimization
+   
+   ###### define the polishing search that is done at the end of each global optimization
     fwrapped=lambda x,grad:f(x)
 
     polishing_optimizer=nlopt.opt(nlopt.LN_NELDERMEAD,n)
@@ -1086,7 +820,21 @@ def minimization_guvenen_all(f,computational_budget,algo,x_0,n,problem_info,x_to
 
     
     
-###################
+################### this function automates the calculation of results across algorithms
+
+### arguments:
+### f: objective function
+### computational_budget: array containing computational budgets considered
+### algo_list: list of algorithms considered
+### x_0: dataframe of starting points for a problem
+### n: number of dimensions of the test problem
+### problem_info: info object that stores information about the objective function
+### x_tol_abs: desired tolerance in parameter vector
+## f_tol_abs: desired tolerance in function value
+### path: path where to store results
+### file_names: names of files we want to store
+### local_tolerance_x_list: list of tolerances for local stage
+### local_tolerance_f_list: list of tolerances for local stage
 
 
 def automate_result_generation(f,computational_budget,algo_list,x_0,n,problem_info,x_tol_abs,f_tol_abs,path,file_names,
@@ -1103,6 +851,7 @@ def automate_result_generation(f,computational_budget,algo_list,x_0,n,problem_in
 
 
 #### additional function that might be of interest later
+#### this function filters all successfull implementations from a results dataframe for a given tolerance and success criterion
 
 
 
@@ -1176,8 +925,7 @@ def minimization_guvenen_2D(f,computational_budget,algo,x_0,n,problem_info,x_tol
     ## f: we need to specify the objective function
     ## computational budget: is a vector that contains different computational budgets between 0 and 10^5
     ## algo: specify the algorithm you want to use from the nlopt library -> argument has to have the form:
-    ######## nlopt.algorithm_name e.g. nlopt.GN_ISRES for ISRES Algorithm
-    ## algorithm: specify the algorithm 
+    ######## nlopt.algorithm_name e.g. nlopt.GN_ISRES for ISRES Algorithm 
     ## x_0: contains the randomly generated starting points -> pandas dataframe containing starting values
     ## n: number of dimensions the problem should have
     ## problem_info: object that that contains known information about the objective function 
@@ -1192,12 +940,16 @@ def minimization_guvenen_2D(f,computational_budget,algo,x_0,n,problem_info,x_tol
     ######################################      Output       ################################################
     
     #### returns a dataframe containing:
-    #### a vector of the optimizer -> columns #6-15 coordinate vector
-    #### the function value of the optimizer -> next column                ##### this is done 100 times
-    #### number of function evaluations -> next columns                      #### for all 100 starting points
+    #### name of the problem column zero
+    #### function value of returned optimum column one
+    #### number of function evaluations needed to get that optimum column two
+    #### computational budget hat is set column three
+    #### calculated success criterion x column four
+    #### calculated success criterion f column five
+    #### a vector of the optimizer -> columns #6-8 (coordinate vector)
     ### accuracy measures as specified in Guvenen et al. 
     
-   ###### define the polishing search at the end of each global optimization
+   ###### define the polishing search that is done at the end of each global optimization
     #fwrapped=lambda x,grad:f(x)
     fwrapped=f
 
@@ -1485,28 +1237,26 @@ def minimization_guvenen_application(f,computational_budget,algo,x_0,n,problem_i
     ## f: we need to specify the objective function
     ## computational budget: is a vector that contains different computational budgets between 0 and 10^5
     ## algo: specify the algorithm you want to use from the nlopt library -> argument has to have the form:
-    ######## nlopt.algorithm_name e.g. nlopt.GN_ISRES for ISRES Algorithm
-    ## algorithm: specify the algorithm 
+    ######## nlopt.algorithm_name e.g. nlopt.LN_COBYLA for Cobyla Algorithm
     ## x_0: contains the randomly generated starting points -> pandas dataframe containing starting values
-    ## n: number of dimensions the problem should have
+    ## n: number of dimensions the problem should have application has three dimensions
     ## problem_info: object that that contains known information about the objective function 
                     ## as for example the domain
                     ## the best solver
                     ## function value of the best solver etc
-    ### If you want to stop the optimization routine when the x_tol_abs for convergence is met 
-    ########   -> plug in -inf for f_tol_abs
-    ##### If you want to stop the optimization routine when the f_tol_abs convergence criterion is met specify:
-    ######## -> x_tol_abs=-inf
-    
+
     ######################################      Output       ################################################
     
     #### returns a dataframe containing:
-    #### a vector of the optimizer -> columns #6-15 coordinate vector
-    #### the function value of the optimizer -> next column                ##### this is done 100 times
-    #### number of function evaluations -> next columns                      #### for all 100 starting points
+    #### name of the problem column zero
+    #### function value of returned optimum column one
+    #### number of function evaluations needed to get that optimum column two
+    #### computational budget hat is set column three
+    #### calculated success criterion x column four
+    #### calculated success criterion f column five
+    #### a vector of the optimizer -> columns #6-9 (coordinate vector)
     ### accuracy measures as specified in Guvenen et al. 
     
-   ###### define the polishing search at the end of each global optimization
     #fwrapped=lambda x,grad:f(x)
     #constraint_wrapped= lambda x,grad:constraint(x)
     fwrapped=f
@@ -1593,7 +1343,7 @@ def minimization_guvenen_application(f,computational_budget,algo,x_0,n,problem_i
         
         
         
-############## Data Pofile application
+############## Data Pofile application similar to general Data Profile
 
 def data_profile_application(success_results_frame,color_vector,marker_vector,algo_names):
     plt.figure(figsize=(10,10))
@@ -1618,7 +1368,7 @@ def data_profile_application(success_results_frame,color_vector,marker_vector,al
     # function to show the plot
     return plt.show()
 
-
+######### Deviation Profile application similar to general Deviation profile
 
 def deviation_profile_application(deviation_results_frame,color_vector,marker_vector,algo_names):
     plt.figure(figsize=(20,10))
@@ -1651,8 +1401,8 @@ def deviation_profile_application(deviation_results_frame,color_vector,marker_ve
 
 def get_converged_vector_revised(results,tau,success_criterion,computational_budget,n):
     ### returns a vector that sets the number of FEs to infinity for all problems algorithm i did not solved 
-    ###(Problems: each starting point is a different problem)
-    ### number of problems = number of different starting points considered
+    ### arguments: results: dataframe of results for a given problem and algorithm, tau: desired tolerance, success_criterion: 0 for X-VAl and 1 for F-Val,
+    ### n: is the number of dimensions of the test function
     
     no_starting_points=np.int(len(results)/len(computational_budget))
     no_budgets=np.int(len(computational_budget))
@@ -1678,6 +1428,14 @@ def get_converged_vector_revised(results,tau,success_criterion,computational_bud
 
 
 def get_performance_metrics_revised(results_list,tau,success_criterion,computational_budget,cols,n):
+    ### this function computes the performance metric r_p,s for a given problem for all algorithms considered
+    ### arguments
+    ### results_list: list of results of all algorithms for the considered test problem
+    ### tau: desired tolerance level
+    ### success_criterion. 0 for X-VAL and 1 for F-VAL
+    ### computational budget: vector containing the considered budgets
+    ### cols: string vector containing the algorithm names as columns
+    ### n: dimension of test function considered
     
     df=[]
     
@@ -1699,6 +1457,13 @@ def get_performance_metrics_revised(results_list,tau,success_criterion,computati
 
 
 def get_performance_metrics_alpha(performance_metrics_object,alpha,cols):
+    
+    ### this function calculates the amount of performance metrics r_ps which lie below alpha_i for each alpha considered and each algorithm for one considered 
+    ### test problem
+    ### arguments:
+    ### performance metrics object: object generated by the function get_performance_metrics_revised
+    ### alpha: vector of alphas we consider
+    ## cols: string vector containing the algorithm names as columns
     
     rf=[]
     #rf.append(alpha)
@@ -1727,6 +1492,13 @@ def get_performance_metrics_alpha(performance_metrics_object,alpha,cols):
     return dataframe_2
 
 
+##### function get_metrics_aggregated aggregates performance metrics across test problems for all algorithms
+#### arguments: 
+#### metrics_list_objects: a list of objects, for each test problem considered one of the class get_performance_metrics_alpha 
+#### no_start_points: number of start points considered in benchmarking experiment
+#### no_budgets: number of computational budgets considered in benchmarking experiment
+### cols: col names (that are the algorithm names)
+### alphas: vector of alphas considered
 
 
 def get_metrics_aggregated(metrics_list_object,no_start_points,no_budgets,cols,alpha):
@@ -1764,6 +1536,9 @@ def get_metrics_aggregated(metrics_list_object,no_start_points,no_budgets,cols,a
 
 
 
+##### function that plots the performance profile
+#### arguments: metrics_agg_frame: a frame of aggregated performance metrics across test problems that contains all algorithms, color_vector: vector of colors,
+### marker_vector: vector of markers, algo_names: string vector of algorithm names
 
 def performance_profile(metrics_agg_frame,color_vector,marker_vector,algo_names):
     plt.figure(figsize=(10,10))
@@ -1789,6 +1564,7 @@ def performance_profile(metrics_agg_frame,color_vector,marker_vector,algo_names)
     return plt.show()
 
 
+##### deviation profile plotting function for rosenbrock function with changed axis bounds
 
 def deviation_profile_rosen(deviation_results_frame,color_vector,marker_vector,algo_names):
     plt.figure(figsize=(20,10))

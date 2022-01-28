@@ -16,7 +16,7 @@ np.set_printoptions(precision=20)
 pd.set_option("display.precision", 14)
 
 
-
+##### the functions in this file are used to generated random starting points for test functions and our economic application
 
 
 def get_starting_points(n,problem_info_object,p):
