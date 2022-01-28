@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def initial_simplex(dim, domain):
+def initial_simplex(dim, domain, eps=0.5):
     """Return a dim- dimensional simplex within the cube domain^n
     Args:
         dim:           the dimension we are working with
@@ -11,7 +11,7 @@ def initial_simplex(dim, domain):
         A:           the verticies of the simplex in an dim+1 dimensional array
 
     """
-    A = np.random.rand(dim + 1, dim)
+    A = np.random.rand(dim + 1, dim) * eps
     A = [domain[0] + x * (domain[1] - domain[0]) for x in A]
 
     return A
