@@ -2,23 +2,22 @@ import pandas as pd
 import math
 import autograd.numpy as np
 from autograd import grad, jacobian
-from aux_m.test_problems import problem_application_correct_1
 
 
 from numpy.testing import assert_array_equal
 from numpy.testing import assert_array_almost_equal
 
 
-from nelder_mead_based_optimization_source import (
+from auxiliary.nelder_mead_based_optimization_source import (
     initial_simplex,
     call_nelder_mead_method,
     nm_replace_final,
 )
-from newton_based_optimization_source import (
+from auxiliary.newton_based_optimization_source import (
     naive_optimization,
 )
 
-from functions import rastrigin, griewank, levi_no_13, rosenbrock
+from auxiliary.functions import rastrigin, griewank, levi_no_13, rosenbrock
 
 
 FACTORS = list("cni")
