@@ -15,7 +15,7 @@ from autograd import value_and_grad
 np.set_printoptions(precision=20)
 pd.set_option("display.precision", 14)
 
-
+####### this file contains the test problems (functions) considered in our project and additional test problems
 ####### Functions that work for all algorithms 
 
 
@@ -113,7 +113,7 @@ def problem_ackley(x):
 
 
 
-def problem_schwefel(x):  # schw.m
+def problem_schwefel(x):  
     x = np.asarray_chkfinite(x)
     n = len(x)
     return 418.9829*n - np.sum( x * np.sin( np.sqrt( np.abs( x ))))
