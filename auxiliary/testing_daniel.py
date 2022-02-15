@@ -13,15 +13,15 @@ from auxiliary.test_functions_daniel_copy import levi_no_13_instance
 from auxiliary.test_functions_daniel_copy import griewank_instance
 from auxiliary.functions_daniel_copy import rastrigin, rosenbrock, levi_no_13, griewank
 
-#from auxiliary.newton_based_optimization_source import (
-    #find_starting_point,
-    #naive_optimization,
-    #newton_method,
-#)
+# from auxiliary.newton_based_optimization_source import (
+# find_starting_point,
+# naive_optimization,
+# newton_method,
+# )
 
-#from auxiliary.nelder_mead_based_optimization_source import initial_simplex, nelder_mead_method
+# from auxiliary.nelder_mead_based_optimization_source import initial_simplex, nelder_mead_method
 
-#from auxiliary.work_niel_copy import first_derivative_1D, newton_method_1D
+# from auxiliary.work_niel_copy import first_derivative_1D, newton_method_1D
 
 
 def plot_test_function(domain, function, name_of_function="some function"):
@@ -55,9 +55,7 @@ def plot_test_function(domain, function, name_of_function="some function"):
     pass
 
 
-
-
-def plot_test_function_contour(domain, function,name_of_function,opt):
+def plot_test_function_contour(domain, function, name_of_function, opt):
     """Plot a 3d graph of a function.
 
     Args:
@@ -85,6 +83,6 @@ def plot_test_function_contour(domain, function,name_of_function,opt):
 
     plt.contourf(X, Y, Z)
     ax.set(xlabel="x", ylabel="y", title="f = " + name_of_function)
-    ax.scatter(opt[0], opt[1], c = "red", marker = "x")
+    ax.scatter(opt[0], opt[1], c="red", marker="x")
     plt.show()
     pass
