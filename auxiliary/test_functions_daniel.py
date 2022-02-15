@@ -5,7 +5,7 @@ from numpy.testing import assert_array_equal
 from numpy.testing import assert_array_almost_equal
 
 
-from auxiliary.functions_daniel_copy import (
+from auxiliary.functions_daniel import (
     rastrigin_instance,
     griewank_instance,
     levi_no_13_instance,

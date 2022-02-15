@@ -7,11 +7,11 @@ from mpl_toolkits.mplot3d import Axes3D
 from numpy.lib.function_base import vectorize
 
 # functions to be tested
-from auxiliary.test_functions_daniel_copy import rastrigin_instance
-from auxiliary.test_functions_daniel_copy import rosenbrock_instance
-from auxiliary.test_functions_daniel_copy import levi_no_13_instance
-from auxiliary.test_functions_daniel_copy import griewank_instance
-from auxiliary.functions_daniel_copy import rastrigin, rosenbrock, levi_no_13, griewank
+from auxiliary.test_functions_daniel import rastrigin_instance
+from auxiliary.test_functions_daniel import rosenbrock_instance
+from auxiliary.test_functions_daniel import levi_no_13_instance
+from auxiliary.test_functions_daniel import griewank_instance
+from auxiliary.functions_daniel import rastrigin, rosenbrock, levi_no_13, griewank
 
 # from auxiliary.newton_based_optimization_source import (
 # find_starting_point,
