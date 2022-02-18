@@ -209,7 +209,7 @@ def call_nelder_mead_method(
         or f_difference < y_tolerance
         or calls >= computational_budget
     ):
-        return [np.round(verts[indexes[0]]), calls]
+        return [np.array(np.round(verts[indexes[0]])), calls]
 
     # 3 Reflection
     f_x_r = f(x_r)
