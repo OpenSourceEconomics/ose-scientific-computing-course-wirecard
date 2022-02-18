@@ -8,16 +8,16 @@ from numpy.testing import assert_array_equal
 from numpy.testing import assert_array_almost_equal
 
 
-from auxiliary.nelder_mead_based_optimization_source import (
+from nelder_mead_based_optimization_source import (
     initial_simplex,
     call_nelder_mead_method,
     nm_replace_final,
 )
-from auxiliary.newton_based_optimization_source import (
+from newton_based_optimization_source import (
     naive_optimization,
 )
 
-from auxiliary.functions import rastrigin, griewank, levi_no_13, rosenbrock
+from functions import rastrigin, griewank, levi_no_13, rosenbrock
 
 
 FACTORS = list("cni")
@@ -31,51 +31,6 @@ def test_nm_replace_final():
     x_new = 7
     computed_array = nm_replace_final(input_array, indexes, x_new)
     assert_array_equal(computed_array, expected_new_array)
-
-
-def test_functions_used_here():
-    input_functions_raw = [
-        lambda a: 20 * (a[0] + a[1]) ** 2 + a[1] ** 4 + 1,
-        lambda a: (1 / 200) * (a[0] + 1) ** 2 * (math.cos(a[1]) + 1) + a[1] ** 2,
-        lambda a: (1 / 800) * (a[0] - 6) ** 4 * (math.sin(a[1]) + 3) + a[1] ** 4,
-    ]
-
-    f_1 = lambda b: input_functions_raw[0](b)
-    f_2 = lambda b: input_functions_raw[1](b)
-    f_3 = lambda b: input_functions_raw[2](b)
-
-    input_functions = [lambda b: f_1(b), lambda b: f_2(b), lambda b: f_3(b)]
-
-    input_functions_hard = [
-        lambda a: griewank(a),
-        lambda a: rosenbrock(a),
-        lambda a: rastrigin(a),
-    ]
-
-    expected_minima = [[0, 0], [-1, 0], [6, 0]]
-
-    expected_minima_hard = [[0, 0], [1, 1], [0, 0]]
-
-    names_of_functions = [
-        "lambda a: 20 * (a[0] + a[1]) ** 2 + a[1] ** 4 + 1",
-        "lambda a: (1 / 200) * (a[0] + 1) ** 2 * (np.cos(a[1]) + 1) + a[1] ** 2",
-        "lambda a : (1/800) * ( a[0] - 6) ** 4 * (np.sin(a[1])+ 3) + a[1] ** 4",
-    ]
-    names_of_functions_hard = ["griewank", "rosenbrock", "rastrigin"]
-
-    A = []
-    for function, name in zip(input_functions, names_of_functions):
-        print(name)
-        A.append(function([1, 2]))
-        A.append(function([2, 3]))
-        A.append(function([4, 2]))
-        # A.append(function(np.array([1,2])))
-        # A.append(function(np.array([2,3])))
-        # A.append(function(np.array([4,2])))
-        df = jacobian(function)
-        J = jacobian(function)
-        print(df(np.array([1.0, 2.0])))
-        # A.append(J([1,2]))
 
 
 def test_old_newton_opti():
@@ -160,13 +115,13 @@ def test_call_nelder_mead_method():
 
     # print(call_nelder_mead_method(input_functions[0], initial_simplex(2, [-5, 5]), 2))
     computed_minima = [
-        call_nelder_mead_method(input_function, initial_simplex(2, [-5, 5]), 2)[0]
+        call_nelder_mead_method(input_function, initial_simplex(2, [-5, 5]))[0]
         for input_function in input_functions
     ]
 
     computed_minima_hard = [
         call_nelder_mead_method(
-            input_function, initial_simplex(2, starting_point, 0.1), 2
+            input_function, initial_simplex(2, starting_point, 0.1)
         )[0]
         for input_function, starting_point in zip(
             input_functions_hard, starting_points_hard

@@ -137,6 +137,13 @@ def nm_replace_final(verts, indexes, x_new):
     return new_verts
 
 
+def nm_shrink(verts, indexes, sigma):
+    v_0 = verts[indexes[0]]
+    for i in indexes[1:]:
+        verts[i] = v_0 + sigma * (verts[i] - v_0)
+    return verts
+
+
 # TODO
 
 # Maybe we could implement the nelder-mead-method as a class such that we can safe, call and change the values alpha, gamma, rho and sigma
@@ -145,19 +152,19 @@ def nm_replace_final(verts, indexes, x_new):
 def call_nelder_mead_method(
     f,
     verts,
-    dim,
-    f_difference=10,
-    calls=0,
-    terminate_criterion=terminate_criterion_x,
     x_tolerance=1e-6,
     y_tolerance=1e-6,
     computational_budget=1000,
+    f_difference=10,
+    calls=0,
+    terminate_criterion=terminate_criterion_x,
     alpha=1,
     gamma=2,
     rho=0.5,
     sigma=0.5,
     values=[],
 ):
+
     """Return an approximation of a local optimum.
 
     Args:
@@ -214,13 +221,12 @@ def call_nelder_mead_method(
             return call_nelder_mead_method(
                 f,
                 nm_replace_final(verts, indexes, x_r),
-                dim,
-                f_difference,
-                calls,
-                terminate_criterion,
                 x_tolerance,
                 y_tolerance,
                 computational_budget,
+                f_difference,
+                calls,
+                terminate_criterion,
                 alpha,
                 gamma,
                 rho,
@@ -240,13 +246,12 @@ def call_nelder_mead_method(
             return call_nelder_mead_method(
                 f,
                 nm_replace_final(verts, indexes, x_e),
-                dim,
-                f_difference,
-                calls,
-                terminate_criterion,
                 x_tolerance,
                 y_tolerance,
                 computational_budget,
+                f_difference,
+                calls,
+                terminate_criterion,
                 alpha,
                 gamma,
                 rho,
@@ -259,13 +264,12 @@ def call_nelder_mead_method(
             return call_nelder_mead_method(
                 f,
                 nm_replace_final(verts, indexes, x_r),
-                dim,
-                f_difference,
-                calls,
-                terminate_criterion,
                 x_tolerance,
                 y_tolerance,
                 computational_budget,
+                f_difference,
+                calls,
+                terminate_criterion,
                 alpha,
                 gamma,
                 rho,
@@ -284,13 +288,12 @@ def call_nelder_mead_method(
         return call_nelder_mead_method(
             f,
             nm_replace_final(verts, indexes, x_c),
-            dim,
-            f_difference,
-            calls,
-            terminate_criterion,
             x_tolerance,
             y_tolerance,
             computational_budget,
+            f_difference,
+            calls,
+            terminate_criterion,
             alpha,
             gamma,
             rho,
@@ -303,15 +306,15 @@ def call_nelder_mead_method(
     return call_nelder_mead_method(
         f,
         nm_shrink(verts, indexes, sigma),
-        dim,
-        f_difference,
-        calls,
-        terminate_criterion,
         x_tolerance,
         y_tolerance,
         computational_budget,
+        f_difference,
+        calls,
+        terminate_criterion,
         alpha,
         gamma,
         rho,
         sigma,
+        values,
     )

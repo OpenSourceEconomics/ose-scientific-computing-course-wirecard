@@ -19,9 +19,13 @@ from newton_based_optimization_source import (
     newton_method,
 )
 
-from nelder_mead_based_optimization_source import initial_simplex, nelder_mead_method
+from nelder_mead_based_optimization_source import (
+    initial_simplex,
+    call_nelder_mead_method,
+)
 
-from work_niel import first_derivative_1D, newton_method_1D
+
+nelder_mead_method = call_nelder_mead_method
 
 
 def plot_test_function(domain, function, name_of_function="some function"):
