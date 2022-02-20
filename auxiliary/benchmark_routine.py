@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import time
 
 
 from callable_algorithms import our_nelder_mead_method, our_newton_based_optimization
@@ -49,20 +50,25 @@ def benchmark_optimization(
 
     starting_points = get_starting_points(n, domain_center, domain_radius, dimension)
 
-    df = pd.DataFrame([], columns=["successfull", "function evaluations"])
+    df = pd.DataFrame([], columns=["computed result", "function evaluations", "time"])
 
     for starting_point in starting_points:
+        start = time.time()
+        a = algo(f, starting_point, x_tolerance, y_tolerance, computational_budget)
+        end = time.time()
+        a = list(a)
         a = pd.Series(
-            algo(f, starting_point, x_tolerance, y_tolerance, computational_budget),
-            index=df.index,
+            a + [end - start],
+            index=df.columns,
         )
         """if (a[0] - optimum) < 1e-6:
             a = a.append(1)
         else:
             a = a.append(0)
         """
-        df.append(a, ignore_index=True)
+        df = df.append(a, ignore_index=True)
 
+    df["correct result"] = pd.Series([optimum] * n)
     # for result, function_calls in zip(df)
 
     return df
