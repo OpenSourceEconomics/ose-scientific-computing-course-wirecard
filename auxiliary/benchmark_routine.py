@@ -69,6 +69,9 @@ def benchmark_optimization(
         df = df.append(a, ignore_index=True)
 
     df["correct result"] = pd.Series([optimum] * n)
+    df["success"] = np.where(
+        np.allclose(df["computed result"], df["correct result"]), 1, 0
+    )
     # for result, function_calls in zip(df)
 
     return df
