@@ -8,9 +8,37 @@ from functions import rastrigin, griewank, rosenbrock, levi_no_13
 
 
 def get_starting_points(n, domain_center, domain_radius, dimension):
+    """Return a dataframe which contains the results of the optimization algorithm applied to the
+       test-funcion f with n different starting point.
+
+    Args:
+        n:                  the number of points which we want to the function to return
+        domain_center:      the center of the domain in which the starting points should lie
+        domain_radius:      the radius of the domain
+        dimension:          the dimension of the space from which we want the starting point
+
+
+    Returns:
+        out:               returns and array of n starting points within the domain_radius around the domain_center
+
+    """
     A = np.random.rand(n, dimension) * domain_radius
     A = [domain_center + x for x in A]
     return A
+
+
+def average_time_success(df):
+    df_new = pd.DataFrame([])
+    df_new["algorithm"] = pd.Series([df.iloc[0]["algorithm"]])
+    df_new["test_function"] = pd.Series([df.iloc[0]["test_function"]])
+    df_new["computational_budget"] = pd.Series([df.iloc[0]["computational_budget"]])
+    df_new["sample_size"] = pd.Series([df.iloc[0]["sample_size"]])
+    df_new["success_rate"] = pd.Series([df["success"].mean()])
+    df_new["average_time"] = pd.Series([df["time"].mean()])
+    df_new["average_function_evaluations"] = pd.Series(
+        [df["function_evaluations"].mean()]
+    )
+    return df_new
 
 
 def benchmark_optimization(
@@ -24,6 +52,8 @@ def benchmark_optimization(
     domain_center,
     domain_radius,
     dimension,
+    algo_name="unknown",
+    t_func_name="unknown",
 ):
 
     """Return a dataframe which contains the results of the optimization algorithm applied to the
@@ -50,7 +80,7 @@ def benchmark_optimization(
 
     starting_points = get_starting_points(n, domain_center, domain_radius, dimension)
 
-    df = pd.DataFrame([], columns=["computed result", "function evaluations", "time"])
+    df = pd.DataFrame([], columns=["computed_result", "function_evaluations", "time"])
 
     for starting_point in starting_points:
         start = time.time()
@@ -61,27 +91,36 @@ def benchmark_optimization(
             a + [end - start],
             index=df.columns,
         )
-        """if (a[0] - optimum) < 1e-6:
-            a = a.append(1)
-        else:
-            a = a.append(0)
-        """
         df = df.append(a, ignore_index=True)
 
-    df["correct result"] = pd.Series([optimum] * n)
-    df["success"] = np.where(
-        np.allclose(df["computed result"], df["correct result"]), 1, 0
+    df["correct_result"] = pd.Series([optimum] * n)
+    df["algorithm"] = pd.Series([algo_name] * n)
+    df["test_function"] = pd.Series([t_func_name] * n)
+    df["computational_budget"] = pd.Series([computational_budget] * n)
+    df["sample_size"] = pd.Series([n] * n)
+    df["success"] = df.apply(
+        lambda row: np.allclose(row.correct_result, row.computed_result), axis=1
     )
-    # for result, function_calls in zip(df)
+    df["success"] = df.apply(lambda row: row.success * 1, axis=1)
 
     return df
-    pass
 
 
 if __name__ == "__main__":
 
     df1 = benchmark_optimization(
-        griewank, [0, 0], our_nelder_mead_method, 100, 1e-4, 1e-6, 100, [0, 0], 5, 2
+        griewank,
+        [0, 0],
+        our_nelder_mead_method,
+        100,
+        1e-4,
+        1e-6,
+        100,
+        [0, 0],
+        5,
+        2,
+        "our_nelder_mead_method",
+        "griewank",
     )
     df2 = benchmark_optimization(
         griewank,
@@ -95,6 +134,8 @@ if __name__ == "__main__":
         5,
         2,
     )
-    print(df1)
-    print(df2)
+    print("df1 summary: \n")
+    print(average_time_success(df1))
+    print("df2 sumary: \n")
+    print(average_time_success(df2))
     pass
