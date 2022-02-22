@@ -106,36 +106,114 @@ def benchmark_optimization(
     return df
 
 
+def run_benchmark(
+    algorithm,
+    test_function,
+    optimum,
+    computational_budgets,
+    domain_center,
+    domain_radius,
+    dimension,
+    n,
+    algorithm_name="unknown",
+    test_function_name="unknown",
+    x_tolerance=1e-6,
+    y_tolerance=1e-6,
+):
+    df = average_time_success(
+        benchmark_optimization(
+            test_function,
+            optimum,
+            algorithm,
+            computational_budgets[0],
+            x_tolerance,
+            y_tolerance,
+            n,
+            domain_center,
+            domain_radius,
+            dimension,
+            algorithm_name,
+            test_function_name,
+        )
+    )
+    count = 0
+    for computational_budget in computational_budgets[1:]:
+        df = pd.concat(
+            [
+                df,
+                average_time_success(
+                    benchmark_optimization(
+                        test_function,
+                        optimum,
+                        algorithm,
+                        computational_budget,
+                        x_tolerance,
+                        y_tolerance,
+                        n,
+                        domain_center,
+                        domain_radius,
+                        dimension,
+                        algorithm_name,
+                        test_function_name,
+                    )
+                ),
+            ],
+            axis=0,
+        )
+        count += 1
+        print("Benchmark ", count, " out of ", len(computational_budgets), "done.")
+    return df
+
+
 if __name__ == "__main__":
 
-    df1 = benchmark_optimization(
-        griewank,
-        [0, 0],
-        our_nelder_mead_method,
-        100,
-        1e-4,
-        1e-6,
-        100,
-        [0, 0],
-        5,
-        2,
-        "our_nelder_mead_method",
-        "griewank",
-    )
-    df2 = benchmark_optimization(
-        griewank,
-        [0, 0],
-        our_newton_based_optimization,
-        100,
-        1e-6,
-        1e-6,
-        100,
-        [0, 0],
-        5,
-        2,
-    )
-    print("df1 summary: \n")
-    print(average_time_success(df1))
-    print("df2 sumary: \n")
-    print(average_time_success(df2))
+    test_benchmark_optimization = False
+    test_accumulated_benchmark = True
+
+    if test_benchmark_optimization == True:
+        df1 = benchmark_optimization(
+            griewank,
+            [0, 0],
+            our_nelder_mead_method,
+            100,
+            1e-4,
+            1e-6,
+            100,
+            [0, 0],
+            5,
+            2,
+            "our_nelder_mead_method",
+            "griewank",
+        )
+        df2 = benchmark_optimization(
+            griewank,
+            [0, 0],
+            our_newton_based_optimization,
+            100,
+            1e-6,
+            1e-6,
+            100,
+            [0, 0],
+            5,
+            2,
+        )
+        print("df1 summary: \n")
+        print(average_time_success(df1))
+        print("df2 sumary: \n")
+        print(average_time_success(df2))
+
+    if test_accumulated_benchmark == True:
+        df = run_benchmark(
+            our_nelder_mead_method,
+            griewank,
+            [0, 0],
+            [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+            [0, 0],
+            4,
+            2,
+            25,
+            "our nelder mead method",
+            "griewank",
+        )
+        print(df)
     pass
