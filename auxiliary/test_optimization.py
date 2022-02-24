@@ -17,6 +17,8 @@ from newton_based_optimization_source import (
     naive_optimization,
 )
 
+from callable_algorithms import find_starting_points
+
 from functions import rastrigin, griewank, levi_no_13, rosenbrock
 
 

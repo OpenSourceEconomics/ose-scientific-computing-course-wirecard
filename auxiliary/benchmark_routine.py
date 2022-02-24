@@ -2,10 +2,6 @@ import numpy as np
 import pandas as pd
 import time
 import matplotlib.pyplot as plt
-from auxiliary.callable_algorithms import (
-    our_smart_nelder_mead_method,
-    our_smart_newton_based_optimization,
-)
 
 
 from callable_algorithms import (
@@ -51,19 +47,72 @@ def average_time_success(df):
     return df_new
 
 
-def benchmark_optimization(
+def benchmark_smart_optimization(
+    f,
+    algorithm,
+    computational_budget,
+    domain_center,
+    domain_radius,
+    n,
+    dimension,
+    optimum,
+    algo_name="unknown",
+    t_func_name="unknown",
+    x_tolerance=1e-6,
+    y_tolerance=1e-6,
+    sample_size=50,
+    number_of_candidates=5,
+):
+    df = pd.DataFrame([], columns=["computed_result", "function_evaluations", "time"])
+
+    for i in range(n):
+        start = time.time()
+        a = algorithm(
+            f,
+            computational_budget,
+            domain_center,
+            domain_radius,
+            dimension,
+            sample_size,
+            number_of_candidates,
+            x_tolerance,
+            y_tolerance,
+        )
+        end = time.time()
+        a = list(a)
+        a = pd.Series(
+            a + [end - start],
+            index=df.columns,
+        )
+        df = df.append(a, ignore_index=True)
+
+    df["correct_result"] = pd.Series([optimum] * n)
+    df["algorithm"] = pd.Series([algo_name] * n)
+    df["test_function"] = pd.Series([t_func_name] * n)
+    df["computational_budget"] = pd.Series([computational_budget] * n)
+    df["sample_size"] = pd.Series([n] * n)
+    df["success"] = df.apply(
+        lambda row: np.allclose(row.correct_result, row.computed_result), axis=1
+    )
+    df["success"] = df.apply(lambda row: row.success * 1, axis=1)
+
+    return df
+    pass
+
+
+def benchmark_simple_optimization(
     f,
     optimum,
     algo,
     computational_budget,
-    x_tolerance,
-    y_tolerance,
     n,
     domain_center,
     domain_radius,
     dimension,
     algo_name="unknown",
     t_func_name="unknown",
+    x_tolerance=1e-6,
+    y_tolerance=1e-6,
 ):
 
     """Return a dataframe which contains the results of the optimization algorithm applied to the
@@ -116,7 +165,7 @@ def benchmark_optimization(
     return df
 
 
-def run_benchmark(
+def run_simple_benchmark(
     algorithm,
     test_function,
     optimum,
@@ -130,41 +179,110 @@ def run_benchmark(
     x_tolerance=1e-6,
     y_tolerance=1e-6,
 ):
+
     df = average_time_success(
-        benchmark_optimization(
+        benchmark_simple_optimization(
             test_function,
             optimum,
             algorithm,
             computational_budgets[0],
-            x_tolerance,
-            y_tolerance,
             n,
             domain_center,
             domain_radius,
             dimension,
             algorithm_name,
             test_function_name,
+            x_tolerance,
+            y_tolerance,
         )
     )
     count = 0
     for computational_budget in computational_budgets[1:]:
+        print(computational_budget)
         df = pd.concat(
             [
                 df,
                 average_time_success(
-                    benchmark_optimization(
+                    benchmark_simple_optimization(
                         test_function,
                         optimum,
                         algorithm,
                         computational_budget,
-                        x_tolerance,
-                        y_tolerance,
                         n,
                         domain_center,
                         domain_radius,
                         dimension,
                         algorithm_name,
                         test_function_name,
+                        x_tolerance,
+                        y_tolerance,
+                    )
+                ),
+            ],
+            axis=0,
+        )
+        count += 1
+        print("Benchmark ", count, " out of ", len(computational_budgets), "done.")
+    return df
+
+
+def run_smart_benchmark(
+    algorithm,
+    test_function,
+    optimum,
+    computational_budgets,
+    domain_center,
+    domain_radius,
+    dimension,
+    n,
+    sample_size=100,
+    number_of_candidates=5,
+    algorithm_name="unknown",
+    test_function_name="unknown",
+    x_tolerance=1e-6,
+    y_tolerance=1e-6,
+):
+
+    df = average_time_success(
+        benchmark_smart_optimization(
+            test_function,
+            algorithm,
+            computational_budgets[0],
+            domain_center,
+            domain_radius,
+            n,
+            dimension,
+            optimum,
+            algorithm_name,
+            test_function_name,
+            x_tolerance,
+            y_tolerance,
+            sample_size,
+            number_of_candidates,
+        )
+    )
+    count = 0
+    for computational_budget in computational_budgets[1:]:
+        print(computational_budget)
+        df = pd.concat(
+            [
+                df,
+                average_time_success(
+                    benchmark_smart_optimization(
+                        test_function,
+                        algorithm,
+                        computational_budget,
+                        domain_center,
+                        domain_radius,
+                        n,
+                        dimension,
+                        optimum,
+                        algorithm_name,
+                        test_function_name,
+                        x_tolerance,
+                        y_tolerance,
+                        sample_size,
+                        number_of_candidates,
                     )
                 ),
             ],
@@ -185,32 +303,36 @@ if __name__ == "__main__":
     test_benchmark_optimization = False
     test_accumulated_benchmark = True
 
+    input_functions = [
+        lambda a: 20 * (a[0] + a[1]) ** 2 + a[1] ** 4 + 1,
+        lambda a: (1 / 200) * (a[0] + 1) ** 2 * (np.cos(a[1]) + 1) + a[1] ** 2,
+        lambda a: (1 / 800) * (a[0] - 6) ** 4 * (np.sin(a[1]) + 3) + a[1] ** 4,
+    ]
+
     if test_benchmark_optimization == True:
-        df1 = benchmark_optimization(
+        df1 = benchmark_smart_optimization(
             griewank,
-            [0, 0],
             our_smart_nelder_mead_method,
-            100,
-            1e-4,
-            1e-6,
-            100,
+            400,
             [0, 0],
             5,
+            25,
             2,
-            "our_nelder_mead_method",
+            [0, 0],
+            "our smart nelder mead method",
             "griewank",
         )
-        df2 = benchmark_optimization(
+        df2 = benchmark_smart_optimization(
             griewank,
-            [0, 0],
             our_smart_newton_based_optimization,
-            100,
-            1e-6,
-            1e-6,
-            100,
+            400,
             [0, 0],
             5,
+            25,
             2,
+            [0, 0],
+            "our smart newton based optimization",
+            "griewank",
         )
         print("df1 summary: \n")
         print(average_time_success(df1))
@@ -218,18 +340,19 @@ if __name__ == "__main__":
         print(average_time_success(df2))
 
     if test_accumulated_benchmark == True:
-        df = run_benchmark(
-            our_smart_nelder_mead_method,
-            griewank,
-            [0, 0],
-            np.arange(0, 60, 5),
-            [0, 0],
-            4,
-            2,
-            25,
-            "our nelder mead method",
-            "griewank",
-        )
-        print(df)
-        plot_benchmark_results(df)
+        for input_function in input_functions:
+            df = run_smart_benchmark(
+                our_smart_newton_based_optimization,
+                input_function,
+                [0, 0],
+                [100, 150, 200, 250, 300],
+                [0, 0],
+                4,
+                2,
+                25,
+                algorithm_name="our newton based optimization",
+                test_function_name="polynomial with a little bit of cosinus",
+            )
+            print(df)
+            plot_benchmark_results(df)
     pass

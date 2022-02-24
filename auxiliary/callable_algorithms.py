@@ -184,9 +184,7 @@ def iterate_optimization(
         )
         computational_budget -= sample_size
         i = 0
-        print("das computational budget beträgt: ", computational_budget)
         while computational_budget > 0 and i < number_of_candidates:
-            print("wir sind in kleiner while durchgang: ", i)
             a = algorithm(
                 f, starting_points[i], x_tolerance, y_tolerance, computational_budget
             )
@@ -195,14 +193,12 @@ def iterate_optimization(
             computational_budget -= a[1]
             computational_budget -= 1
             i += 1
-    # print(candidates)
     index = np.argmin(values)
 
     return candidates[index], budget - computational_budget
 
 
 if __name__ == "__main__":
-    # print(find_starting_points(griewank, [0,0], 5, 2, 100, 5))
     print(
         iterate_optimization(
             our_simple_nelder_mead_method, rosenbrock, 1000, [0, 0], 5, 2, 50, 5

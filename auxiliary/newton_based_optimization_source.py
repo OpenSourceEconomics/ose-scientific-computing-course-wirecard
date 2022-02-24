@@ -148,11 +148,12 @@ def newton_method(
     return x_n, calls_of_f_or_df
 
 
-# TODO
+def new_naive_optimization():
+    x_0 = 0
+    pass
 
-# Maybe we could implement the neewton-method as a class such that we can safe, call and change the values alpha, gamma, rho and sigma
 
-
+#
 def naive_optimization(
     f, starting_point, x_tolerance=1e-6, y_tolerance=1e-6, computational_budget=100
 ):
@@ -169,9 +170,7 @@ def naive_optimization(
         out: either an approximation for an optimum or a message if the procedure didnt converge
 
     """
-
     # 1. Set the starting point of the iteration
-
     x_0 = np.array(starting_point).astype(float)
 
     # 2. compute derivative of f
