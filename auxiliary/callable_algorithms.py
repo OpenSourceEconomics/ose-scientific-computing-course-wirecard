@@ -7,6 +7,8 @@
 # return optimum, number_of_function_evaluations
 
 import numpy as np
+from functions import rosenbrock
+from functions import griewank
 from newton_based_optimization_source import naive_optimization
 
 from nelder_mead_based_optimization_source import (
@@ -15,7 +17,7 @@ from nelder_mead_based_optimization_source import (
 )
 
 
-def our_nelder_mead_method(
+def our_simple_nelder_mead_method(
     f,
     starting_point,
     stopping_tolerance_xvalue,
@@ -53,7 +55,7 @@ def our_nelder_mead_method(
     )
 
 
-def our_newton_based_optimization(
+def our_simple_newton_based_optimization(
     f,
     starting_point,
     stopping_tolerance_xvalue,
@@ -83,5 +85,127 @@ def our_newton_based_optimization(
     )
 
 
+def our_smart_nelder_mead_method(
+    f,
+    computational_budget,
+    domain_center,
+    domain_radius,
+    dimension,
+    sample_size=50,
+    number_of_candidates=5,
+    x_tolerance=1e-6,
+    y_tolerance=1e-6,
+):
+    return iterate_optimization(
+        our_simple_nelder_mead_method,
+        f,
+        computational_budget,
+        domain_center,
+        domain_radius,
+        dimension,
+        sample_size=50,
+        number_of_candidates=5,
+        x_tolerance=1e-6,
+        y_tolerance=1e-6,
+    )
+
+
+def our_smart_newton_based_optimization(
+    f,
+    computational_budget,
+    domain_center,
+    domain_radius,
+    dimension,
+    sample_size=50,
+    number_of_candidates=5,
+    x_tolerance=1e-6,
+    y_tolerance=1e-6,
+):
+    return iterate_optimization(
+        our_simple_newton_based_optimization,
+        f,
+        computational_budget,
+        domain_center,
+        domain_radius,
+        dimension,
+        sample_size=50,
+        number_of_candidates=5,
+        x_tolerance=1e-6,
+        y_tolerance=1e-6,
+    )
+
+
+def find_starting_points(
+    f, domain_center, domain_radius, dimension, sample_size, number_of_candidates
+):
+    """Returns a candidate to start the local optimum finding process from.
+    Args:
+        f:              a function from \R^n to \R whose optimum we want to find
+        domain:         the domain of the function in which we want to find the point (domain ist always a cube)
+        n:              the dimension of the domain of the function
+        k:              the amount of random points we draw to run the optimization on.
+
+    Returns:
+        out:            a candidate in domain^n to start the local search for an optimum from
+
+    """
+    A = np.random.rand(sample_size, dimension) * 2 - np.array([1] * dimension)
+    B = [domain_center + x * domain_radius for x in A]
+    C = np.array([f(x) for x in B])
+    D = np.argpartition(C, -number_of_candidates)[-number_of_candidates:]
+    return [B[index] for index in D]
+
+
+def iterate_optimization(
+    algorithm,
+    f,
+    computational_budget,
+    domain_center,
+    domain_radius,
+    dimension,
+    sample_size=50,
+    number_of_candidates=5,
+    x_tolerance=1e-6,
+    y_tolerance=1e-6,
+):
+    budget = computational_budget + 0
+    candidates = []
+    values = []
+
+    i = 0
+    while computational_budget > sample_size:
+        starting_points = find_starting_points(
+            f,
+            domain_center,
+            domain_radius,
+            dimension,
+            sample_size,
+            number_of_candidates,
+        )
+        computational_budget -= sample_size
+        i = 0
+        print("das computational budget beträgt: ", computational_budget)
+        while computational_budget > 0 and i < number_of_candidates:
+            print("wir sind in kleiner while durchgang: ", i)
+            a = algorithm(
+                f, starting_points[i], x_tolerance, y_tolerance, computational_budget
+            )
+            candidates.append(a[0])
+            values.append(f(a[0]))
+            computational_budget -= a[1]
+            computational_budget -= 1
+            i += 1
+    # print(candidates)
+    index = np.argmin(values)
+
+    return candidates[index], budget - computational_budget
+
+
 if __name__ == "__main__":
+    # print(find_starting_points(griewank, [0,0], 5, 2, 100, 5))
+    print(
+        iterate_optimization(
+            our_simple_nelder_mead_method, rosenbrock, 1000, [0, 0], 5, 2, 50, 5
+        )
+    )
     pass

@@ -1,9 +1,19 @@
 import numpy as np
 import pandas as pd
 import time
+import matplotlib.pyplot as plt
+from auxiliary.callable_algorithms import (
+    our_smart_nelder_mead_method,
+    our_smart_newton_based_optimization,
+)
 
 
-from callable_algorithms import our_nelder_mead_method, our_newton_based_optimization
+from callable_algorithms import (
+    our_simple_nelder_mead_method,
+    our_simple_newton_based_optimization,
+    our_smart_nelder_mead_method,
+    our_smart_newton_based_optimization,
+)
 from functions import rastrigin, griewank, rosenbrock, levi_no_13
 
 
@@ -165,6 +175,11 @@ def run_benchmark(
     return df
 
 
+def plot_benchmark_results(df):
+    df.plot(x="computational_budget", y="success_rate", kind="line")
+    plt.show()
+
+
 if __name__ == "__main__":
 
     test_benchmark_optimization = False
@@ -174,7 +189,7 @@ if __name__ == "__main__":
         df1 = benchmark_optimization(
             griewank,
             [0, 0],
-            our_nelder_mead_method,
+            our_smart_nelder_mead_method,
             100,
             1e-4,
             1e-6,
@@ -188,7 +203,7 @@ if __name__ == "__main__":
         df2 = benchmark_optimization(
             griewank,
             [0, 0],
-            our_newton_based_optimization,
+            our_smart_newton_based_optimization,
             100,
             1e-6,
             1e-6,
@@ -204,10 +219,10 @@ if __name__ == "__main__":
 
     if test_accumulated_benchmark == True:
         df = run_benchmark(
-            our_nelder_mead_method,
+            our_smart_nelder_mead_method,
             griewank,
             [0, 0],
-            [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+            np.arange(0, 60, 5),
             [0, 0],
             4,
             2,
@@ -216,4 +231,5 @@ if __name__ == "__main__":
             "griewank",
         )
         print(df)
+        plot_benchmark_results(df)
     pass

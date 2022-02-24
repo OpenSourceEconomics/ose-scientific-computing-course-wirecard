@@ -105,26 +105,6 @@ def stopping_criterion_x_or_y(x, y, x_tolerance, y_tolerance):
         return False
 
 
-def find_starting_point(f, domain, n, k=10000):
-    """Returns a candidate to start the local optimum finding process from.
-    Args:
-        f:              a function from \R^n to \R whose optimum we want to find
-        domain:         the domain of the function in which we want to find the point (domain ist always a cube)
-        n:              the dimension of the domain of the function
-        k:              the amount of random points we draw to run the optimization on.
-
-    Returns:
-        out:            a candidate in domain^n to start the local search for an optimum from
-
-    """
-    A = np.random.rand(k, n)
-    B = [f(domain[0] + (domain[1] - domain[0]) * x) for x in A]
-    index = np.where(B == np.amin(B))
-    x = A[index][0]
-    y = domain[0] + (domain[1] - domain[0]) * x
-    return domain[0] + (domain[1] - domain[0]) * x
-
-
 def newton_method(
     f,
     df,
