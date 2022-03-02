@@ -62,6 +62,7 @@ def our_simple_newton_based_optimization(
     stopping_tolerance_functionvalue,
     computational_budget,
 ):
+    print("gets called")
     """Return an approximation of a local optimum.
 
     Args:

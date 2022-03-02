@@ -148,12 +148,16 @@ def newton_method(
     return x_n, calls_of_f_or_df
 
 
-def new_naive_optimization():
-    x_0 = 0
+def new_naive_optimization(
+    f, starting_point, x_tolerance=1e-6, y_tolerance=1e-6, computational_budget=100
+):
+    x_0 = np.array(starting_point).astype(float)
+    df = jacobian(f)
+    J = jacobian(jacobian(f))
+    stopping_criterion = pick_stopp_criterion(x_tolerance, y_tolerance)
     pass
 
 
-#
 def naive_optimization(
     f, starting_point, x_tolerance=1e-6, y_tolerance=1e-6, computational_budget=100
 ):
@@ -184,7 +188,8 @@ def naive_optimization(
         df, J, x_0, x_tolerance, y_tolerance, computational_budget
     )
     # 6. return output of 4
-    return optimum, calls
+
+    return np.round(optimum), calls
 
 
 if __name__ == "__main__":

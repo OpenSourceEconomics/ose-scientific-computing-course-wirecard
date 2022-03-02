@@ -345,7 +345,7 @@ if __name__ == "__main__":
                 our_smart_newton_based_optimization,
                 input_function,
                 [0, 0],
-                [100, 150, 200, 250, 300],
+                [100, 150],
                 [0, 0],
                 4,
                 2,
