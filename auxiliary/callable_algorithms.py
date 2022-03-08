@@ -1,11 +1,3 @@
-# In this file we organise all optimization algorithms in a callable format for our performance testing routine.
-
-# They are supposed to take the following format:
-
-# def minimization(f,starting_point, stopping_tolerance_xwert, stopping_tolerance_functionswert, computational _budget):
-# ...
-# return optimum, number_of_function_evaluations
-
 import numpy as np
 from functions import rosenbrock
 from functions import griewank
@@ -15,6 +7,8 @@ from nelder_mead_based_optimization_source import (
     call_nelder_mead_method,
     initial_simplex,
 )
+
+# In this File we provide two versions
 
 
 def our_simple_nelder_mead_method(
@@ -62,7 +56,6 @@ def our_simple_newton_based_optimization(
     stopping_tolerance_functionvalue,
     computational_budget,
 ):
-    print("gets called")
     """Return an approximation of a local optimum.
 
     Args:
@@ -97,6 +90,23 @@ def our_smart_nelder_mead_method(
     x_tolerance=1e-6,
     y_tolerance=1e-6,
 ):
+    """Return an approximation of a local optimum found by the nelder-mead method run from 50 starting points.
+
+    Args:
+        f:                                  a real valued function
+        computational_budget:               maximal number of function calls after which the algortithm terminates
+        domain_center:                      the center of the domain(-circle)
+        domain_radius:                      the radius of the domain(-circle)
+        sample_size:                        the number of points which we consider to start the nelder-mead-method from
+        number_of_candidates:               the number of points from which we start the nelder-mead-method
+        x_tolerance:                        a positive real number
+        y_tolerance:                        a positive real number
+
+    Returns:
+        out_1: an approximation of a local optimum of the function
+        out_2: number of evaluations of f
+
+    """
     return iterate_optimization(
         our_simple_nelder_mead_method,
         f,
@@ -104,10 +114,10 @@ def our_smart_nelder_mead_method(
         domain_center,
         domain_radius,
         dimension,
-        sample_size=50,
-        number_of_candidates=5,
-        x_tolerance=1e-6,
-        y_tolerance=1e-6,
+        sample_size,
+        number_of_candidates,
+        x_tolerance,
+        y_tolerance,
     )
 
 
@@ -122,6 +132,23 @@ def our_smart_newton_based_optimization(
     x_tolerance=1e-6,
     y_tolerance=1e-6,
 ):
+    """Return an approximation of a local optimum found by the newton-method run from multiple.
+
+    Args:
+        f:                                  a real valued function
+        computational_budget:               maximal number of function calls after which the algortithm terminates
+        domain_center:                      the center of the domain(-circle)
+        domain_radius:                      the radius of the domain(-circle)
+        sample_size:                        the number of points which we consider to start the newton-method from
+        number_of_candidates:               the number of points from which we start the nelder-mead-method
+        x_tolerance:                        a positive real number
+        y_tolerance:                        a positive real number
+
+    Returns:
+        out_1: an approximation of a local optimum of the function
+        out_2: number of evaluations of f
+
+    """
     return iterate_optimization(
         our_simple_newton_based_optimization,
         f,
@@ -129,25 +156,27 @@ def our_smart_newton_based_optimization(
         domain_center,
         domain_radius,
         dimension,
-        sample_size=50,
-        number_of_candidates=5,
-        x_tolerance=1e-6,
-        y_tolerance=1e-6,
+        sample_size,
+        number_of_candidates,
+        x_tolerance,
+        y_tolerance,
     )
 
 
 def find_starting_points(
     f, domain_center, domain_radius, dimension, sample_size, number_of_candidates
 ):
-    """Returns a candidate to start the local optimum finding process from.
+    """Returns candidates to start the local optimum finding process from.
     Args:
-        f:              a function from \R^n to \R whose optimum we want to find
-        domain:         the domain of the function in which we want to find the point (domain ist always a cube)
-        n:              the dimension of the domain of the function
-        k:              the amount of random points we draw to run the optimization on.
+        f:                    a function from \R^n to \R whose optimum we want to find
+        domain_center:        the center of the domain(-circle)
+        domain_radius:        the radius of the domain(-circle)
+        dimension:            the dimension of the inputs of f
+        sample_size:          the number of points within the domain to be considered for the optimization
+        number_of_candidates: the number of points to be returned as candidates for the optimization to start from
 
     Returns:
-        out:            a candidate in domain^n to start the local search for an optimum from
+        out:                  an array of points within the domain(-circle)
 
     """
     A = np.random.rand(sample_size, dimension) * 2 - np.array([1] * dimension)
@@ -169,6 +198,25 @@ def iterate_optimization(
     x_tolerance=1e-6,
     y_tolerance=1e-6,
 ):
+    """Return an approximation of a local optimum found an algorithm run from multiple starting points.
+
+    Args:
+        algorithm,                          an optimization algorithm that takes the inputs: f, starting_point, x_tolerance, y_tolerance, computational_budget
+        f:                                  a real valued function
+        computational_budget:               maximal number of function calls after which the algortithm terminates
+        domain_center:                      the center of the domain(-circle)
+        domain_radius:                      the radius of the domain(-circle)
+        dimension:                          the dimension of the inputs of f
+        sample_size:                        the number of points which we consider to start the nelder-mead-method from
+        number_of_candidates:               the number of points from which we start the nelder-mead-method
+        x_tolerance:                        a positive real number
+        y_tolerance:                        a positive real number
+
+    Returns:
+        out_1: an approximation of a local optimum of the function
+        out_2: number of evaluations of f
+
+    """
     budget = computational_budget + 0
     candidates = []
     values = []
