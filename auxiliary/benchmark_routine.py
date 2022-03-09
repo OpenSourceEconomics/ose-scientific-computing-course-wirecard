@@ -199,8 +199,8 @@ def run_simple_benchmark(
         )
     )
     count = 0
+    print("\n \n Hallo \n\n")
     for computational_budget in computational_budgets[1:]:
-        # print(computational_budget)
         df = pd.concat(
             [
                 df,

@@ -66,3 +66,4 @@ if __name__ == "__main__":
     test_rosenbrock()
     test_griewank()
     test_levi_no_13()
+    print("All test completed.")

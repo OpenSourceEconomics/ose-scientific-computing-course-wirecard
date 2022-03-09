@@ -87,7 +87,7 @@ def rastrigin(x, A=10, domain=[-5.12, 5.12]):
     # This function still hast to be tested wether it does what its supposed to do
 
     input = np.array(x)
-    n = input.size
+    n = len(input)
     out = A * n + np.sum(input * input - A * np.cos(2 * np.pi * input)) + 1
     return out
 

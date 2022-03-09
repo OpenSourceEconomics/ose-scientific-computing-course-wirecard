@@ -1,6 +1,11 @@
 import numpy as np
-from functions import rosenbrock
-from functions import griewank
+import nlopt
+from functions import (
+    rastrigin,
+    rosenbrock,
+    griewank,
+    levi_no_13,
+)
 from newton_based_optimization_source import naive_optimization
 
 from nelder_mead_based_optimization_source import (
@@ -163,6 +168,70 @@ def our_smart_newton_based_optimization(
     )
 
 
+def optimization_smart_BOBYQA_NLOPT(
+    f,
+    computational_budget,
+    domain_center,
+    domain_radius,
+    dimension,
+    sample_size=50,
+    number_of_candidates=5,
+    x_tolerance=1e-6,
+    y_tolerance=1e-6,
+):
+    return iterate_optimization(
+        optimization_BOBYQA_NLOPT,
+        f,
+        computational_budget,
+        domain_center,
+        domain_radius,
+        dimension,
+        sample_size,
+        number_of_candidates,
+        x_tolerance,
+        y_tolerance,
+    )
+
+
+def optimization_BOBYQA_NLOPT(
+    f,
+    starting_point,
+    x_tolerance,
+    y_tolerance,
+    computational_budget,
+):
+    n = len(starting_point)
+    global_optimum = nlopt.opt(nlopt.GN_MLSL, n)
+    local_opt = nlopt.opt(nlopt.LN_BOBYQA, n)
+    # local_opt.set_lower_bounds(problem_info.lower_bound)
+    # local_opt.set_upper_bounds(problem_info.upper_bound)
+    local_opt.set_xtol_abs(x_tolerance)
+    local_opt.set_ftol_abs(y_tolerance)
+    local_opt.set_min_objective(f)
+    global_optimum.set_local_optimizer(local_opt)
+    global_optimum.set_lower_bounds(-100)
+    global_optimum.set_upper_bounds(100)
+    global_optimum.set_min_objective(f)
+    global_optimum.set_xtol_abs(x_tolerance)
+    global_optimum.set_ftol_abs(y_tolerance)
+    global_optimum.set_maxeval(computational_budget)
+
+    # start_point_i=np.array(x_0.iloc[i])
+    optimizer = global_optimum.optimize(np.array(starting_point))
+    # optimizer=polishing_optimizer.optimize(optimizer_1)
+    # function_val=f(optimizer)
+    num_evals = global_optimum.get_numevals()
+    #### define accuracy measures
+    # comp_budget=comp_budge_j
+    # abs_diff=np.abs(np.subtract(problem_info.solver,optimizer)) ### account for multiple glob min missing
+    # success_crit_x=np.amax(abs_diff)
+    # success_crit_f=np.abs(np.subtract(problem_info.solver_function_value,function_val))
+    # information=np.hstack((problem_info.name,function_val,num_evals,comp_budget,success_crit_x,success_crit_f,optimizer))
+    # df.append(information)
+    optimizer = np.round(optimizer)
+    return optimizer, num_evals
+
+
 def find_starting_points(
     f, domain_center, domain_radius, dimension, sample_size, number_of_candidates
 ):
@@ -257,4 +326,9 @@ if __name__ == "__main__":
             our_simple_nelder_mead_method, rosenbrock, 1000, [0, 0], 5, 2, 50, 5
         )
     )
+    print(optimization_BOBYQA_NLOPT(rosenbrock, [45, 76], 1e-6, 1e-6, 1000))
+    print(optimization_BOBYQA_NLOPT(griewank, [52, 65], 1e-6, 1e-6, 1000))
+    print(optimization_smart_BOBYQA_NLOPT(griewank, 1000, [0, 0], 100, 2))
+
+    # print(optimization_BOBYQA_NLOPT(rastrigin, [75,65],1e-6,1e-6,1000))
     pass
