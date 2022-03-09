@@ -53,7 +53,7 @@ def benchmark_smart_optimization(
     computational_budget,
     domain_center,
     domain_radius,
-    n,
+    number_of_optimizations,
     dimension,
     optimum,
     algo_name="unknown",
@@ -65,7 +65,7 @@ def benchmark_smart_optimization(
 ):
     df = pd.DataFrame([], columns=["computed_result", "function_evaluations", "time"])
 
-    for i in range(n):
+    for i in range(number_of_optimizations):
         start = time.time()
         a = algorithm(
             f,
@@ -86,11 +86,13 @@ def benchmark_smart_optimization(
         )
         df = df.append(a, ignore_index=True)
 
-    df["correct_result"] = pd.Series([optimum] * n)
-    df["algorithm"] = pd.Series([algo_name] * n)
-    df["test_function"] = pd.Series([t_func_name] * n)
-    df["computational_budget"] = pd.Series([computational_budget] * n)
-    df["sample_size"] = pd.Series([n] * n)
+    df["correct_result"] = pd.Series([optimum] * number_of_optimizations)
+    df["algorithm"] = pd.Series([algo_name] * number_of_optimizations)
+    df["test_function"] = pd.Series([t_func_name] * number_of_optimizations)
+    df["computational_budget"] = pd.Series(
+        [computational_budget] * number_of_optimizations
+    )
+    df["sample_size"] = pd.Series([number_of_optimizations] * number_of_optimizations)
     df["success"] = df.apply(
         lambda row: np.allclose(row.correct_result, row.computed_result), axis=1
     )
@@ -198,7 +200,7 @@ def run_simple_benchmark(
     )
     count = 0
     for computational_budget in computational_budgets[1:]:
-        print(computational_budget)
+        # print(computational_budget)
         df = pd.concat(
             [
                 df,
@@ -234,7 +236,7 @@ def run_smart_benchmark(
     domain_center,
     domain_radius,
     dimension,
-    n,
+    number_of_optimizations,
     sample_size=100,
     number_of_candidates=5,
     algorithm_name="unknown",
@@ -250,7 +252,7 @@ def run_smart_benchmark(
             computational_budgets[0],
             domain_center,
             domain_radius,
-            n,
+            number_of_optimizations,
             dimension,
             optimum,
             algorithm_name,
@@ -263,7 +265,7 @@ def run_smart_benchmark(
     )
     count = 0
     for computational_budget in computational_budgets[1:]:
-        print(computational_budget)
+        # print(computational_budget)
         df = pd.concat(
             [
                 df,
@@ -274,7 +276,7 @@ def run_smart_benchmark(
                         computational_budget,
                         domain_center,
                         domain_radius,
-                        n,
+                        number_of_optimizations,
                         dimension,
                         optimum,
                         algorithm_name,
@@ -355,12 +357,12 @@ if __name__ == "__main__":
                 our_smart_nelder_mead_method,
                 input_function,
                 minimum,
-                [100, 150, 200, 250, 300, 350],
+                [500],
                 [0, 0],
                 4,
                 2,
-                25,
-                sample_size=20,
+                10,
+                sample_size=25,
                 number_of_candidates=3,
                 algorithm_name="our nelder-mead-method",
                 test_function_name=input_function_name,

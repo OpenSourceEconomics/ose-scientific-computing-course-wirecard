@@ -224,6 +224,8 @@ def iterate_optimization(
     assert (
         computational_budget > sample_size
     ), "computational_budget is initially smaller than sample size."
+    assert computational_budget > 0, "computational_budget should be positive."
+    assert number_of_candidates > 0, "number_of_candidates should be positive."
     while computational_budget > sample_size:
         starting_points = find_starting_points(
             f,
@@ -244,7 +246,6 @@ def iterate_optimization(
             computational_budget -= a[1]
             computational_budget -= 1
             i += 1
-    print(values)
     index = np.argmin(values)
 
     return candidates[index], budget - computational_budget
