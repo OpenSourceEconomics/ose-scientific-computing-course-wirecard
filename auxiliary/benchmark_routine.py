@@ -309,6 +309,14 @@ if __name__ == "__main__":
         lambda a: (1 / 800) * (a[0] - 6) ** 4 * (np.sin(a[1]) + 3) + a[1] ** 4,
     ]
 
+    input_function_names = [
+        "lambda a: 20 * (a[0] + a[1]) ** 2 + a[1] ** 4 + 1",
+        "lambda a: (1 / 200) * (a[0] + 1) ** 2 * (np.cos(a[1]) + 1) + a[1] ** 2",
+        "lambda a : (1/800) * ( a[0] - 6) ** 4 * (np.sin(a[1])+ 3) + a[1] ** 4",
+    ]
+
+    expected_minima = [[0, 0], [-1, 0], [6, 0]]
+
     if test_benchmark_optimization == True:
         df1 = benchmark_smart_optimization(
             griewank,
@@ -340,18 +348,22 @@ if __name__ == "__main__":
         print(average_time_success(df2))
 
     if test_accumulated_benchmark == True:
-        for input_function in input_functions:
+        for input_function, input_function_name, minimum in zip(
+            input_functions, input_function_names, expected_minima
+        ):
             df = run_smart_benchmark(
-                our_smart_newton_based_optimization,
+                our_smart_nelder_mead_method,
                 input_function,
-                [0, 0],
-                [100, 150],
+                minimum,
+                [100, 150, 200, 250, 300, 350],
                 [0, 0],
                 4,
                 2,
                 25,
-                algorithm_name="our newton based optimization",
-                test_function_name="polynomial with a little bit of cosinus",
+                sample_size=20,
+                number_of_candidates=3,
+                algorithm_name="our nelder-mead-method",
+                test_function_name=input_function_name,
             )
             print(df)
             plot_benchmark_results(df)

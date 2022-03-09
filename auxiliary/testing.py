@@ -14,7 +14,6 @@ from test_functions import griewank_instance
 from functions import rastrigin, rosenbrock, levi_no_13, griewank
 
 from newton_based_optimization_source import (
-    find_starting_point,
     naive_optimization,
     newton_method,
 )
@@ -29,7 +28,7 @@ nelder_mead_method = call_nelder_mead_method
 
 
 def plot_test_function(domain, function, name_of_function="some function"):
-    """Plot a 3d graph of a function.
+    """Plot a 3d graph of a 2-dimensional real valued function.
 
     Args:
         domain:                     domain \subset \R of the function
