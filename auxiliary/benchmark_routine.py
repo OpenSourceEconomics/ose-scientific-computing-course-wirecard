@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import time
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 
 from callable_algorithms import (
@@ -9,6 +10,7 @@ from callable_algorithms import (
     our_simple_newton_based_optimization,
     our_smart_nelder_mead_method,
     our_smart_newton_based_optimization,
+    optimization_smart_BOBYQA_NLOPT,
 )
 from functions import rastrigin, griewank, rosenbrock, levi_no_13
 
@@ -296,14 +298,25 @@ def run_smart_benchmark(
 
 
 def plot_benchmark_results(df):
-    df.plot(x="computational_budget", y="success_rate", kind="line")
+    algorithms = df.algorithm.unique()
+    print("The algorithms are: ", algorithms)
+    sns.lineplot(x="computational_budget", y="success_rate", hue="algorithm", data=df)
     plt.show()
+    """
+    for algorithm in algorithms:
+        print("the algorithm is: ", algorithm)
+        df_new = df[df['algorithm']==algorithm]
+        print(df_new)
+        df_new.plot(x="computational_budget", y="success_rate", kind="line", legend = True)
+    plt.show()
+
+    """
 
 
 if __name__ == "__main__":
 
     test_benchmark_optimization = False
-    test_accumulated_benchmark = True
+    test_accumulated_benchmark = False
 
     input_functions = [
         lambda a: 20 * (a[0] + a[1]) ** 2 + a[1] ** 4 + 1,
@@ -318,6 +331,63 @@ if __name__ == "__main__":
     ]
 
     expected_minima = [[0, 0], [-1, 0], [6, 0]]
+
+    df0 = run_smart_benchmark(
+        optimization_smart_BOBYQA_NLOPT,
+        griewank,
+        [0, 0],
+        [
+            500,
+            1000,
+            1500,
+            2000,
+            2500,
+            3000,
+            3500,
+            4000,
+            5000,
+            6000,
+            7000,
+            8000,
+            9000,
+            10000,
+        ],
+        [0, 0],
+        100,
+        2,
+        10,
+        algorithm_name="BOBYQA",
+    )
+    df1 = run_smart_benchmark(
+        our_smart_nelder_mead_method,
+        griewank,
+        [0, 0],
+        [
+            500,
+            1000,
+            1500,
+            2000,
+            2500,
+            3000,
+            3500,
+            4000,
+            5000,
+            6000,
+            7000,
+            8000,
+            9000,
+            10000,
+        ],
+        [0, 0],
+        100,
+        2,
+        10,
+        algorithm_name="Nelder-Mead",
+    )
+
+    df0 = pd.concat([df0, df1])
+
+    plot_benchmark_results(df0)
 
     if test_benchmark_optimization == True:
         df1 = benchmark_smart_optimization(
