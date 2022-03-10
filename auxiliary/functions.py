@@ -70,7 +70,7 @@ class rastrigin_instance:
         return rastrigin(y, self.A)
 
 
-def rastrigin(x, A=10, domain=[-5.12, 5.12]):
+def rastrigin(x, domain=[-5.12, 5.12]):
     """Compute the output of the x.size dimensional rastrigin function.
 
     Args:
@@ -85,7 +85,8 @@ def rastrigin(x, A=10, domain=[-5.12, 5.12]):
     # The global minimum lies at (0,...,0) and equals to 1
 
     # This function still hast to be tested wether it does what its supposed to do
-
+    A = 10
+    # print("the input is: ", x)
     input = np.array(x)
     n = len(input)
     out = A * n + np.sum(input * input - A * np.cos(2 * np.pi * input)) + 1

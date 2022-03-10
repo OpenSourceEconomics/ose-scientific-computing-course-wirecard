@@ -322,12 +322,13 @@ def iterate_optimization(
 
 if __name__ == "__main__":
     print(
+        "the result ist: ",
         iterate_optimization(
-            our_simple_nelder_mead_method, rosenbrock, 1000, [0, 0], 5, 2, 50, 5
-        )
+            our_simple_nelder_mead_method, rastrigin, 1000, [0, 0], 5, 2, 50, 5
+        ),
     )
     print(optimization_BOBYQA_NLOPT(rosenbrock, [45, 76], 1e-6, 1e-6, 1000))
-    print(optimization_BOBYQA_NLOPT(griewank, [52, 65], 1e-6, 1e-6, 1000))
+    print(optimization_BOBYQA_NLOPT(rastrigin, [52, 65], 1e-6, 1e-6, 1000))
     print(optimization_smart_BOBYQA_NLOPT(griewank, 1000, [0, 0], 100, 2))
 
     # print(optimization_BOBYQA_NLOPT(rastrigin, [75,65],1e-6,1e-6,1000))
