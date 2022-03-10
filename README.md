@@ -43,7 +43,7 @@ In order to ensure full reproducibility of our project, we have set up a contino
 
 ## Structure of the notebook
 
-In the introduction we explain the goal of our project. In the first chapter we explain some key concepts to the reader to be able to follow. Afterwards we talk about reproducability and in chapter 3 we present a selection of the optimization algorithms we implemented and benchmarked. In chapter 4 we present the test-functions we used to benchmark and elaborate why we chose them. In the following two chapters we first describe the benchmark routine we designed for the nelder-mead-method and afterwards we run the benchmark and discuss the results. In the last chapter we reflect on our work and discuss what the next steps could be to improve the optimization-algorithms we implemented.
+In the introduction we explain the goal of our project. In the first chapter we explain some key concepts to the reader to be able to follow. Afterwards we talk about reproducability and in chapter 3 we present a selection of the optimization algorithms we implemented and benchmarked. In chapter 4 we present the test-functions we used to benchmark and elaborate why we chose them. In the following two chapters we first describe the benchmark routine we designed for the nelder-mead-method and afterwards we run the benchmark and discuss the results.
 
 
 ## Repository
