@@ -26,16 +26,21 @@ FACTORS = list("cni")
 
 
 def test_nm_replace_final():
+    # creation of inputs
     input_array = np.array([1, 2, 6, 4, 5, 3])
     expected_new_array = np.array([1, 2, 7, 4, 5, 3])
 
     indexes = np.argsort(input_array)
     x_new = 7
+    # computation by the function to be tested
     computed_array = nm_replace_final(input_array, indexes, x_new)
+    # assert
     assert_array_equal(computed_array, expected_new_array)
 
 
 def test_old_newton_opti():
+
+    # initialization of inputs
     input_functions = [
         lambda a: 20 * (a[0] + a[1]) ** 2 + a[1] ** 4 + 1,
         lambda a: (1 / 200) * (a[0] + 1) ** 2 * (np.cos(a[1]) + 1) + a[1] ** 2,
@@ -54,6 +59,7 @@ def test_old_newton_opti():
 
     starting_points_hard = [[0.1, 0.1], [0.9, 0.8], [0.1, -0.1]]
 
+    # names for readability of the error messages
     names_of_functions = [
         "lambda a: 20 * (a[0] + a[1]) ** 2 + a[1] ** 4 + 1",
         "lambda a: (1 / 200) * (a[0] + 1) ** 2 * (np.cos(a[1]) + 1) + a[1] ** 2",
@@ -62,6 +68,7 @@ def test_old_newton_opti():
 
     names_of_functions_hard = ["griewank", "rosenbrock", "rastrigin"]
 
+    # computation of minima
     computed_minima = [
         np.round(naive_optimization(input_function, [3, 3])[0])
         for input_function in input_functions
@@ -76,10 +83,10 @@ def test_old_newton_opti():
         )
     ]
 
+    # assert
     for expected_minimum, computed_minimum, name in zip(
         expected_minima, computed_minima, names_of_functions
     ):
-        # print("expected minimum: ", expected_minimum, "computed minimum: ", computed_minimum)
 
         assert_array_almost_equal(computed_minimum, expected_minimum, err_msg=name)
 
@@ -90,6 +97,8 @@ def test_old_newton_opti():
 
 
 def test_call_nelder_mead_method():
+
+    # initialization of inputs
     input_functions = [
         lambda a: 20 * (a[0] + a[1]) ** 2 + a[1] ** 4 + 1,
         lambda a: (1 / 200) * (a[0] + 1) ** 2 * (math.cos(a[1]) + 1) + a[1] ** 2,
@@ -108,6 +117,7 @@ def test_call_nelder_mead_method():
 
     starting_points_hard = [[0.1, 0.2], [0.9, 1.2], [0.2, -0.1]]
 
+    # names of functions for readability of the error messages
     names_of_functions = [
         "lambda a: 20 * (a[0] + a[1]) ** 2 + a[1] ** 4 + 1",
         "lambda a: (1 / 200) * (a[0] + 1) ** 2 * (np.cos(a[1]) + 1) + a[1] ** 2",
@@ -115,7 +125,7 @@ def test_call_nelder_mead_method():
     ]
     names_of_functions_hard = ["griewank", "rosenbrock", "rastrigin"]
 
-    # print(call_nelder_mead_method(input_functions[0], initial_simplex(2, [-5, 5]), 2))
+    # computation of minima
     computed_minima = [
         call_nelder_mead_method(input_function, initial_simplex(2, [-5, 5]))[0]
         for input_function in input_functions
@@ -130,6 +140,7 @@ def test_call_nelder_mead_method():
         )
     ]
 
+    # assert
     for expected_minimum, computed_minimum, name in zip(
         expected_minima, computed_minima, names_of_functions
     ):
@@ -145,12 +156,9 @@ def test_call_nelder_mead_method():
 
 
 if __name__ == "__main__":
-    # test_functions_used_here()
-    # test_nelder_mead_method()
+
+    # to run tests manually (They do also pass when called by pytest)
     test_call_nelder_mead_method()
-    # verts = [[1, 1, 1], [0, 1, 0], [1, 0, 0], [1, 0, 0]]
-    # result = call_nelder_mead_method(problem_application, verts, 3)
-    # print(result)
     test_old_newton_opti()
 
     print("All tests completed")

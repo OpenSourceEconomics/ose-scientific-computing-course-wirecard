@@ -1,0 +1,7 @@
+,algorithm,test_function,computational_budget,sample_size,success_rate,average_time,average_function_evaluations
+0,our nelder-mead method,rosenbrock,1000,50,1.0,0.11721981048583985,997.8
+0,our nelder-mead method,rosenbrock,3000,50,1.0,0.2496897077560425,2997.88
+0,our nelder-mead method,rosenbrock,6000,50,1.0,0.4747264289855957,6000.34
+0,our nelder-mead method,rosenbrock,10000,50,1.0,0.8874608707427979,9996.38
+0,our nelder-mead method,rosenbrock,15000,50,1.0,1.3784243202209472,14999.22
+0,our nelder-mead method,rosenbrock,21000,50,1.0,2.127349896430969,20997.9
