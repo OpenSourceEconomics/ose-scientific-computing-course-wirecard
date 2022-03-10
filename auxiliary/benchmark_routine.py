@@ -5,14 +5,14 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 
-from callable_algorithms import (
+from auxiliary.callable_algorithms import (
     our_simple_nelder_mead_method,
     our_simple_newton_based_optimization,
     global_nelder_mead_method,
     global_newton_based_optimization,
     global_optimization_BOBYQA,
 )
-from functions import rastrigin, griewank, rosenbrock, levi_no_13
+from auxiliary.functions import rastrigin, griewank, rosenbrock, levi_no_13
 
 # In this file we implement the benchmark routine that we use to benchmark the nelder-mead-method
 # we implemented and compare its performace to algorithms from the established libary NLOPT
