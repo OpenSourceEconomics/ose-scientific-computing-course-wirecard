@@ -1,14 +1,14 @@
 import numpy as np
 import nlopt
-from functions import (
+from auxiliary.functions import (
     rastrigin,
     rosenbrock,
     griewank,
     levi_no_13,
 )
-from newton_based_optimization_source import naive_optimization
+from auxiliary.newton_based_optimization_source import naive_optimization
 
-from nelder_mead_based_optimization_source import (
+from auxiliary.nelder_mead_based_optimization_source import (
     call_nelder_mead_method,
     initial_simplex,
 )
