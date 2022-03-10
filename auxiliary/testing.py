@@ -7,11 +7,7 @@ from mpl_toolkits.mplot3d import Axes3D
 from numpy.lib.function_base import vectorize
 
 # functions to be tested
-from test_functions import rastrigin_instance
-from test_functions import rosenbrock_instance
-from test_functions import levi_no_13_instance
-from test_functions import griewank_instance
-from functions import rastrigin, rosenbrock, levi_no_13, griewank
+from auxiliary.functions import rastrigin, rosenbrock, levi_no_13, griewank
 
 from newton_based_optimization_source import (
     naive_optimization,

@@ -1,4 +1,4 @@
-name: Continuous Integration EPPE
+name: Continuous IntegrationEPPE
 
 on: [push]
 
