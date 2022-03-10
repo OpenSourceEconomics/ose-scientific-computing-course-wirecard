@@ -3,7 +3,7 @@
 Course: EPPE|M.Sc. Economics/ Ph.D. Economics| University of Bonn|<br>
 Authors: **Daniel Nogues Kollert**
 ##
-The main document of my submisson is the Jupyter Notebook 'eppe_abgabe.ipnyb'. It uses and refers tom the following files in the auxiliary folder:
+The main document of my submission is the Jupyter Notebook 'eppe_abgabe.ipnyb'. It uses and refers to the following files in the auxiliary folder:
 
 - benchmark_routine.py
 - callable_algorithms.py
@@ -13,15 +13,15 @@ The main document of my submisson is the Jupyter Notebook 'eppe_abgabe.ipnyb'. I
 - test_functions.py
 - test_optimization.py
 
-This Notebook documents parts of my contribution for a project Michael Gerhards and I handed in to the OSE scientific computing class by Prof. Eisenhauer in the Wintersemester 21/22 at the Uni Bonn. That project contains a benchmarking experiment. We compared a collection of different optimization algorithms which are implemented within the NLOPT library. Our project reports **data-profiles,deviation-profiles and performance profiles**.<br> The benchmarking experiment follows in great parts the methodology outlined in the following paper:<br>
+This Notebook documents parts of my contribution to a project Michael Gerhards and I handed in for the OSE scientific computing class by Prof. Eisenhauer in the Wintersemester of 21/22 at the Uni Bonn. That project contains a benchmarking experiment. We compared a collection of different optimization algorithms which are implemented within the NLOPT library. Our project reports **data-profiles,deviation-profiles, and performance profiles**.<br> The benchmarking experiment follows in great parts the methodology outlined in the following paper:<br>
 #
 [Arnoud, Antoine and Guvenen, Fatih and Kleineberg, Tatjana](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3465350#)
 <br> Benchmarking Global Optimizers
 <br> (October 2019). NBER Working Paper No. w26340
 #
-Another great part of our project was devoted to the implementation of two optimization algorithms. We successfully implemented the **Newton root finding method** and the **Nelder Mead** optimization algorithm by ourself. These algorithms are not included in the benchmarking experiment, due to the fact that they still require a lot of solving time. This solving time would be huge if we would apply these algorithms on our benchmarking experiment. However these algorithms are successfully implemented and are capable to solve test problems.
+Another great part of our project was devoted to the implementation of two optimization algorithms. We successfully implemented the **Newton root finding method** and the **Nelder Mead** optimization algorithm by ourselves. These algorithms are not included in the benchmarking experiment, since they still require a lot of solving time. This solving time would be huge if we would apply these algorithms to our benchmarking experiment. However, these algorithms are successfully implemented and are capable to solve the test problems.
 #
-While writing on the documentation of my work for the submission to the EPPE-class I managed to implement a benchmark routine that allows us to benchmark the nelder-mead-method we implemented and compare its performance to optimization-algorithms from the NLOPT libary.
+While writing on the documentation of my work for the submission to the EPPE-class I managed to implement a benchmark routine that allows us to benchmark the nelder-mead-method we implemented and compare its performance to optimization algorithms from the NLOPT library.
 ##
 You can easily access this project by simply clicking on the badges shown below:
 ##
@@ -37,20 +37,24 @@ You can easily access this project by simply clicking on the badges shown below:
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/OpenSourceEconomics/ose-scientific-computing-course-wirecard/HEAD)
 
 ## Reproducibility
-In order to ensure full reproducibility of our project, we have set up a continous integration environment using Github Actions which can be checked by clicking on the badge shown below:
+To ensure full reproducibility of our project, we have set up a continuous integration environment using Github Actions which can be checked by clicking on the badge shown below:
 
 [![Continuous Integration](https://github.com/OpenSourceEconomics/ose-scientific-computing-course-wirecard/actions/workflows/ci.yml/badge.svg)](https://github.com/OpenSourceEconomics/ose-scientific-computing-course-wirecard/actions/workflows/ci.yml)
 
+## Pytest
+
+When running pytest make sure to exclude the files [auxiliary/test_functions_daniel.py], [auxiliary/aux_m/test_problems.py], and [auxiliary/aux_m/test_problems_info.py], since these were not designed as part of the pytest routine.
+
 ## Structure of the notebook
 
-In the introduction we explain the goal of our project. In the first chapter we explain some key concepts to the reader to be able to follow. Afterwards we talk about reproducability and in chapter 3 we present a selection of the optimization algorithms we implemented and benchmarked. In chapter 4 we present the test-functions we used to benchmark and elaborate why we chose them. In the following two chapters we first describe the benchmark routine we designed for the nelder-mead-method and afterwards we run the benchmark and discuss the results.
+In the introduction, we explain the goal of our project. In the first chapter, we explain some key concepts to the reader to be able to follow. Then we talk about reproducibility and in chapter 3 we present a selection of the optimization algorithms we implemented and benchmarked. In chapter 4 we present the test functions we used to benchmark and elaborate why we chose them. In the following two chapters we first describe the benchmark routine we designed for the nelder-mead-method and then, we run the benchmark and discuss the results.
 
 
 ## Repository
 
 This project is created using a python environment. As explained above the results are represented in the notebooks[student_project.ipynb](https://github.com/OpenSourceEconomics/ose-scientific-computing-course-wirecard/blob/master/student_project.ipynb) and [eppe_abgabe.ipynb](https://github.com/OpenSourceEconomics/ose-scientific-computing-course-wirecard/blob/master/eppe_abgabe.ipynb) which are in the main branch of this repository. The best way to view all contents of this study, is to download the whole Github repository [ose-scientific-computing-wirecard](https://github.com/OpenSourceEconomics/ose-scientific-computing-course-wirecard). NBviewer and other viewing options like my-Binder **may not display all illustrations fully as in a local jupyter-notebook environment**. But the best way to view this project online should be via my-Binder.
 
-The results generated by our analysis for the OSE course can be found in the folder [data/Results](https://github.com/OpenSourceEconomics/ose-scientific-computing-course-wirecard/tree/master/data/Results). The notebooks (and seeeds) which were used in order to generate the results can be found in the folder [data/dat_generation_files](https://github.com/OpenSourceEconomics/ose-scientific-computing-course-wirecard/tree/master/data/dat_generation_files). The auxiliary files necessary for the project notebook and for the result generation can be found in the folder [auxiliary/aux_m](https://github.com/OpenSourceEconomics/ose-scientific-computing-course-wirecard/tree/master/auxiliary/aux_m).
+The results generated by our analysis for the OSE course can be found in the folder [data/Results](https://github.com/OpenSourceEconomics/ose-scientific-computing-course-wirecard/tree/master/data/Results). The notebooks (and seeds) which were used to generate the results can be found in the folder [data/dat_generation_files](https://github.com/OpenSourceEconomics/ose-scientific-computing-course-wirecard/tree/master/data/dat_generation_files). The auxiliary files necessary for the project notebook and the result generation can be found in the folder [auxiliary/aux_m](https://github.com/OpenSourceEconomics/ose-scientific-computing-course-wirecard/tree/master/auxiliary/aux_m).
 
 All scripts relevant for the file [eppe_abgabe.ipynb] can be found in the foulder [auxiliary]((https://github.com/OpenSourceEconomics/ose-scientific-computing-course-wirecard/tree/master/auxiliary)
 

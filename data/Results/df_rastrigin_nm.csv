@@ -1,0 +1,3 @@
+,algorithm,test_function,computational_budget,sample_size,success_rate,average_time,average_function_evaluations
+0,our newton based optimization,rastrigin,3000,50,0.0,3.177476553916931,3002.0
+0,our newton based optimization,rastrigin,15000,50,0.0,21.607081656455993,15002.0

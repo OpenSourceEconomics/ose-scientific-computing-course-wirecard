@@ -1,0 +1,7 @@
+,algorithm,test_function,computational_budget,sample_size,success_rate,average_time,average_function_evaluations
+0,our newton based optimization,rosenbrock,250,50,1.0,0.1423124074935913,160.0
+0,our newton based optimization,rosenbrock,500,50,1.0,0.36215656757354736,480.0
+0,our newton based optimization,rosenbrock,750,50,1.0,0.5864100646972656,752.0
+0,our newton based optimization,rosenbrock,1000,50,1.0,0.7272751760482788,960.0
+0,our newton based optimization,rosenbrock,1250,50,1.0,1.0468316221237182,1252.0
+0,our newton based optimization,rosenbrock,1500,50,1.0,1.2289710330963135,1440.0

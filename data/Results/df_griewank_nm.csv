@@ -1,0 +1,3 @@
+,algorithm,test_function,computational_budget,sample_size,success_rate,average_time,average_function_evaluations
+0,our newton based optimization,griewank,3000,50,0.0,4.8149982452392575,3002.0
+0,our newton based optimization,griewank,15000,50,0.0,28.008220438957213,15002.0

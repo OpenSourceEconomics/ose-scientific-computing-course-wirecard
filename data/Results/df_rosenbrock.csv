@@ -1,13 +1,21 @@
 ,algorithm,test_function,computational_budget,sample_size,success_rate,average_time,average_function_evaluations
-0,our nelder-mead method,rosenbrock,250,50,0.18,0.029225878715515137,251.44
-1,our nelder-mead method,rosenbrock,500,50,0.78,0.05586179256439209,501.44
-2,our nelder-mead method,rosenbrock,750,50,1.0,0.06353740692138672,748.32
-3,our nelder-mead method,rosenbrock,1000,50,1.0,0.09002946853637696,1001.2
-4,our nelder-mead method,rosenbrock,1250,50,1.0,0.10151492118835449,1251.3
-5,our nelder-mead method,rosenbrock,1500,50,1.0,0.13622237205505372,1497.16
-6,BOBYQA,rosenbrock,250,50,0.32,0.009941015243530273,251.0
-7,BOBYQA,rosenbrock,500,50,0.64,0.02013596534729004,501.0
-8,BOBYQA,rosenbrock,750,50,0.88,0.021148004531860352,751.0
-9,BOBYQA,rosenbrock,1000,50,0.96,0.03211303234100342,1001.0
-10,BOBYQA,rosenbrock,1250,50,0.98,0.040684537887573244,1251.0
-11,BOBYQA,rosenbrock,1500,50,0.98,0.05585989475250244,1501.0
+0,algorithm,test_function,computational_budget,sample_size,success_rate,average_time,average_function_evaluations
+1,our nelder-mead method,rosenbrock,250,50,0.18,0.029225878715515137,251.44
+2,our nelder-mead method,rosenbrock,500,50,0.78,0.05586179256439209,501.44
+3,our nelder-mead method,rosenbrock,750,50,1.0,0.06353740692138672,748.32
+4,our nelder-mead method,rosenbrock,1000,50,1.0,0.09002946853637696,1001.2
+5,our nelder-mead method,rosenbrock,1250,50,1.0,0.10151492118835449,1251.3
+6,our nelder-mead method,rosenbrock,1500,50,1.0,0.13622237205505372,1497.16
+7,BOBYQA,rosenbrock,250,50,0.32,0.009941015243530273,251.0
+8,BOBYQA,rosenbrock,500,50,0.64,0.02013596534729004,501.0
+9,BOBYQA,rosenbrock,750,50,0.88,0.021148004531860352,751.0
+10,BOBYQA,rosenbrock,1000,50,0.96,0.03211303234100342,1001.0
+11,BOBYQA,rosenbrock,1250,50,0.98,0.040684537887573244,1251.0
+12,BOBYQA,rosenbrock,1500,50,0.98,0.05585989475250244,1501.0
+13,algorithm,test_function,computational_budget,sample_size,success_rate,average_time,average_function_evaluations
+14,our newton based optimization,rosenbrock,250,50,1.0,0.1423124074935913,160.0
+15,our newton based optimization,rosenbrock,500,50,1.0,0.36215656757354736,480.0
+16,our newton based optimization,rosenbrock,750,50,1.0,0.5864100646972656,752.0
+17,our newton based optimization,rosenbrock,1000,50,1.0,0.7272751760482788,960.0
+18,our newton based optimization,rosenbrock,1250,50,1.0,1.0468316221237182,1252.0
+19,our newton based optimization,rosenbrock,1500,50,1.0,1.2289710330963135,1440.0
