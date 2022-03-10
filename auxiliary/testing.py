@@ -9,12 +9,12 @@ from numpy.lib.function_base import vectorize
 # functions to be tested
 from auxiliary.functions import rastrigin, rosenbrock, levi_no_13, griewank
 
-from newton_based_optimization_source import (
+from auxiliary.newton_based_optimization_source import (
     naive_optimization,
     newton_method,
 )
 
-from nelder_mead_based_optimization_source import (
+from auxiliary.nelder_mead_based_optimization_source import (
     initial_simplex,
     call_nelder_mead_method,
 )
