@@ -1,0 +1,16 @@
+name: eppe_abgabe
+
+dependencies:
+- numpy
+- pandas
+- jupyterlab
+- matplotlib
+- seaborn
+- scipy
+- statsmodels
+- pip
+- pip:
+  - nlopt
+  - autograd
+
+

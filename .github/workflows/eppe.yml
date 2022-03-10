@@ -12,7 +12,7 @@ jobs:
     - uses: conda-incubator/setup-miniconda@v2
       with:
            activate-environment: eppe_abgabe
-           environment-file: environment.yml
+           environment-file: environment_EPPE.yml
            python-version: 3.6
            auto-activate-base: false
     - name: execute notebooks
