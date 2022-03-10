@@ -1,0 +1,13 @@
+,algorithm,test_function,computational_budget,sample_size,success_rate,average_time,average_function_evaluations
+0,our nelder-mead method,griewank,1000,50,0.26,0.07889605522155761,1001.4
+1,our nelder-mead method,griewank,3000,50,0.48,0.22843839168548585,2999.5
+2,our nelder-mead method,griewank,6000,50,0.66,0.46406738758087157,6000.02
+3,our nelder-mead method,griewank,10000,50,0.76,0.7640594148635864,9990.94
+4,our nelder-mead method,griewank,15000,50,0.94,1.2814565372467042,14996.48
+5,our nelder-mead method,griewank,21000,50,0.98,1.8711687231063843,20995.44
+6,BOBYQA,griewank,1000,50,1.0,0.04546496868133545,1001.0
+7,BOBYQA,griewank,3000,50,1.0,0.16155770778656006,3001.0
+8,BOBYQA,griewank,6000,50,1.0,0.5427471828460694,6001.0
+9,BOBYQA,griewank,10000,50,1.0,1.232431902885437,10001.0
+10,BOBYQA,griewank,15000,50,1.0,2.6158808279037475,15001.0
+11,BOBYQA,griewank,21000,50,1.0,5.0753222894668575,21001.0
