@@ -201,12 +201,3 @@ def naive_optimization(
     # 6. return output of 4
 
     return np.round(optimum), calls
-
-
-if __name__ == "__main__":
-
-    test_finding_starting_point = False
-    test_initial_simplex = False
-
-    if test_finding_starting_point:
-        print(find_starting_point(lambda a: a[0] + a[1], [4, 6], 2))

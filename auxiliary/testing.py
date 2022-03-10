@@ -94,16 +94,6 @@ if __name__ == "__main__":
         plot_test_function((-10, 10), levi_no_13, "Levi no. 13")
         plot_test_function((-100, 100), rosenbrock, "rosenbrock")
 
-    if test_newton_1D:
-        print(
-            "One root of x^2 + 1 is at x == ", newton_method_1D(lambda a: a ** 2 - 4, 6)
-        )
-        f = lambda a: (a - 4) ** 2 + 1
-        df_2 = lambda b: 2 * b - 8
-        df = lambda c: first_derivative_1D(c, f, eps=10 ** -8)
-        print("Min of (x-4)^2 + 1 is at x == ", newton_method_1D(df_2, 1))
-        print("Min of (x-4)**2 + 1 is at x == ", newton_method_1D(df, 1))
-
     if test_newton:
         # functions whose minimum we want to find:
         f = lambda a: (a[0] + a[1]) ** 2 - 0.5 * a[1] ** 2 + 1
