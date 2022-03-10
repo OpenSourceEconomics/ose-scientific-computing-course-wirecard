@@ -13,9 +13,22 @@ from nelder_mead_based_optimization_source import (
     initial_simplex,
 )
 
-# In this File we provide two versions
+# In this File we provide three global and two local optimization algorithms.
 
+# 1. local optimization:
+#       - our_simple_nelder_mead_method
+#       - our_simple_newton_based_optimization
 
+# 2. global optimization
+#       - global_optimization_BOBYQA
+#       - global_nelder_mead_method
+#       - globar_newton_based_optimization
+
+# The global_optimization_BOBYQA uses the optimization algorithm BOBYQA provided by the NLOPT package
+# The global_nelder_mead_method uses a implementation of the nelder-mead method that we coded in the file: nelder_mead_based_optimization_source
+# the global_newton_based_optimization uses an newton_method_based local optimization we coded in the file: newton_based_optimization_source
+
+# local optimization
 def our_simple_nelder_mead_method(
     f,
     starting_point,
@@ -54,6 +67,7 @@ def our_simple_nelder_mead_method(
     )
 
 
+# local optimization
 def our_simple_newton_based_optimization(
     f,
     starting_point,
@@ -84,7 +98,43 @@ def our_simple_newton_based_optimization(
     )
 
 
-def our_smart_nelder_mead_method(
+# local optimization
+def optimization_BOBYQA_NLOPT(
+    f,
+    starting_point,
+    x_tolerance,
+    y_tolerance,
+    computational_budget,
+):
+
+    # set all the parameters for the optimization algorithm
+    n = len(starting_point)
+    global_optimum = nlopt.opt(nlopt.GN_MLSL, n)
+    local_opt = nlopt.opt(nlopt.LN_BOBYQA, n)
+    local_opt.set_xtol_abs(x_tolerance)
+    local_opt.set_ftol_abs(y_tolerance)
+    local_opt.set_min_objective(f)
+    global_optimum.set_local_optimizer(local_opt)
+    global_optimum.set_lower_bounds(-100)
+    global_optimum.set_upper_bounds(100)
+    global_optimum.set_min_objective(f)
+    global_optimum.set_xtol_abs(x_tolerance)
+    global_optimum.set_ftol_abs(y_tolerance)
+    global_optimum.set_maxeval(computational_budget)
+
+    # optimize the function
+    optimizer = global_optimum.optimize(np.array(starting_point))
+
+    num_evals = global_optimum.get_numevals()
+
+    # round the result
+    optimizer = np.round(optimizer)
+
+    return optimizer, num_evals
+
+
+# global optimization
+def global_nelder_mead_method(
     f,
     computational_budget,
     domain_center,
@@ -95,7 +145,7 @@ def our_smart_nelder_mead_method(
     x_tolerance=1e-6,
     y_tolerance=1e-6,
 ):
-    """Return an approximation of a local optimum found by the nelder-mead method run from 50 starting points.
+    """Return an approximation of a global optimum found by the nelder-mead method run from sample size many starting points.
 
     Args:
         f:                                  a real valued function
@@ -126,7 +176,8 @@ def our_smart_nelder_mead_method(
     )
 
 
-def our_smart_newton_based_optimization(
+# global optimization
+def global_newton_based_optimization(
     f,
     computational_budget,
     domain_center,
@@ -137,7 +188,7 @@ def our_smart_newton_based_optimization(
     x_tolerance=1e-6,
     y_tolerance=1e-6,
 ):
-    """Return an approximation of a local optimum found by the newton-method run from multiple.
+    """Return an approximation of a global optimum found by the newton-method run from multiple starting points.
 
     Args:
         f:                                  a real valued function
@@ -168,7 +219,8 @@ def our_smart_newton_based_optimization(
     )
 
 
-def optimization_smart_BOBYQA_NLOPT(
+# global optimization
+def global_optimization_BOBYQA(
     f,
     computational_budget,
     domain_center,
@@ -179,6 +231,23 @@ def optimization_smart_BOBYQA_NLOPT(
     x_tolerance=1e-6,
     y_tolerance=1e-6,
 ):
+    """Return an approximation of a global optimum found by the BOBYQA algorithm run from sample size starting points.
+
+    Args:
+        f:                                  a real valued function
+        computational_budget:               maximal number of function calls after which the algortithm terminates
+        domain_center:                      the center of the domain(-circle)
+        domain_radius:                      the radius of the domain(-circle)
+        sample_size:                        the number of points which we consider to start the nelder-mead-method from
+        number_of_candidates:               the number of points from which we start the nelder-mead-method
+        x_tolerance:                        a positive real number
+        y_tolerance:                        a positive real number
+
+    Returns:
+        out_1: an approximation of a local optimum of the function
+        out_2: number of evaluations of f
+
+    """
     return iterate_optimization(
         optimization_BOBYQA_NLOPT,
         f,
@@ -193,45 +262,7 @@ def optimization_smart_BOBYQA_NLOPT(
     )
 
 
-def optimization_BOBYQA_NLOPT(
-    f,
-    starting_point,
-    x_tolerance,
-    y_tolerance,
-    computational_budget,
-):
-    n = len(starting_point)
-    global_optimum = nlopt.opt(nlopt.GN_MLSL, n)
-    local_opt = nlopt.opt(nlopt.LN_BOBYQA, n)
-    # local_opt.set_lower_bounds(problem_info.lower_bound)
-    # local_opt.set_upper_bounds(problem_info.upper_bound)
-    local_opt.set_xtol_abs(x_tolerance)
-    local_opt.set_ftol_abs(y_tolerance)
-    local_opt.set_min_objective(f)
-    global_optimum.set_local_optimizer(local_opt)
-    global_optimum.set_lower_bounds(-100)
-    global_optimum.set_upper_bounds(100)
-    global_optimum.set_min_objective(f)
-    global_optimum.set_xtol_abs(x_tolerance)
-    global_optimum.set_ftol_abs(y_tolerance)
-    global_optimum.set_maxeval(computational_budget)
-
-    # start_point_i=np.array(x_0.iloc[i])
-    optimizer = global_optimum.optimize(np.array(starting_point))
-    # optimizer=polishing_optimizer.optimize(optimizer_1)
-    # function_val=f(optimizer)
-    num_evals = global_optimum.get_numevals()
-    #### define accuracy measures
-    # comp_budget=comp_budge_j
-    # abs_diff=np.abs(np.subtract(problem_info.solver,optimizer)) ### account for multiple glob min missing
-    # success_crit_x=np.amax(abs_diff)
-    # success_crit_f=np.abs(np.subtract(problem_info.solver_function_value,function_val))
-    # information=np.hstack((problem_info.name,function_val,num_evals,comp_budget,success_crit_x,success_crit_f,optimizer))
-    # df.append(information)
-    optimizer = np.round(optimizer)
-    return optimizer, num_evals
-
-
+# the following function finds the starting points for the global optimization algorithms
 def find_starting_points(
     f, domain_center, domain_radius, dimension, sample_size, number_of_candidates
 ):
@@ -248,13 +279,19 @@ def find_starting_points(
         out:                  an array of points within the domain(-circle)
 
     """
+    # get random vectors in [-1,1]^n
     A = np.random.rand(sample_size, dimension) * 2 - np.array([1] * dimension)
+    # map these onto domain_center + [-domain_radius, domain_radius]
     B = [domain_center + x * domain_radius for x in A]
+    # apply f onto these points
     C = np.array([f(x) for x in B])
+    # find the number_of_candidates points with the smallest f-value
     D = np.argpartition(C, -number_of_candidates)[-number_of_candidates:]
+    # return the list of candidates
     return [B[index] for index in D]
 
 
+# this funciton is used to turn the local searches into global search algorithms
 def iterate_optimization(
     algorithm,
     f,
@@ -286,15 +323,20 @@ def iterate_optimization(
         out_2: number of evaluations of f
 
     """
+    # initilize variables
     budget = computational_budget + 0
     candidates = []
     values = []
     i = 0
+
+    # make sure that the variables computational_budget, sample_size  and number_of_candididates take the right form
     assert (
         computational_budget > sample_size
     ), "computational_budget is initially smaller than sample size."
     assert computational_budget > 0, "computational_budget should be positive."
     assert number_of_candidates > 0, "number_of_candidates should be positive."
+
+    # if we run through all candidates and still have budget left we get new candidates
     while computational_budget > sample_size:
         starting_points = find_starting_points(
             f,
@@ -306,6 +348,7 @@ def iterate_optimization(
         )
         computational_budget -= sample_size
         i = 0
+        # while we have budget left we start local searches from the candidates we were given before
         while computational_budget > 0 and i < number_of_candidates:
             a = algorithm(
                 f, starting_points[i], x_tolerance, y_tolerance, computational_budget
@@ -315,6 +358,7 @@ def iterate_optimization(
             computational_budget -= a[1]
             computational_budget -= 1
             i += 1
+    # get the best computed candidate
     index = np.argmin(values)
 
     return candidates[index], budget - computational_budget

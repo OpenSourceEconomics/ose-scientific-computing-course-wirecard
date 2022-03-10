@@ -2,42 +2,19 @@ import autograd.numpy as np
 import numbers
 
 # In this File we are implementing real valued functions to test the optimization algorithms we implement
-
 # The first four are taken from our main source
+# the parameter 'domain' is not used yet. Might be integrated in the future
+# the classes at the end of the file can be ignored for now. They might be integrate in the future to improve on the project
 
 
-def is_x_in_domain(x, domain):
-    if len(x) != len(domain):
-        assert "Dimension of input value and domain are not the same"
-    for x_i, i in zip(x, range(len(x))):
-        if domain[i][0] < x_i and x_i < domain[i][1]:
-            pass
-        else:
-            return False
-
-    return True
-
-
-class griewank_instance:
-    def __init__(self, dimension, a=200, domain=[-100, 100]):
-        self.a = 200
-        self.dim = dimension
-        self.domain = np.array([domain for i in range(self.dim)])
-
-    def value(self, x):
-        assert (
-            len(x) == self.dim
-        ), "The dimension of the input is and the function are different"
-        # assert is_x_in_domain(x, self.domain), "The input value is not in the domain of the function"
-        return griewank(x, self.a, self.domain)
-
-
+# the griewank function
 def griewank(x, a=200, domain=[-100, 100]):
     """Compute the output of the x.size dimensional griewank function.
 
     Args:
-        x: a number, an array of numbers or a numpy array of numbers
-        a: a variable factor of the function
+        x:      a number, an array of numbers or a numpy array of numbers
+        a:      a variable factor of the function
+        domain: the domain of the function
 
 
     Returns:
@@ -56,20 +33,7 @@ def griewank(x, a=200, domain=[-100, 100]):
     return out
 
 
-class rastrigin_instance:
-    def __init__(self, dimension, A=10, domain=[-5.12, 5.12]):
-        self.A = A
-        self.dim = dimension
-        self.domain = np.array([domain for i in range(self.dim)])
-
-    def value(self, y):
-        assert (
-            len(y) == self.dim
-        ), "The dimension of the input and the function are different"
-        # assert is_x_in_domain(y, self.domain), "The input value is not in the domain of the function"
-        return rastrigin(y, self.A)
-
-
+# the rastrigin function
 def rastrigin(x, domain=[-5.12, 5.12]):
     """Compute the output of the x.size dimensional rastrigin function.
 
@@ -85,27 +49,15 @@ def rastrigin(x, domain=[-5.12, 5.12]):
     # The global minimum lies at (0,...,0) and equals to 1
 
     # This function still hast to be tested wether it does what its supposed to do
+
     A = 10
-    # print("the input is: ", x)
     input = np.array(x)
     n = len(input)
     out = A * n + np.sum(input * input - A * np.cos(2 * np.pi * input)) + 1
     return out
 
 
-class rosenbrock_instance:
-    def __init__(self, dimension, domain=[-100, 100]):
-        self.dim = dimension
-        self.domain = np.array([domain for i in range(self.dim)])
-
-    def value(self, x):
-        assert (
-            len(x) == self.dim
-        ), "The dimension of the input is and the function are different"
-        # assert is_x_in_domain(x, self.domain), "The input value is not in the domain of the function"
-        return rosenbrock(x)
-
-
+# the rosenbrock function
 def rosenbrock(x, domain=[-100, 100]):
     """Compute the output of the x.size dimensional rosenbrock function.
 
@@ -131,20 +83,7 @@ def rosenbrock(x, domain=[-100, 100]):
         )
 
 
-class levi_no_13_instance:
-    def __init__(self, dimension, domain=[-10, 10]):
-        self.dim = dimension
-        self.domain = np.array([domain for i in range(self.dim)])
-
-    def value(self, x):
-        assert (
-            len(x) == self.dim
-        ), "The dimension of the input is and the function are different"
-        # assert is_x_in_domain(x, self.domain), "The input value is not in the domain of the function"
-        return levi_no_13(x)
-
-
-# for now i have excluded the domain of the following function
+# the levi no. 13 function
 def levi_no_13(x):
     """Compute the output of the x.size dimensional Levi No. 13 function.
 
@@ -178,6 +117,88 @@ def levi_no_13(x):
         )
 
     return out
+
+
+# a function that at some point is going to be used for the classes
+def is_x_in_domain(x, domain):
+    """check wether x lies in the domain
+
+    Args:
+        x:      a vector of lenght n
+        domain: an array of 2 dimensional vectors of lenght n
+
+
+    Returns:
+        out:    true if x is in the domain, else: flalse
+
+    """
+    if len(x) != len(domain):
+        assert "Dimension of input value and domain are not the same"
+    for x_i, i in zip(x, range(len(x))):
+        if domain[i][0] < x_i and x_i < domain[i][1]:
+            pass
+        else:
+            return False
+
+    return True
+
+
+# the rastrigin function as a class
+class rastrigin_instance:
+    def __init__(self, dimension, A=10, domain=[-5.12, 5.12]):
+        self.A = A
+        self.dim = dimension
+        self.domain = np.array([domain for i in range(self.dim)])
+
+    def value(self, y):
+        assert (
+            len(y) == self.dim
+        ), "The dimension of the input and the function are different"
+        # assert is_x_in_domain(y, self.domain), "The input value is not in the domain of the function"
+        return rastrigin(y, self.A)
+
+
+# the rosenbrock function as a class
+class rosenbrock_instance:
+    def __init__(self, dimension, domain=[-100, 100]):
+        self.dim = dimension
+        self.domain = np.array([domain for i in range(self.dim)])
+
+    def value(self, x):
+        assert (
+            len(x) == self.dim
+        ), "The dimension of the input is and the function are different"
+        # assert is_x_in_domain(x, self.domain), "The input value is not in the domain of the function"
+        return rosenbrock(x)
+
+
+# the levo_no_13 function as a class
+class levi_no_13_instance:
+    def __init__(self, dimension, domain=[-10, 10]):
+        self.dim = dimension
+        self.domain = np.array([domain for i in range(self.dim)])
+
+    def value(self, x):
+        assert (
+            len(x) == self.dim
+        ), "The dimension of the input is and the function are different"
+        # assert is_x_in_domain(x, self.domain), "The input value is not in the domain of the function"
+        return levi_no_13(x)
+
+
+# the griewank function as a class
+class griewank_instance:
+    def __init__(self, dimension, a=200, domain=[-100, 100]):
+        self.a = 200
+        self.dim = dimension
+        self.domain = np.array([domain for i in range(self.dim)])
+
+    def value(self, x):
+        assert (
+            len(x) == self.dim
+        ), "The dimension of the input is and the function are different"
+        # assert is_x_in_domain(x, self.domain), "The input value is not in the domain of the function"
+        return griewank(x, self.a, self.domain)
 
 
 if __name__ == "__main__":

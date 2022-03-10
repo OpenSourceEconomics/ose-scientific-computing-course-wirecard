@@ -3,12 +3,10 @@ import autograd.numpy as np
 from autograd import grad, jacobian
 
 
-# In this File we are going to implement the optimization algorithms we study in our assignment
+# In this File we implented a naive local optimization algorithm that uses the newton
+# method and requires the funciton of interest to be twice continuously differentiable
 
-# To get some practice with implementing optimization algorithms I implemented the 1 Dimensional Newton Method,
-# and a naive optimization algorithms that uses the multidimensional newton method
-
-
+# this function is not used yet but could be integrated later to give the optimization algorithms more flexibility
 def pick_stopp_criterion(x_tolerance, y_tolerance):
     """Return the correct termination criterion.
 
@@ -43,6 +41,7 @@ def pick_stopp_criterion(x_tolerance, y_tolerance):
         ), "You should not set both x_tolerance and y_tolerance to -np.inf."
 
 
+# checks wether stopping criterion in x is reached
 def stopping_criterion_x(x, y, x_tolerance, y_tolerance):
     """Return False if x < x_tolerance, else True.
 
@@ -62,6 +61,7 @@ def stopping_criterion_x(x, y, x_tolerance, y_tolerance):
         return True
 
 
+# checks wether stopping criterion in y is reached
 def stopping_criterion_y(x, y, x_tolerance, y_tolerance):
     """Return True if y < y_tolerance, else false.
 
@@ -83,6 +83,7 @@ def stopping_criterion_y(x, y, x_tolerance, y_tolerance):
         return True
 
 
+# checks wether either the stopping criterion in y or in x is reached
 def stopping_criterion_x_or_y(x, y, x_tolerance, y_tolerance):
     """Return True if both terminate_criterion_y and terminate_criterion_x are True, else false.
 
@@ -105,6 +106,7 @@ def stopping_criterion_x_or_y(x, y, x_tolerance, y_tolerance):
         return False
 
 
+# the multi-dimensional newton method
 def newton_method(
     f,
     df,
@@ -129,25 +131,33 @@ def newton_method(
     """
 
     # default stopping criterion for now y
+    # this can still be adapted later to make the algorithms more flexible
 
+    # initilize variables:
     calls_of_f_or_df = 0
     f_xn = f(x_n)
     calls_of_f_or_df = calls_of_f_or_df + 1
     n = n - 1
+    # iteration of the newton method
     while stopping_criterium(x_n, f_xn, x_tolerance, y_tolerance) and n > 0:
 
+        # solve linear equations
         sol = np.linalg.solve(df(x_n), -f_xn)
 
+        # adjust count of function evaluations
         calls_of_f_or_df = calls_of_f_or_df + 1
         n = n - 1
 
         x_n = x_n + sol
         f_xn = f(x_n)
+
+        # adjust count of function evaluations
         calls_of_f_or_df = calls_of_f_or_df + 1
         n = n - 1
     return x_n, calls_of_f_or_df
 
 
+# This function is not used anymore and can be deleted 10.03.2022 Daniel
 def new_naive_optimization(
     f, starting_point, x_tolerance=1e-6, y_tolerance=1e-6, computational_budget=100
 ):
@@ -158,6 +168,7 @@ def new_naive_optimization(
     pass
 
 
+# a local optimization search based on the newton method
 def naive_optimization(
     f, starting_point, x_tolerance=1e-6, y_tolerance=1e-6, computational_budget=100
 ):
@@ -171,7 +182,7 @@ def naive_optimization(
         computation_budget: the number of maximal function evaluations
 
     Returns:
-        out: either an approximation for an optimum or a message if the procedure didnt converge
+        out: a candidate for a local optimum and the number of function evaluations
 
     """
     # 1. Set the starting point of the iteration
@@ -181,7 +192,7 @@ def naive_optimization(
     df = jacobian(f)
     # 3. compute jacobian of the derivative of f
     J = jacobian(df)
-    # 4. choose stopping criterion
+    # 4. choose stopping criterion, this is not integrated yet
     stopping_criterion = pick_stopp_criterion(x_tolerance, y_tolerance)
     # 5. run newton method on the derivative of f
     optimum, calls = newton_method(
